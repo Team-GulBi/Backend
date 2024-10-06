@@ -9,7 +9,6 @@ import lombok.*;
 @Getter
 @NoArgsConstructor  // 기본 생성자
 @AllArgsConstructor  // 모든 필드를 사용하는 생성자
-@Builder  // 빌더 패턴을 위한 어노테이션
 public class User extends BaseEntity {
 
     @Id
@@ -27,4 +26,12 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @Builder
+    public User(String nickname, String email, String phoneNumber, String password) {
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+    }
 }

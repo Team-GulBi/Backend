@@ -1,13 +1,44 @@
 version: '3.8'
 services:
-  backend:
-    build:
-      context: ./
-    restart: always
+#  backend:
+#    image: openjdk:17-jdk
+#    volumes:
+#      - .:/app  # 현재 디렉토리를 /app으로 마운트
+#    working_dir: /app  # 작업 디렉토리 설정
+#    command: ./gradlew bootJar  # Gradle을 사용하여 JAR 파일 생성
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - app-tier
+
+  mysqldb:
+    image: mysql:latest
+    env_file:
+      - .env
     ports:
-      - "8080:8080"
+      - '3306:3306'
+    restart: always
+    volumes:
+      - 'mysqldb-data:/var/lib/mysql'
     networks:
       - app-tier
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysqldb
+      PMA_PORT: 3306
+    networks:
+      - app-tier
+
+volumes:
+  mysqldb-data:
+    driver: local  # 로컬 드라이버 사용
 
 networks:
   app-tier:

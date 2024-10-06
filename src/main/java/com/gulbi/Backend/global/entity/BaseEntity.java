@@ -17,8 +17,6 @@ public abstract class BaseEntity {
 
     private LocalDateTime updatedAt;
 
-
-
     @PrePersist  // 엔티티가 처음 저장될 때 자동 호출
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

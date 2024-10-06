@@ -9,6 +9,19 @@ services:
     networks:
       - app-tier
 
+  mysqldb:
+    image: mysql:latest
+    env_file:
+      - .env
+    ports:
+      - '3306:3306'
+    restart: always
+    volumes:
+      - 'mysqldb-data:/var/lib/mysql'
+    networks:
+      - app-tier
+
+
 networks:
   app-tier:
     driver: bridge

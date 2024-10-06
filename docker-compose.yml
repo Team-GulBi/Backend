@@ -24,6 +24,18 @@ services:
     networks:
       - app-tier
 
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysqldb
+      PMA_PORT: 3306
+    networks:
+      - app-tier
+
 volumes:
   mysqldb-data:
     driver: local  # 로컬 드라이버 사용

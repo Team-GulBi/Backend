@@ -24,6 +24,7 @@ _site/
 activemq-data
 bin
 build
+build/
 !/**/src/**/bin
 !/**/src/**/build
 build.log
@@ -43,7 +44,7 @@ secrets.yml
 node_modules
 .env
 .idea
-
+*.bin
 
 
 

@@ -45,6 +45,9 @@ node_modules
 .env
 .idea
 *.bin
+application-private.properties
+build
+
 
 
 

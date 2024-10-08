@@ -1,14 +1,13 @@
 package com.gulbi.Backend.domain.user.dto;
 
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-public class UserRegisterDto {
+@Data
+public class RegisterRequestDto {
     private String nickname;
     private String email;
     private String password;
+    private String phoneNumber;
 }

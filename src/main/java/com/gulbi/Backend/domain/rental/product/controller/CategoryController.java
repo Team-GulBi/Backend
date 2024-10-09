@@ -29,7 +29,7 @@ public class CategoryController {
     }
 
     @GetMapping("/mcategory/{categoryId}")
-    public ResponseEntity<RestApiResponse> getMidCategory(@PathVariable("categoryId") Long categoryId){
+    public ResponseEntity<RestApiResponse> getMidCategory(@PathVariable("categoryId") Integer categoryId){
         List<CategoryProjection> list = categoryService.getBelowCategoriesByParentId(categoryId);
 
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);

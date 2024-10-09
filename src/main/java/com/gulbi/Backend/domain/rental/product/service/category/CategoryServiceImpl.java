@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryProjection> getBelowCategoriesByParentId(Long categoryId) {
+    public List<CategoryProjection> getBelowCategoriesByParentId(Integer categoryId) {
         List<CategoryProjection> belowCategoryList= categoryRepository.findBelowCategory(categoryId);
 
         return belowCategoryList;

@@ -2,6 +2,7 @@ package com.gulbi.Backend.domain.rental.product.service.category;
 
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.repository.CategoryRepository;
+import com.gulbi.Backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class CategoryInitializer implements CommandLineRunner {
 
         Category beef = Category.builder().name("소고기").parent(food).build(); //소분류
         categoryRepository.save(beef);
+
 
 
     }

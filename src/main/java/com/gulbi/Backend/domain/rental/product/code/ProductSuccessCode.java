@@ -1,18 +1,16 @@
 package com.gulbi.Backend.domain.rental.product.code;
-
 import com.gulbi.Backend.global.response.ResponseApiCode;
 import org.springframework.http.HttpStatus;
 
-public enum CategorySuccessCode implements ResponseApiCode {
+public enum ProductSuccessCode implements ResponseApiCode {
 
-    GET_CATEGORY_SUCCESS(HttpStatus.CREATED,"C001","카테고리 조회가 성공적으로 완료되었습니다.");
-
+    PRODUCT_REGISTER_SUCCESS(HttpStatus.OK,"P001","상품이 성공적으로 등록 되었습니다.");
 
     private HttpStatus status;
     private String code;
     private String message;
 
-    CategorySuccessCode(HttpStatus status, String code, String message) {
+    ProductSuccessCode(HttpStatus status, String code, String message) {
         this.status = status;
         this.code=code;
         this.message=message;

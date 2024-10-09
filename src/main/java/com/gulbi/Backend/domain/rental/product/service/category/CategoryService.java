@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CategoryService {
     public List<CategoryProjection> getBigCategories();
-    public List<CategoryProjection> getBelowCategoriesByParentId(Long categoryId);
+    public List<CategoryProjection> getBelowCategoriesByParentId(Integer categoryId);
 }

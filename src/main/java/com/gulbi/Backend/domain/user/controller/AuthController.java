@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -22,8 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto request) {
         String token = userService.login(request);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(Collections.singletonMap("token", token));
     }
 }

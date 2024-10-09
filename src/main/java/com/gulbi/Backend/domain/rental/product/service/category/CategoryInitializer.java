@@ -1,13 +1,10 @@
-package com.gulbi.Backend.domain.rental.product.service;
+package com.gulbi.Backend.domain.rental.product.service.category;
 
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.repository.CategoryRepository;
-import com.gulbi.Backend.domain.rental.product.repository.ProductRepository2;
-import com.gulbi.Backend.domain.rental.product.service.ProductService2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Component
 @RequiredArgsConstructor

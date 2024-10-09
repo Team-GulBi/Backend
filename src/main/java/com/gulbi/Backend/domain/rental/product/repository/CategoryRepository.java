@@ -13,7 +13,7 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 //    @Query("SELECT c1 FROM Category c1 LEFT JOIN c1.parent c2")
     @Query("SELECT c FROM Category c WHERE c.parent IS NULL")
-    List<Category> findAllNoParent();
+    List<CategoryProjection> findAllNoParent();
     // 대분류만 꺼냄, 대분류는 부모님이 안계심
 
     @Query("SELECT c.id AS id, c.name AS name FROM Category c WHERE c.parent.id = :parentId")

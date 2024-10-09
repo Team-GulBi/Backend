@@ -23,9 +23,4 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
-    // 부모 카테고리를 설정할 수 있는 생성자
-//    public Category(String name, Category parent) {
-//        this.name = name;
-//        this.parent = parent;
-//    }
 }

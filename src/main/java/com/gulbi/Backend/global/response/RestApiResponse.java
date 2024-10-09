@@ -1,8 +1,13 @@
 package com.gulbi.Backend.global.response;
 
+import com.gulbi.Backend.domain.rental.product.code.CategorySuccessCode;
+import com.gulbi.Backend.domain.rental.product.dto.CategoryProjection;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+
 @Getter
 public class RestApiResponse {
     private HttpStatus status;
@@ -21,6 +26,7 @@ public class RestApiResponse {
         this.code = responseApiCode.getCode();
         this.message=responseApiCode.getMessage();
     }
+
 
 
 }

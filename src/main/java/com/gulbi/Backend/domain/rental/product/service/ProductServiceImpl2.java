@@ -9,7 +9,9 @@ import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,11 +20,14 @@ public class ProductServiceImpl2 implements ProductService2 {
 
     private final ProductRepository2 productRepository;
 
+    private final ImageService imageService;
+
     private final CategoryRepository categoryRepository;
 
     private final UserRepository userRepository; // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
     @Override
-    public void registerProduct(ProductRegisterRequest product) {
+    public void registerProduct(ProductRegisterRequest product, List<MultipartFile> images) {
+
         String productName = product.getProductName();
         String title = product.getTitle();
         User user = User.builder().email("1").phoneNumber("2").nickname("z").password("2").build();  // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
@@ -67,5 +72,9 @@ public class ProductServiceImpl2 implements ProductService2 {
 
         productRepository.save(product1);
 
+        imageService.registerImageWithProduct(images,product1);
+
     }
+
+
 }

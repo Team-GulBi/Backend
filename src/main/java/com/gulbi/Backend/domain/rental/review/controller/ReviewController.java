@@ -19,7 +19,6 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<RestApiResponse> createReview(@RequestBody ReviewCreateRequest request){
         reviewService.registerReview(request);
-        System.out.println("ddddddddddddddd");
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }

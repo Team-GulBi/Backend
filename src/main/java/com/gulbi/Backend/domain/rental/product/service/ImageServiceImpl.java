@@ -39,5 +39,11 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Override
+    public List<Image> getImageByProductId(Long productId) {
+        List<Image> imageList = imageRepository.findByImageWithProduct(productId).orElseThrow(()->new RuntimeException());
+        return imageList;
+    }
+
 
 }

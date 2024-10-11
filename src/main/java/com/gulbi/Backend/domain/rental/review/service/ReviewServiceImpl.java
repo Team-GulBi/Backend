@@ -3,12 +3,15 @@ package com.gulbi.Backend.domain.rental.review.service;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository2;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequest;
+import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
 import com.gulbi.Backend.domain.rental.review.repository.ReviewRepository;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +35,13 @@ public class ReviewServiceImpl implements ReviewService{
         Review review = Review.builder().product(product).rating(rating).content(content).user(user).build();
 
         reviewRepository.save(review);
+    }
+
+    @Override
+    public List<ReviewWithAvgProjection> bringAllReview(Long productId) {
+        List<ReviewWithAvgProjection> reviewWithAvg =reviewRepository.bringAllReviewAndAvgByProductId(productId).orElseThrow();
+        System.out.println(reviewWithAvg.get(0).getContent());
+        return reviewWithAvg;
+
     }
 }

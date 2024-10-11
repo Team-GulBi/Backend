@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.service.category;
 
 import com.gulbi.Backend.domain.rental.product.dto.CategoryProjection;
+import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,11 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryProjection> belowCategoryList= categoryRepository.findBelowCategory(categoryId);
 
         return belowCategoryList;
+    }
+
+    @Override
+    public Category getCategoryById(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
+        return category;
     }
 }

@@ -1,5 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.dto;
 
+import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
+import com.gulbi.Backend.domain.rental.review.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,4 +33,8 @@ public class ProductDetailResponse {
 
     private String created_at;
     private List<String> images;
+
+    private List<ReviewWithAvgProjection> reviews;
+
+
 }

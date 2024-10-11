@@ -21,9 +21,17 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)  // 카테고리 코드 테이블과 다대일 관계 설정
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)  // 대분류와 다대일 관계 설정
+    @JoinColumn(name = "b_category_id", nullable = false) // 외래 키 이름 수정
+    private Category bCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)  // 중분류와 다대일 관계 설정
+    @JoinColumn(name = "m_category_id", nullable = false) // 외래 키 이름 수정
+    private Category mCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)  // 소분류와 다대일 관계 설정
+    @JoinColumn(name = "s_category_id", nullable = false) // 외래 키 이름 수정
+    private Category sCategory;
 
     @Column(length = 100)
     private String tag;
@@ -57,10 +65,12 @@ public class Product extends BaseEntity {
 
     // 생성자
     @Builder
-    public Product(User user, Category category, String tag, String title, String name, int views, int price, int period,
+    public Product(User user, Category bCategory, Category mCategory, Category sCategory, String tag, String title, String name, int views, int price,
                    String sido, String sigungu, String bname, String description, float rating) {
         this.user = user;
-        this.category = category;
+        this.bCategory = bCategory;
+        this.mCategory = mCategory;
+        this.sCategory = sCategory;
         this.tag = tag;
         this.title = title;
         this.name = name;

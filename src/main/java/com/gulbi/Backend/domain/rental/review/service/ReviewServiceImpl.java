@@ -1,0 +1,36 @@
+package com.gulbi.Backend.domain.rental.review.service;
+
+import com.gulbi.Backend.domain.rental.product.entity.Product;
+import com.gulbi.Backend.domain.rental.product.repository.ProductRepository2;
+import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequest;
+import com.gulbi.Backend.domain.rental.review.entity.Review;
+import com.gulbi.Backend.domain.rental.review.repository.ReviewRepository;
+import com.gulbi.Backend.domain.user.entity.User;
+import com.gulbi.Backend.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class ReviewServiceImpl implements ReviewService{
+    private final ReviewRepository reviewRepository;
+    private final ProductRepository2 productRepository;
+
+    private final UserRepository userRepository; // jwt연동 되면 없앨거임.
+    @Override
+    public void registerReview(ReviewCreateRequest request) {
+
+        User user = User.builder().email("abua100").phoneNumber("0010388293").nickname("zsexs").password("2gdd1!").build();  // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
+        userRepository.save(user); // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
+
+        Long productId = request.getProductId();
+        String content = request.getContent();
+        Integer rating = request.getRating();
+
+        Product product = productRepository.findById(productId).orElseThrow();
+
+        Review review = Review.builder().product(product).rating(rating).content(content).user(user).build();
+
+        reviewRepository.save(review);
+    }
+}

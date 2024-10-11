@@ -63,10 +63,13 @@ public class Product extends BaseEntity {
     @Column(nullable = true)
     private float rating;  // 평균 평점
 
+    @Column(nullable = false, length = 200000)
+    private String mainImage;
+
     // 생성자
     @Builder
     public Product(User user, Category bCategory, Category mCategory, Category sCategory, String tag, String title, String name, int views, int price,
-                   String sido, String sigungu, String bname, String description, float rating) {
+                   String sido, String sigungu, String bname, String description, float rating, String mainImage) {
         this.user = user;
         this.bCategory = bCategory;
         this.mCategory = mCategory;
@@ -81,5 +84,6 @@ public class Product extends BaseEntity {
         this.bname = bname;
         this.description = description;
         this.rating = rating;
+        this.mainImage = mainImage;
     }
 }

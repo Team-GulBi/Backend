@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 
 public enum CategorySuccessCode implements ResponseApiCode {
 
-    GET_CATEGORY_SUCCESS(HttpStatus.CREATED,"C001","카테고리 조회가 성공적으로 완료되었습니다.");
+    GET_CATEGORY_SUCCESS(HttpStatus.CREATED,"C001","카테고리 조회가 성공적으로 완료되었습니다."),
+     DELETE_CATEGORY_OK(HttpStatus.OK,"C002","카테고리가 성공적으로 삭제되었습니다.");
 
 
     private HttpStatus status;

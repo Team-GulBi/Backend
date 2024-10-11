@@ -23,9 +23,10 @@ public class CategoryController {
     @GetMapping("/bcategory")
     public ResponseEntity<RestApiResponse> getBigCategory(){
         List<CategoryProjection> list = categoryService.getBigCategories();
+//        RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS);
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);
-
         return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/mcategory/{categoryId}")

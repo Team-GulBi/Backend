@@ -3,6 +3,7 @@ package com.gulbi.Backend.domain.rental.product.service;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
+import com.gulbi.Backend.global.util.Base64Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +25,7 @@ public class ImageServiceImpl implements ImageService {
 
         for (MultipartFile file : files) {
             try {
-                byte[] bytes = file.getBytes();
-                String strBytes = Base64.getEncoder().encodeToString(bytes);
+                String strBytes = Base64Util.MultipartFileToString(file); // global > util에 만들어놨어용
                 Image image = Image.builder().url(strBytes).product(product).build();
                 imageList.add(image);
             } catch (IOException e) {
@@ -38,4 +38,6 @@ public class ImageServiceImpl implements ImageService {
             imageRepository.saveAll(imageList);
         }
     }
+
+
 }

@@ -26,6 +26,7 @@ public class CategoryInitializer implements CommandLineRunner {
 
         Category beef = Category.builder().name("소고기").parent(food).build(); //소분류
         categoryRepository.save(beef);
+        
 
 
 

@@ -3,6 +3,7 @@ package com.gulbi.Backend.domain.rental.product.controller;
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
 import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
+import com.gulbi.Backend.domain.rental.product.dto.ProductResponseProjection;
 import com.gulbi.Backend.domain.rental.product.service.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.ProductService2;
 import com.gulbi.Backend.domain.user.entity.User;
@@ -10,6 +11,7 @@ import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
@@ -51,6 +53,14 @@ public class ProductController2 {
 
         ProductDetailResponse data = productService.getProductDetail(productId);
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{query}/{filtering}")
+    public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("filtering")String filtering){
+        System.out.println(query);
+            List<ProductResponseProjection> data =productService.searchProductWithTitle(query);
+            RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
         return ResponseEntity.ok(response);
     }
 }

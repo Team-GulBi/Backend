@@ -2,6 +2,7 @@ package com.gulbi.Backend.domain.rental.product.service;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
 import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
+import com.gulbi.Backend.domain.rental.product.dto.ProductResponseProjection;
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
@@ -142,6 +143,13 @@ public class ProductServiceImpl2 implements ProductService2 {
 
 
     return  response;
+    }
+
+    @Override
+    public List<ProductResponseProjection> searchProductWithTitle(String query) {
+       List<ProductResponseProjection> products = productRepository.findProductByQuery(query).orElseThrow();
+        System.out.println(products);
+        return products;
     }
 
 

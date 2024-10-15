@@ -37,7 +37,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/signin", "/api/v1/auth/signup").permitAll()  // 로그인, 회원가입 엔드포인트는 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config").permitAll() // Swagger 관련 엔드포인트 허용
-                        .anyRequest().permitAll())
+                        .anyRequest().permitAll()) //임시비활성화
                         //.anyRequest().authenticated())  // 나머지는 인증 필요
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
                 .build();

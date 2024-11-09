@@ -31,4 +31,10 @@ public class ProfileController {
         profileService.createProfile(request, userDetails);
         return ResponseEntity.ok("Profile created successfully");
     }
+    @PutMapping
+    public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDto request, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        profileService.updateProfile(request, userDetails);
+        return ResponseEntity.ok("Profile updated successfully");
+    }
 }

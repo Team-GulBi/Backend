@@ -56,4 +56,13 @@ public class Profile {
                 .bname(dto.getBname())
                 .build();
     }
+    public void update(ProfileRequestDto dto) {
+        this.image = dto.getImage();
+        this.intro = dto.getIntro();
+        this.phone = dto.getPhone();
+        this.signature = dto.getSignature();
+        this.sido = dto.getSido();
+        this.sigungu = dto.getSigungu();
+        this.bname = dto.getBname();
+    }
 }

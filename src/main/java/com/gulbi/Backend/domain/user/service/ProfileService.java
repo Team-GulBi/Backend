@@ -28,7 +28,19 @@ public class ProfileService {
 
         // DTO와 User를 사용해 Profile 인스턴스 생성
         Profile profile = Profile.fromDto(request, user);
-
         profileRepository.save(profile);
+    }
+
+    public void updateProfile(ProfileRequestDto request, UserDetails userDetails) {
+        //User의 이메일로 해당 사용자의 프로필 조회
+        String email=userDetails.getUsername();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Profile existingProfile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        // 기존 프로필 필드를 DTO에 있는 값으로 업데이트
+        existingProfile.update(request);
+        profileRepository.save(existingProfile); // 수정된 프로필을 저장
     }
 }

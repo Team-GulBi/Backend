@@ -1,10 +1,12 @@
 package com.gulbi.Backend.domain.user.service;
 
+import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
 import com.gulbi.Backend.domain.user.entity.Profile;
-import com.gulbi.Backend.domain.user.entity.User; // User import 추가
+import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.repository.ProfileRepository;
-import com.gulbi.Backend.domain.user.repository.UserRepository; // UserRepository import 추가
+import com.gulbi.Backend.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,4 +45,42 @@ public class ProfileService {
         existingProfile.update(request);
         profileRepository.save(existingProfile); // 수정된 프로필을 저장
     }
+
+    // 프로필 조회
+    public ProfileResponseDto getProfile(Long userId) {
+        // SecurityContext에서 인증된 사용자 정보(UserDetails) 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername();
+
+        User loggedInUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Long loggedInUserId = loggedInUser.getId();
+
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Profile not found"));
+
+        if (userId.equals(loggedInUserId)) {
+            // 본인의 프로필
+            return ProfileResponseDto.fromProfileForUser(
+                    profile.getImage(),
+                    profile.getIntro(),
+                    profile.getPhone(),
+                    profile.getSignature(),
+                    profile.getSido(),
+                    profile.getSigungu(),
+                    profile.getBname()
+            );
+        } else {
+            // 타인의 프로필
+            return ProfileResponseDto.fromProfileForOtherUsers(
+                    profile.getImage(),
+                    profile.getIntro(),
+                    profile.getSido(),
+                    profile.getSigungu(),
+                    profile.getBname()
+            );
+        }
+    }
 }
+

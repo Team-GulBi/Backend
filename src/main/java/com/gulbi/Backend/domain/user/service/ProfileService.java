@@ -1,11 +1,12 @@
 package com.gulbi.Backend.domain.user.service;
-
+import jakarta.servlet.http.HttpServletResponse;
 import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
 import com.gulbi.Backend.domain.user.entity.Profile;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.repository.ProfileRepository;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
+import com.gulbi.Backend.global.util.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,10 @@ public class ProfileService {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private UserService userService;
     public void createProfile(ProfileRequestDto request, UserDetails userDetails) {
         // 이메일을 통해 User 객체를 찾기
         String email = userDetails.getUsername(); // UserDetails에서 이메일 추출
@@ -33,18 +37,23 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
-    public void updateProfile(ProfileRequestDto request, UserDetails userDetails) {
-        //User의 이메일로 해당 사용자의 프로필 조회
-        String email=userDetails.getUsername();
-        User user = userRepository.findByEmail(email)
+    public String updateProfile(ProfileRequestDto request, UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Profile existingProfile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
-        // 기존 프로필 필드를 DTO에 있는 값으로 업데이트
+
+        // 프로필 업데이트
         existingProfile.update(request);
-        profileRepository.save(existingProfile); // 수정된 프로필을 저장
+        profileRepository.save(existingProfile);
+
+        // 프로필 완료 상태에 따라 역할을 결정하고 토큰 생성
+        String role = userService.isProfileComplete(existingProfile) ? "ROLE_COMPLETED_USER" : "ROLE_INCOMPLETED_USER";
+        return jwtUtil.generateToken(user.getEmail(), user.getId(), role); // 토큰 반환
     }
+
+
 
     // 프로필 조회
     public ProfileResponseDto getProfile(Long userId) {

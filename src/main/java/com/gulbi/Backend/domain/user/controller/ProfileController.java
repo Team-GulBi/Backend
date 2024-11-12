@@ -34,9 +34,14 @@ public class ProfileController {
     @PutMapping
     public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDto request, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        profileService.updateProfile(request, userDetails);
-        return ResponseEntity.ok("Profile updated successfully");
+        // ProfileService에서 JWT 토큰을 반환받음
+        String newToken = profileService.updateProfile(request, userDetails);
+        // 응답 헤더에 토큰 추가
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + newToken)
+                .body("Profile updated successfully");
     }
+
 
     @GetMapping("/{userId}")
     public ResponseEntity<ProfileResponseDto> getProfile(@PathVariable Long userId) {

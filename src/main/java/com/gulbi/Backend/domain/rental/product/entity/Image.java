@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Access(AccessType.FIELD)
 @Entity
 @Table(name = "images")
 @NoArgsConstructor

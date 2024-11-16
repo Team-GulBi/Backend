@@ -3,10 +3,9 @@ package com.gulbi.Backend.domain.rental.product.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
+@Access(AccessType.FIELD)
 @Entity
 @Table(name = "categories")
-@Getter
 @Builder(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)

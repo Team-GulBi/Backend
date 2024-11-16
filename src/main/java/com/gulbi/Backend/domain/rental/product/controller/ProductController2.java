@@ -3,6 +3,7 @@ package com.gulbi.Backend.domain.rental.product.controller;
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
 import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
+import com.gulbi.Backend.domain.rental.product.dto.ProductResponseDto;
 import com.gulbi.Backend.domain.rental.product.dto.ProductResponseProjection;
 import com.gulbi.Backend.domain.rental.product.service.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.ProductService2;
@@ -44,7 +45,6 @@ public class ProductController2 {
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
 
 
-
         return ResponseEntity.ok(response);
     }
 
@@ -58,9 +58,14 @@ public class ProductController2 {
 
     @GetMapping("/{query}/{filtering}")
     public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("filtering")String filtering){
+        long startTime = System.currentTimeMillis();
         System.out.println(query);
-            List<ProductResponseProjection> data =productService.searchProductWithTitle(query);
+//            List<ProductResponseProjection> data =productService.searchProductWithTitle(query);
+            List<ProductResponseDto> data =productService.searchProductWithTitle(query);
             RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
+        long endTime = System.currentTimeMillis(); // 끝나는 시간 기록
+        long executionTime = endTime - startTime; // 실행 시간 계산
+        System.out.println("Execution time: " + executionTime + " ms");
         return ResponseEntity.ok(response);
     }
 }

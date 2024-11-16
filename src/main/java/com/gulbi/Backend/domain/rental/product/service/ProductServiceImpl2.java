@@ -2,6 +2,7 @@ package com.gulbi.Backend.domain.rental.product.service;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
 import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
+import com.gulbi.Backend.domain.rental.product.dto.ProductResponseDto;
 import com.gulbi.Backend.domain.rental.product.dto.ProductResponseProjection;
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
@@ -16,6 +17,7 @@ import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import com.gulbi.Backend.global.util.Base64Util;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -146,9 +148,17 @@ public class ProductServiceImpl2 implements ProductService2 {
     }
 
     @Override
-    public List<ProductResponseProjection> searchProductWithTitle(String query) {
-       List<ProductResponseProjection> products = productRepository.findProductByQuery(query).orElseThrow();
-        System.out.println(products);
+    public List<ProductResponseDto> searchProductWithTitle(String query) {
+//       List<ProductResponseProjection> products = productRepository.findProductByQuery(query);
+       List<ProductResponseDto> products = productRepository.findProductByQuery(query);
+
+       for(ProductResponseDto product : products){
+        System.out.println("ProductResponseDto: " + product.getClass());
+       }
+
+//        for(ProductResponseProjection product : products){
+//            System.out.println("ProductProjection 클래스: " + product.getClass());
+//        }
         return products;
     }
 

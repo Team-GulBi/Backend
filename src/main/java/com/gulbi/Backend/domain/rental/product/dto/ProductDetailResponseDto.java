@@ -1,12 +1,10 @@
 package com.gulbi.Backend.domain.rental.product.dto;
 
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
-import com.gulbi.Backend.domain.rental.review.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-public class ProductDetailResponse {
+public class ProductDetailResponseDto {
     private String tag;
     private String title;
     private String productName;

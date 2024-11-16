@@ -16,7 +16,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryProjection> getBigCategories() {
 
-        List<CategoryProjection> bigCategoryList= categoryRepository.findAllNoParent();
+        List<CategoryProjection> bigCategoryList= categoryRepository.findAllNoParentProjection();
 
         return bigCategoryList;
     }

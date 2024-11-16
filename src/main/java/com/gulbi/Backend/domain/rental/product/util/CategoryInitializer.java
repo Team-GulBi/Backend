@@ -2,14 +2,19 @@ package com.gulbi.Backend.domain.rental.product.util;
 
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.repository.CategoryRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class CategoryInitializer implements CommandLineRunner {
+public class CategoryInitializer implements CommandLineRunner{
     private final CategoryRepository categoryRepository;
+
+//    @PostConstruct
+//    private void initCategory() {
+//    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -35,7 +40,7 @@ public class CategoryInitializer implements CommandLineRunner {
                 {"치마", "여성의류"},
         };
 
-        for(String[] category : categories){
+        for (String[] category : categories) {
             String categoryName = category[0];
             String parentCategoryName = category[1];
             Category parentCategory = parentCategoryName == null
@@ -44,4 +49,5 @@ public class CategoryInitializer implements CommandLineRunner {
             categoryRepository.save(Category.builder().name(categoryName).parent(parentCategory).build());
         }
     }
-}
+    }
+

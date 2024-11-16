@@ -1,9 +1,9 @@
 package com.gulbi.Backend.domain.rental.product.controller;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
-import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
-import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
-import com.gulbi.Backend.domain.rental.product.dto.ProductResponseDto;
+import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.ProductResponseDto;
 import com.gulbi.Backend.domain.rental.product.service.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.ProductService;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
@@ -29,7 +29,7 @@ public class ProductController {
 
     @CrossOrigin("http://localhost:5173/")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequest product,
+    public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto product,
                                                     @RequestPart("images") List<MultipartFile> images,
                                                     HttpServletRequest request) throws IOException {
 
@@ -45,21 +45,21 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<RestApiResponse> productDetail(@PathVariable("productId") Long productId) {
 
-        ProductDetailResponse data = productService.getProductDetail(productId);
+        ProductDetailResponseDto data = productService.getProductDetail(productId);
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{query}/{filtering}")
-    public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("filtering")String filtering){
-        long startTime = System.currentTimeMillis();
-        System.out.println(query);
-//            List<ProductResponseProjection> data =productService.searchProductWithTitle(query);
-            List<ProductResponseDto> data =productService.searchProductWithTitle(query);
-            RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
-        long endTime = System.currentTimeMillis(); // 끝나는 시간 기록
-        long executionTime = endTime - startTime; // 실행 시간 계산
-        System.out.println("Execution time: " + executionTime + " ms");
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("/{query}/{filtering}")
+//    public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("filtering")String filtering){
+//        long startTime = System.currentTimeMillis();
+//        System.out.println(query);
+////            List<ProductResponseProjection> data =productService.searchProductWithTitle(query);
+//            List<ProductResponseDto> data =productService.searchProductWithTitle(query);
+//            RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
+//        long endTime = System.currentTimeMillis(); // 끝나는 시간 기록
+//        long executionTime = endTime - startTime; // 실행 시간 계산
+//        System.out.println("Execution time: " + executionTime + " ms");
+//        return ResponseEntity.ok(response);
+//    }
 }

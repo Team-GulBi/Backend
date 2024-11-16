@@ -1,6 +1,6 @@
 package com.gulbi.Backend.domain.rental.product.dto.product;
 
-public interface ProductResponseProjection {
+public interface ProductOverViewResponse {
 
    Long getId();
    String getMainImage();

@@ -1,13 +1,16 @@
 package com.gulbi.Backend.domain.rental.product.service;
 
-import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
-import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
-import com.gulbi.Backend.domain.rental.product.dto.ProductResponseDto;
-import com.gulbi.Backend.domain.rental.product.entity.Category;
+import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductRegisterDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.ProductRegisterDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.ProductResponseProjection;
+import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
+import com.gulbi.Backend.domain.rental.product.factory.ProductFactory;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
-import com.gulbi.Backend.domain.rental.product.service.category.CategoryService;
+import com.gulbi.Backend.domain.rental.product.service.category.CategoryBusinessService;
+import com.gulbi.Backend.domain.rental.product.vo.MainImage;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import com.gulbi.Backend.domain.user.entity.User;
@@ -26,73 +29,30 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository; // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
     private final ProductRepository productRepository;
-
     private final ImageService imageService;
-
     private final ReviewService reviewService;
-    private final CategoryService categoryService;
+    private final CategoryBusinessService categoryBusinessService;
 
 
     @Override
-    public void registerProduct(ProductRegisterRequest product, List<MultipartFile> images) {
-
+    public void registerProduct(ProductRegisterRequestDto product, List<MultipartFile> images) throws IOException {
 
         User user = User.builder().email("1").phoneNumber("2").nickname("z").password("2").build();  // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
         userRepository.save(user); // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
-        try{
-        String productName = product.getProductName();
-        String title = product.getTitle();
-        String bname = product.getBname();
-        String sido = product.getSido();
-        String sigungu = product.getSigungu();
-        Integer price = Integer.parseInt(product.getPrice());
-        String tag = product.getTag();
-        String description = product.getDescription();
 
-        Integer scategoryId = Integer.parseInt(product.getScategoryId());
-        Integer mcategoryId = Integer.parseInt(product.getMcategoryId());
-        Integer bcategoryId = Integer.parseInt(product.getBcategoryId());
-
-        Category scategory = categoryService.getCategoryById(scategoryId);
-        Category mcategory = categoryService.getCategoryById(mcategoryId);
-        Category bcategory = categoryService.getCategoryById(bcategoryId);
-
-
-
-            String mainImg = Base64Util.MultipartFileToString(images.get(0));
-
-
-        Product product1 = Product.builder()
-                .user(user)
-                .name(productName)
-                .price(price)
-                .tag(tag)
-                .bname(bname)
-                .sido(sido)
-                .sigungu(sigungu)
-                .description(description)
-                .title(title)
-                .views(0)
-                .rating(0)
-                .bCategory(bcategory)
-                .mCategory(mcategory)
-                .sCategory(scategory)
-                .mainImage(mainImg)
-                .build();
-
-
+        CategoryInProductRegisterDto categoryInProductRegisterDto = categoryBusinessService.resolveCategories(product);
+        ProductRegisterDto productRegisterDto = product.createProductDto();
+        MainImage mainImg = MainImage.of(Base64Util.MultipartFileToString(images.get(0)));
+        Product product1 = ProductFactory.createProduct(productRegisterDto, categoryInProductRegisterDto, user , mainImg);
         productRepository.save(product1);
+        imageService.registerImageWithProduct(images, product1);
 
-        imageService.registerImageWithProduct(images,product1);
-       }catch (IOException e){
-           System.out.println(e);
-       }
 
 
     }
 
     @Override
-    public ProductDetailResponse getProductDetail(Long productId) {
+    public ProductDetailResponseDto getProductDetail(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()-> new RuntimeException());
         final String tag = product.getTag();
         final String title = product.getTitle();
@@ -119,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
         System.out.println(reviewWithAvg.get(0).getContent());
 
 
-        ProductDetailResponse response = ProductDetailResponse.builder()
+        ProductDetailResponseDto response = ProductDetailResponseDto.builder()
                 .tag(tag)
                 .title(title)
                 .productName(productName)
@@ -143,17 +103,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDto> searchProductWithTitle(String query) {
-//       List<ProductResponseProjection> products = productRepository.findProductByQuery(query);
-       List<ProductResponseDto> products = productRepository.findProductByQuery(query);
-
-       for(ProductResponseDto product : products){
-        System.out.println("ProductResponseDto: " + product.getClass());
-       }
-
-//        for(ProductResponseProjection product : products){
-//            System.out.println("ProductProjection 클래스: " + product.getClass());
-//        }
+    public List<ProductResponseProjection> searchProductWithTitle(String query) {
+       List<ProductResponseProjection> products = productRepository.findProductByQuery(query);
         return products;
     }
 

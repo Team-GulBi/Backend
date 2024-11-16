@@ -9,16 +9,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long> {
-
     @Query(value = "SELECT p.id AS id, p.main_image AS mainImage, p.title AS title, p.price AS price FROM products p WHERE p.title LIKE CONCAT('%', :query, '%')", nativeQuery = true)
     public List<ProductOverViewResponse> findProductByQuery(@Param("query")String query);
 
-    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.mainImage) " +
+    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.mainImage, p.bCategory, p.mCategory, p.sCategory, p.createdAt) " +
             "FROM Product p WHERE p.id = :id")
-    ProductDto findProductDtoById(@Param("id") Long id);
+    public Optional<ProductDto> findProductDtoById(@Param("id") Long id);
+
 
 
 

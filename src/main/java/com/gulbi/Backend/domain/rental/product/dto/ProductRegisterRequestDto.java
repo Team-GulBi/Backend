@@ -1,19 +1,15 @@
 package com.gulbi.Backend.domain.rental.product.dto;
 
-import com.gulbi.Backend.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductRegisterRequest {
+public class ProductRegisterRequestDto {
     private String tag;
     private String title;
     private String productName;

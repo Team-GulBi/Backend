@@ -1,7 +1,7 @@
 package com.gulbi.Backend.domain.rental.review.service;
 
 import com.gulbi.Backend.domain.rental.product.entity.Product;
-import com.gulbi.Backend.domain.rental.product.repository.ProductRepository2;
+import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequest;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
-    private final ProductRepository2 productRepository;
+    private final ProductRepository productRepository;
 
     private final UserRepository userRepository; // jwt연동 되면 없앨거임.
     @Override

@@ -4,32 +4,26 @@ import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductDetailResponse;
 import com.gulbi.Backend.domain.rental.product.dto.ProductRegisterRequest;
 import com.gulbi.Backend.domain.rental.product.dto.ProductResponseDto;
-import com.gulbi.Backend.domain.rental.product.dto.ProductResponseProjection;
 import com.gulbi.Backend.domain.rental.product.service.ImageService;
-import com.gulbi.Backend.domain.rental.product.service.ProductService2;
-import com.gulbi.Backend.domain.user.entity.User;
+import com.gulbi.Backend.domain.rental.product.service.ProductService;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-public class ProductController2 {
+public class ProductController {
 
-    private final ProductService2 productService;
+    private final ProductService productService;
     private final ImageService imageService;
 
 

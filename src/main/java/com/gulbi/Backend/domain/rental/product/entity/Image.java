@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "images")
-@Getter
 @NoArgsConstructor
 public class Image extends BaseEntity {
     @Id

@@ -1,8 +1,10 @@
 package com.gulbi.Backend.domain.rental.product.service;
 
+import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
+import com.gulbi.Backend.domain.rental.product.vo.ProductImageDtoList;
 import com.gulbi.Backend.global.util.Base64Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -40,9 +41,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<Image> getImageByProductId(Long productId) {
-        List<Image> imageList = imageRepository.findByImageWithProduct(productId).orElseThrow(()->new RuntimeException());
-        return imageList;
+    public ProductImageDtoList getImageByProductId(Long productId) {
+        List<ProductImageDto> images = imageRepository.findByImageWithProduct(productId);
+        return ProductImageDtoList.of(images);
+
     }
 
 

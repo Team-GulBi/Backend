@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.dto;
+package com.gulbi.Backend.domain.rental.product.dto.product;
 
 public interface ProductResponseProjection {
 

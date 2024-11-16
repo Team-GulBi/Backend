@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.dto;
+package com.gulbi.Backend.domain.rental.product.dto.response;
 
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import lombok.AllArgsConstructor;

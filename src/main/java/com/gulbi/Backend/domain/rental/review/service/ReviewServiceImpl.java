@@ -39,9 +39,14 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public List<ReviewWithAvgProjection> bringAllReview(Long productId) {
-        List<ReviewWithAvgProjection> reviewWithAvg =reviewRepository.bringAllReviewAndAvgByProductId(productId).orElseThrow();
+        List<ReviewWithAvgProjection> reviewWithAvg = reviewRepository.bringAllReviewAndAvgByProductId(productId);
+
+        if (reviewWithAvg.isEmpty()) {
+            System.out.println("No reviews found for product ID: " + productId);
+            return reviewWithAvg; // 비어있는 리스트를 반환
+        }
+
         System.out.println(reviewWithAvg.get(0).getContent());
         return reviewWithAvg;
-
     }
 }

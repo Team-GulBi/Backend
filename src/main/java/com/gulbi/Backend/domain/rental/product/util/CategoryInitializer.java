@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 public class CategoryInitializer implements CommandLineRunner{
     private final CategoryRepository categoryRepository;
 
-//    @PostConstruct
-//    private void initCategory() {
-//    }
+    @PostConstruct
+    private void initCategory() {
+    }
 
     @Override
     public void run(String... args) throws Exception {

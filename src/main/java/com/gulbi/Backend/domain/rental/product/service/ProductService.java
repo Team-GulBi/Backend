@@ -1,6 +1,6 @@
 package com.gulbi.Backend.domain.rental.product.service;
 
-import com.gulbi.Backend.domain.rental.product.dto.product.ProductResponseProjection;
+import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +13,7 @@ public interface ProductService {
     public ProductDetailResponseDto getProductDetail(Long productId);
 
 //    public List<ProductResponseProjection> searchProductWithTitle(String query);
-public List<ProductResponseProjection> searchProductWithTitle(String query);
+public List<ProductOverViewResponse> searchProductWithTitle(String query);
 
 
 

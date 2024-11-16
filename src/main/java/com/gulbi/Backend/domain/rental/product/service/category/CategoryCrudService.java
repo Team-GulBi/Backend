@@ -5,7 +5,7 @@ import com.gulbi.Backend.domain.rental.product.entity.Category;
 
 import java.util.List;
 
-public interface CategoryService {
+public interface CategoryCrudService {
     public List<CategoryProjection> getBigCategories();
     public List<CategoryProjection> getBelowCategoriesByParentId(Integer categoryId);
     public Category getCategoryById(Integer categoryId);

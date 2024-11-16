@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryCrudServiceImpl implements CategoryCrudService {
 
     private final CategoryRepository categoryRepository;
     @Override
@@ -33,4 +33,5 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         return category;
     }
+
 }

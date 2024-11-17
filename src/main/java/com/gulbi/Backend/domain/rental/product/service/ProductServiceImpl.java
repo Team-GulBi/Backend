@@ -9,13 +9,12 @@ import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailRespons
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.factory.ProductFactory;
 import com.gulbi.Backend.domain.rental.product.service.category.CategoryBusinessService;
-import com.gulbi.Backend.domain.rental.product.vo.MainImage;
+import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
 import com.gulbi.Backend.domain.rental.product.vo.ProductImageDtoList;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
-import com.gulbi.Backend.global.util.Base64Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

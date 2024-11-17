@@ -6,6 +6,7 @@ import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterReques
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductResponseDto;
 import com.gulbi.Backend.domain.rental.product.service.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.ProductService;
+import com.gulbi.Backend.domain.rental.product.vo.ProductImages;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,12 +31,10 @@ public class ProductController {
     @CrossOrigin("http://localhost:5173/")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto product,
-                                                    @RequestPart("images") List<MultipartFile> images,
-                                                    HttpServletRequest request) throws IOException {
-
-        // user는 임의로 하나 만들어서 넣고 사용하겠음.
-        // jwt를 통해 인증을 받아야 하는 로직 확인 후 수정 예정임
-            productService.registerProduct(product, images);
+                                                    @RequestPart("images") List<MultipartFile> images) throws IOException {
+            ProductImages productImages = ProductImages.of(images);
+            product.setProductImages(productImages);
+            productService.registerProduct(product);
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
 
 
@@ -44,7 +43,6 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public ResponseEntity<RestApiResponse> productDetail(@PathVariable("productId") Long productId) {
-
         ProductDetailResponseDto data = productService.getProductDetail(productId);
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
         return ResponseEntity.ok(response);

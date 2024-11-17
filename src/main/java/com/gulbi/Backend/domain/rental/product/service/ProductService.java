@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface ProductService {
     void registerProduct(ProductRegistrationDto productDto, List<MultipartFile> images);  // List<MultipartFile>에서 List<String>으로 변경
+    boolean deleteProductById(Long id);
 }

@@ -23,7 +23,6 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RestApiResponse> registerProduct(
             @RequestPart("body") TestDto product,
@@ -46,11 +45,21 @@ public class ProductController {
                 System.out.println(headerName + ": " + request.getHeader(headerName));
             }
         }
-
         // ProductService에 ProductRegistrationDto와 List<String> image 전달
         //productService.registerProduct(product,images);
 
         // 성공 응답 반환
         return ResponseEntity.ok(new RestApiResponse(SuccessCode.PRODUCT_REGISTER_SUCCESS));
     }
+
+    @DeleteMapping("/{boardID}")
+    public ResponseEntity<RestApiResponse> deleteProduct(@PathVariable Long id){
+        boolean is_Deleted = productService.deleteProductById(id);
+        if (is_Deleted) {
+            return ResponseEntity.ok(new RestApiResponse(SuccessCode.PRODUCT_DELETE_SUCCESS));
+        }else {
+            return ResponseEntity.ok(new RestApiResponse(ErrorCode.PRODUCT_DELETE_FAIL));
+        }
+    }
+
 }

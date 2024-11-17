@@ -59,7 +59,6 @@ public class ProductServiceImpl implements ProductService {
 
         // Step 5: 상품 정보 저장
         productRepository.save(product);
-
         imageService.registerImageWithProduct(images,product);
     }
 
@@ -68,5 +67,11 @@ public class ProductServiceImpl implements ProductService {
                 .id(categoryDto.getId().intValue())
                 .name(categoryDto.getName())
                 .build();
+    }
+
+    public boolean delteProductById(Long boardId) {
+        if (productRepository.existsById(boardId)) {
+            productRepository.deleteById(boardId);
+        }
     }
 }

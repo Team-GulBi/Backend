@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ReviewCreateRequest {
+public class ReviewCreateRequestDto {
     private final Long productId;
     private final Integer rating;
     private final String content;

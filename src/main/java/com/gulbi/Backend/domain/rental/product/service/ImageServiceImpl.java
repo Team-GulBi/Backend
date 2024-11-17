@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.service;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
+import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
@@ -21,10 +22,10 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
 
     @Override
-    public void registerImageWithProduct(List<MultipartFile> files, Product product) {
+    public void registerImageWithProduct(ProductRegisterRequestDto files, Product product) {
         List<Image> imageList = new ArrayList<>();
 
-        for (MultipartFile file : files) {
+        for (MultipartFile file : files.getProductImages().getProductImages()) {
             try {
                 String strBytes = Base64Util.MultipartFileToString(file); // global > util에 만들어놨어용
                 Image image = Image.builder().url(strBytes).product(product).build();

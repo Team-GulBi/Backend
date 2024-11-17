@@ -31,6 +31,7 @@ public class CategoryCrudServiceImpl implements CategoryCrudService {
     @Override
     public Category getCategoryById(Integer categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow();
+//        System.out.println(category.getName());
         return category;
     }
 

@@ -63,7 +63,6 @@ public class ProductDataInitializer implements CommandLineRunner {
                         .description("야무짐")
                         .title(productName)
                         .tag(tags)
-                        .mainImage("sdsd")
                         .price(price)
                         .views(0)
                         .rating(0)

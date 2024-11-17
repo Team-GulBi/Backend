@@ -2,7 +2,7 @@ package com.gulbi.Backend.domain.rental.review.service;
 
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
-import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequest;
+import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
 import com.gulbi.Backend.domain.rental.review.repository.ReviewRepository;
@@ -21,7 +21,7 @@ public class ReviewServiceImpl implements ReviewService{
 
     private final UserRepository userRepository; // jwt연동 되면 없앨거임.
     @Override
-    public void registerReview(ReviewCreateRequest request) {
+    public void registerReview(ReviewCreateRequestDto request) {
 
         User user = User.builder().email("abua100").phoneNumber("0010388293").nickname("zsexs").password("2gdd1!").build();  // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.
         userRepository.save(user); // user관련 태호가 머지해주기 전에는 임시로 만들어서 쓸거임. 추후 머지 되면 없어짐.

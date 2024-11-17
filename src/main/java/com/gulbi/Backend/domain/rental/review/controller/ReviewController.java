@@ -1,6 +1,6 @@
 package com.gulbi.Backend.domain.rental.review.controller;
 
-import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequest;
+import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequestDto;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
     private final ReviewService reviewService;
     @PostMapping
-    public ResponseEntity<RestApiResponse> createReview(@RequestBody ReviewCreateRequest request){
+    public ResponseEntity<RestApiResponse> createReview(@RequestBody ReviewCreateRequestDto request){
         reviewService.registerReview(request);
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
         return ResponseEntity.ok(response);

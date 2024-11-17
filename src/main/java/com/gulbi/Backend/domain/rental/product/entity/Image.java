@@ -19,9 +19,9 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(length = 500)
+    @Column(length = 100000)
     private String url;
-
+    //데이터 타입이 너무 큰거 같아서 최적화 고려 해야함
     @Builder
     public Image(Product product, String url) {
         this.product = product;

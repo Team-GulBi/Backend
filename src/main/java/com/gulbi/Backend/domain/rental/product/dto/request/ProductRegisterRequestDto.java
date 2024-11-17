@@ -1,9 +1,13 @@
 package com.gulbi.Backend.domain.rental.product.dto.request;
 
+import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductRegisterDto;
+import com.gulbi.Backend.domain.rental.product.vo.ProductImages;
+import com.gulbi.Backend.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +24,8 @@ public class ProductRegisterRequestDto {
     private String bcategoryId;
     private String mcategoryId;
     private String scategoryId;
+    @Setter
+    private ProductImages productImages;
 
     public ProductRegisterRequestDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description) {
         this.tag = tag;
@@ -30,10 +36,6 @@ public class ProductRegisterRequestDto {
         this.sigungu = sigungu;
         this.bname = bname;
         this.description = description;
-    }
-
-    public ProductRegisterDto createProductDto() {
-        return ProductRegisterDto.of(this);
     }
     }
 

@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.service;
+package com.gulbi.Backend.domain.rental.product.service.image;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
 import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;

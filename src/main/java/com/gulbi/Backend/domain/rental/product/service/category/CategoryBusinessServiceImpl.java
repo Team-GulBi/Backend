@@ -11,10 +11,18 @@ import org.springframework.stereotype.Service;
 public class CategoryBusinessServiceImpl implements CategoryBusinessService{
     private final CategoryCrudService categoryCrudService;
     @Override
-    public CategoryInProductDto resolveCategories(ProductRegisterRequestDto productRegisterRequestDto) {
-        Category bCategory = categoryCrudService.getCategoryById(Integer.valueOf(productRegisterRequestDto.getBcategoryId()));
-        Category mCategory = categoryCrudService.getCategoryById(Integer.valueOf(productRegisterRequestDto.getMcategoryId()));
-        Category sCategory = categoryCrudService.getCategoryById(Integer.valueOf(productRegisterRequestDto.getScategoryId()));
+    public CategoryInProductDto resolveCategories(String bCategoryId, String mCategoryId, String sCategoryId) {
+        Category bCategory = categoryCrudService.getCategoryById(Integer.valueOf(bCategoryId));
+        Category mCategory = categoryCrudService.getCategoryById(Integer.valueOf(mCategoryId));
+        Category sCategory = categoryCrudService.getCategoryById(Integer.valueOf(sCategoryId));
+        return CategoryInProductDto.of(bCategory, mCategory, sCategory);
+    }
+
+    @Override
+    public CategoryInProductDto resolveCategories(Integer bCategoryId, Integer mCategoryId, Integer sCategoryId) {
+        Category bCategory = categoryCrudService.getCategoryById(bCategoryId);
+        Category mCategory = categoryCrudService.getCategoryById(mCategoryId);
+        Category sCategory = categoryCrudService.getCategoryById(sCategoryId);
         return CategoryInProductDto.of(bCategory, mCategory, sCategory);
     }
 }

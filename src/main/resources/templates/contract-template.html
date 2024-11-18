@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>차용 계약서</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .signature {
+            margin-top: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h1>차용 계약서</h1>
+
+<p><strong>대여인:</strong> ${lender}</p>
+<p><strong>차용인:</strong> ${borrower}</p>
+
+<h2>물품 정보</h2>
+<p><strong>물품명:</strong> ${itemName}</p>
+<p><strong>형식 및 규격:</strong> ${specifications}</p>
+<p><strong>수량:</strong> ${quantity}</p>
+<p><strong>상태:</strong> ${condition}</p>
+<p><strong>비고:</strong> ${notes}</p>
+
+<p>차용인은 위 물품을 틀림없이 차용(임대)하였으며, 아래와 같이 이행할 것을 확약한다.</p>
+
+<h2>제 1조(차용기간 및 장소)</h2>
+<p>1. 본 계약에 따라 대여인은 차용인에게 <strong>${rentalEndDate}</strong>까지 해당 물품을 임대해야 한다. 해당 물품의 대여장소는
+    <strong>${rentalPlace}</strong>로 정한다. 위 대여장소의 상세주소는 다음과 같다.</p>
+<p>- 상세주소: <strong>${rentalDetailAddress}</strong></p>
+
+<p>2. 본 계약에 따라 차용인은 임대기간 종료 후 <strong>${returnDate}</strong>까지 해당 물품을 대여인에게 반납해야 한다. 해당 물품의 반납장소는
+    <strong>${returnPlace}</strong>로 정한다. 위 반납장소의 상세주소는 다음과 같다.</p>
+<p>- 상세주소: <strong>${returnDetailAddress}</strong></p>
+
+<h2>제 2조(임대료의 납부)</h2>
+<p>차용물품에 대한 임대료는 <strong>${rentalFee}</strong>원으로 정한다. 차용인은 <strong>${paymentDate}</strong>에 임대료를 일시지급해야 하며, 연체 시 차용인은 본
+    계약에 따른 불이익을 받을 수 있다.</p>
+
+<h2>제 3조(지연손해금)</h2>
+<p>1. 차용인이 약정된 기일을 초과하여, 임대료 납부를 게을리하였을 경우 차용인은 지연이자로써 일 <strong>${lateInterestRate}</strong>%를 청구할 수 있다. 이에 차용인은 이의없이 본
+    조항에 따라야 한다.</p>
+<p>2. 차용인이 약정된 기일을 초과하여, 해당물품 반납을 게을리하였을 경우 지연손해금으로 물품가액의 <strong>${latePenaltyRate}</strong>%를 청구할 수 있다. 이제 차용인은 이의없이 본
+    조항에 따라야 한다.</p>
+
+<h2>제 4조(위험부담 및 면책조항)</h2>
+<p>1. 차용인의 귀책사유로 본 계약 물품에 파손, 훼손 또는 멸실이 발생한 경우 차용인은 신품 가격의 <strong>${damageCompensationRate}</strong>%를 배상하여야 한다.</p>
+<p>2. 전항의 파손, 훼손 또는 멸실이 천재지변, 사변, 국가비상사태 등 불가항력으로 인한 것일 경우 차용인은 배상책임을 면한다.</p>
+
+<p><strong>${createdDate}</strong></p>
+
+<div class="signature">
+    <p><strong>대여인:</strong> ${lender} (서명)</p>
+    <p><strong>차용인:</strong> ${borrower} (서명)</p>
+</div>
+</body>
+</html>

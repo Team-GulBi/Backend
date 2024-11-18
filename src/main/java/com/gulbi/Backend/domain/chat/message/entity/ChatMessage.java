@@ -3,15 +3,12 @@ package com.gulbi.Backend.domain.chat.message.entity;
 import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class ChatMessage {
 
@@ -20,12 +17,12 @@ public class ChatMessage {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
 
     @Column(nullable = false)
     private String content;
@@ -34,13 +31,16 @@ public class ChatMessage {
     private LocalDateTime timestamp;
 
     @Column(nullable = false)
-    private boolean readStatus; // false: 안읽음, true: 읽음
+    private boolean isRead = false;
 
-    public ChatMessage(User sender, ChatRoom chatRoom, String content) {
-        this.sender = sender;
+    public ChatMessage(ChatRoom chatRoom, User sender, String content) {
         this.chatRoom = chatRoom;
+        this.sender = sender;
         this.content = content;
         this.timestamp = LocalDateTime.now();
-        this.readStatus = false;
+    }
+
+    public void markAsRead() {
+        this.isRead = true;
     }
 }

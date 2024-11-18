@@ -15,10 +15,7 @@ public interface ProductService {
     public void registerProduct(ProductRegisterRequestDto product) throws IOException;
     public ProductDetailResponseDto getProductDetail(Long productId);
     public List<ProductOverViewResponse> searchProductWithTitle(String query);
-    public Product processProductRegisterData(ProductRegisterRequestDto product);
-    public User resolveUser();
-    public ProductRegisterDto createProductRegisterDto();
-    public Product createProduct(ProductRegisterRequestDto product);
+    public Product createProductWithCategoryAndUser(ProductRegisterRequestDto product);
     public void saveProductAndImages(Product product, ProductRegisterRequestDto productRequest);
 
 

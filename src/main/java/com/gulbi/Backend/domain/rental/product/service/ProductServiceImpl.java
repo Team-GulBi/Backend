@@ -25,65 +25,26 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-    private final UserRepository userRepository;
-    private final UserService userService;
     private final ProductCrudService productCrudService;
     private final ImageService imageService;
     private final ReviewService reviewService;
-    private final CategoryBusinessService categoryBusinessService;
+    private final ProductFactory productFactory;
 
     // Public methods
     @Override
     public void registerProduct(ProductRegisterRequestDto product) throws IOException {
-        Product product1 = createProduct(product);
+        Product product1 = createProductWithCategoryAndUser(product);
         saveProductAndImages(product1, product);
     }
 
     @Override
-    public ProductDetailResponseDto getProductDetail(Long productId) {
-        ProductDto product = productCrudService.findProductDtoById(productId);
-        ProductImageDtoList imageList = imageService.getImageByProductId(productId);
-        List<ReviewWithAvgProjection> reviewWithAvg = reviewService.bringAllReview(productId);
-        return ProductDetailResponseDto.of(product, imageList, reviewWithAvg);
-    }
-
-    @Override
     public List<ProductOverViewResponse> searchProductWithTitle(String query) {
-        return productCrudService.findProductOverViewByQuery(query);
+        return productCrudService.getProductOverViewByQuery(query);
     }
 
     @Override
-    public Product processProductRegisterData(ProductRegisterRequestDto product) {
-        User user = resolveUser();
-        CategoryInProductDto categoryInProduct = categoryBusinessService.resolveCategories(product);
-        ProductRegisterDto productRegisterDto = ProductRegisterDto.of(product, categoryInProduct, user);
-        return ProductFactory.createWithRegisterRequestDto(productRegisterDto);
-    }
-
-    @Override
-    public User resolveUser() {
-        userService.getAuthenticatedUser();
-        User user = User.builder()
-                .email("1")
-                .phoneNumber("2")
-                .nickname("z")
-                .password("2")
-                .build();
-        userRepository.save(user);
-        return user;
-    }
-
-    @Override
-    public ProductRegisterDto createProductRegisterDto() {
-        return null;
-    }
-
-    @Override
-    public Product createProduct(ProductRegisterRequestDto product) {
-        User user = resolveUser(); // 유저 조회
-        CategoryInProductDto categoryInProduct = categoryBusinessService.resolveCategories(product); //카테고리 조회
-        ProductRegisterDto productRegisterDto = ProductRegisterDto.of(product, categoryInProduct, user);
-        return ProductFactory.createWithRegisterRequestDto(productRegisterDto);
+    public Product createProductWithCategoryAndUser(ProductRegisterRequestDto productRegisterRequestDto) {
+        return productFactory.createWithRegisterRequestDto(productRegisterRequestDto);
     }
 
     @Override
@@ -91,4 +52,24 @@ public class ProductServiceImpl implements ProductService {
         productCrudService.saveProduct(product);
         imageService.registerImageWithProduct(productRequest, product);
     }
+    @Override
+    public ProductDetailResponseDto getProductDetail(Long productId) {
+        ProductDto product = getProductById(productId);
+        ProductImageDtoList imageList = getProductImagesByProductId(productId);
+        List<ReviewWithAvgProjection> reviewWithAvg = getProductReviewsByProductId(productId);
+        return ProductDetailResponseDto.of(product, imageList, reviewWithAvg);
+    }
+
+    private ProductDto getProductById(Long productId) {
+        return productCrudService.getProductDtoById(productId);
+    }
+
+    private ProductImageDtoList getProductImagesByProductId(Long productId) {
+        return imageService.getImageByProductId(productId);
+    }
+
+    private List<ReviewWithAvgProjection> getProductReviewsByProductId(Long productId) {
+        return reviewService.getAllReview(productId);
+    }
+
 }

@@ -69,9 +69,12 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    public boolean delteProductById(Long boardId) {
+    public boolean deleteProductById(Long boardId) {
         if (productRepository.existsById(boardId)) {
             productRepository.deleteById(boardId);
+            return true;
+        }else {
+            return false;
         }
     }
 }

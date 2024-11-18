@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -52,14 +53,17 @@ public class ProductController {
         return ResponseEntity.ok(new RestApiResponse(SuccessCode.PRODUCT_REGISTER_SUCCESS));
     }
 
-    @DeleteMapping("/{boardID}")
-    public ResponseEntity<RestApiResponse> deleteProduct(@PathVariable Long id){
-        boolean is_Deleted = productService.deleteProductById(id);
-        if (is_Deleted) {
+    @DeleteMapping
+    public ResponseEntity<RestApiResponse> deleteProduct(@RequestBody Map<String, Long> body) {
+        Long boardId = body.get("boardId");
+        boolean isDeleted = productService.deleteProductById(boardId);
+        if (isDeleted) {
             return ResponseEntity.ok(new RestApiResponse(SuccessCode.PRODUCT_DELETE_SUCCESS));
-        }else {
+        } else {
             return ResponseEntity.ok(new RestApiResponse(ErrorCode.PRODUCT_DELETE_FAIL));
         }
     }
 
 }
+
+

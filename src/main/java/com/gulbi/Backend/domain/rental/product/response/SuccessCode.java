@@ -4,6 +4,8 @@ import com.gulbi.Backend.global.response.ResponseApiCode;
 import org.springframework.http.HttpStatus;
 
 public enum SuccessCode implements ResponseApiCode {
+    // 카테고리 관련 성공 코드
+    CATEGORY_FETCH_SUCCESS(HttpStatus.OK, "C001", "카테고리 조회에 성공했습니다."),
     // 상품 등록 성공
     PRODUCT_REGISTER_SUCCESS(HttpStatus.CREATED,"M001","상품등록완료"),
     // 상품 수정 성공

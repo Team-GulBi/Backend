@@ -15,6 +15,8 @@ public enum ErrorCode implements ResponseApiCode {
     PRODUCT_RETRIEVE_FAIL(HttpStatus.NOT_FOUND, "P004", "상품검색실패"),
     // 상품 상세 조회 실패
     PRODUCT_DETAILS_RETRIEVE_FAIL(HttpStatus.NOT_FOUND, "P005", "상품상세검색실패"),
+    // 카테고리 조회 실패
+    CATEGORY_FETCH_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "카테고리 조회에 실패했습니다."),
     // 데이터베이스 처리 오류
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB001", "데이터베이스 처리 중 오류가 발생했습니다."),
     // 서버 오류

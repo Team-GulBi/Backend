@@ -15,6 +15,7 @@ import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
+import com.gulbi.Backend.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
+    private final UserService userService;
     private final ProductCrudService productCrudService;
     private final ImageService imageService;
     private final ReviewService reviewService;
@@ -39,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDetailResponseDto getProductDetail(Long productId) {
-        ProductDto product = productCrudService.findProductById(productId);
+        ProductDto product = productCrudService.findProductDtoById(productId);
         ProductImageDtoList imageList = imageService.getImageByProductId(productId);
         List<ReviewWithAvgProjection> reviewWithAvg = reviewService.bringAllReview(productId);
         return ProductDetailResponseDto.of(product, imageList, reviewWithAvg);
@@ -55,11 +57,12 @@ public class ProductServiceImpl implements ProductService {
         User user = resolveUser();
         CategoryInProductDto categoryInProduct = categoryBusinessService.resolveCategories(product);
         ProductRegisterDto productRegisterDto = ProductRegisterDto.of(product, categoryInProduct, user);
-        return ProductFactory.createProduct(productRegisterDto);
+        return ProductFactory.createWithRegisterRequestDto(productRegisterDto);
     }
 
     @Override
     public User resolveUser() {
+        userService.getAuthenticatedUser();
         User user = User.builder()
                 .email("1")
                 .phoneNumber("2")
@@ -80,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
         User user = resolveUser(); // 유저 조회
         CategoryInProductDto categoryInProduct = categoryBusinessService.resolveCategories(product); //카테고리 조회
         ProductRegisterDto productRegisterDto = ProductRegisterDto.of(product, categoryInProduct, user);
-        return ProductFactory.createProduct(productRegisterDto);
+        return ProductFactory.createWithRegisterRequestDto(productRegisterDto);
     }
 
     @Override

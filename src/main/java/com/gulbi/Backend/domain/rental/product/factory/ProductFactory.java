@@ -8,7 +8,7 @@ import com.gulbi.Backend.domain.user.entity.User;
 
 public class ProductFactory{
 
-    public static Product createProduct(ProductRegisterDto productRegister) {
+    public static Product createWithRegisterRequestDto(ProductRegisterDto productRegister) {
         return Product.builder()
                 .user(productRegister.getUser())
                 .tag(productRegister.getTag())

@@ -1,7 +1,9 @@
 package com.gulbi.Backend.domain.rental.review.dto;
 
+import com.gulbi.Backend.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor

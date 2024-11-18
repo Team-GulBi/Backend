@@ -23,7 +23,7 @@ public class ReviewFactory {
 
     public Review createWithRegisterRequest(ReviewCreateRequestDto reviewCreateRequestDto) {
         User user = userService.getDummyUser();
-        Product product = productCrudService.findProductById(reviewCreateRequestDto.getProductId());
+        Product product = productCrudService.getProductById(reviewCreateRequestDto.getProductId());
         return Review.builder()
                 .content(reviewCreateRequestDto.getContent())
                 .rating(reviewCreateRequestDto.getRating())

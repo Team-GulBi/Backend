@@ -10,6 +10,7 @@ import com.gulbi.Backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,5 +51,20 @@ public class UserService {
         return profile.getImage() != null && profile.getIntro() != null && profile.getPhone() != null &&
                 profile.getSignature() != null && profile.getSido() != null && profile.getSigungu() != null &&
                 profile.getBname() != null; //협의해야할듯 어떤필드 여부를 따질지
+    }
+
+    public User getAuthenticatedUser() {
+        String email = getAuthenticatedEmail();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Authenticated User not found"));
+    }
+    private String getAuthenticatedEmail() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            throw new RuntimeException("No authenticated user");
+        }
     }
 }

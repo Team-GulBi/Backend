@@ -12,6 +12,6 @@ import java.util.List;
 @Service
 public interface ReviewService {
     public void registerReview(ReviewCreateRequestDto request);
-    public List<ReviewWithAvgProjection> bringAllReview(Long productId);
+    public List<ReviewWithAvgProjection> getAllReview(Long productId);
     public Review createReviewWithUserAndProduct(ReviewCreateRequestDto reviewCreateRequestDto);
 }

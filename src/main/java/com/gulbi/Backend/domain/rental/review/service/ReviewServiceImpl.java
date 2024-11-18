@@ -26,14 +26,12 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public void registerReview(ReviewCreateRequestDto review) {
-        Review review1 = createReviewWithUserAndProduct(review);
-        reviewCrudService.saveReview(review1);
+        reviewCrudService.saveReview(createReviewWithUserAndProduct(review));
     }
 
     @Override
-    public List<ReviewWithAvgProjection> bringAllReview(Long productId) {
-        List<ReviewWithAvgProjection> reviewWithAvg = reviewCrudService.findReviewWithRateAvg(productId);
-        return reviewWithAvg;
+    public List<ReviewWithAvgProjection> getAllReview(Long productId) {
+        return reviewCrudService.getReviewWithRateAvg(productId);
     }
 
     @Override

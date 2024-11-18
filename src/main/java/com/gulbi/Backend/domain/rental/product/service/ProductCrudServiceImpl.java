@@ -18,18 +18,18 @@ public class ProductCrudServiceImpl implements ProductCrudService{
     }
 
     @Override
-    public ProductDto findProductDtoById(Long productId) {
+    public ProductDto getProductDtoById(Long productId) {
         return productRepository.findProductDtoById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
     }
 
     @Override
-    public Product findProductById(Long productId) {
+    public Product getProductById(Long productId) {
         return productRepository.findProductById(productId).orElseThrow();
     }
 
     @Override
-    public List<ProductOverViewResponse> findProductOverViewByQuery(String query) {
+    public List<ProductOverViewResponse> getProductOverViewByQuery(String query) {
         return productRepository.findProductByQuery(query);
     }
 }

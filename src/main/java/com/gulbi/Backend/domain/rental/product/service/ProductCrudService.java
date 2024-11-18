@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductCrudService {
     public void saveProduct(Product product);
-    public ProductDto findProductDtoById(Long productId);
-    public Product findProductById(Long productId);
-    public List<ProductOverViewResponse> findProductOverViewByQuery(String query);
+    public ProductDto getProductDtoById(Long productId);
+    public Product getProductById(Long productId);
+    public List<ProductOverViewResponse> getProductOverViewByQuery(String query);
 }

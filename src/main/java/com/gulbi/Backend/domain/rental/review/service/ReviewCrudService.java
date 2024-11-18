@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReviewCrudService{
     public void saveReview(Review review);
-    public List<ReviewWithAvgProjection> findReviewWithRateAvg(Long productId);
+    public List<ReviewWithAvgProjection> getReviewWithRateAvg(Long productId);
 }

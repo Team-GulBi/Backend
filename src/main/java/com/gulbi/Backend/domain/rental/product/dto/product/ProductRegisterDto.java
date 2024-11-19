@@ -3,7 +3,7 @@ package com.gulbi.Backend.domain.rental.product.dto.product;
 import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Category;
-import com.gulbi.Backend.domain.rental.product.vo.ProductImages;
+import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.domain.user.entity.User;
 import lombok.Getter;
 
@@ -21,7 +21,7 @@ public class ProductRegisterDto {
     private Category bCategory;
     private Category mCategory;
     private Category cCategory;
-    private ProductImages productImages;
+    private ProductImageCollection productImageCollection;
 
     public ProductRegisterDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description) {
         this.tag = tag;

@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.vo;
+package com.gulbi.Backend.domain.rental.product.vo.image;
 
 import lombok.Getter;
 

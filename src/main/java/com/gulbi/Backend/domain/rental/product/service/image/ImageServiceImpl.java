@@ -1,15 +1,14 @@
 package com.gulbi.Backend.domain.rental.product.service.image;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
-import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
-import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrls;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtos;
-import com.gulbi.Backend.domain.rental.product.vo.image.Images;
-import com.gulbi.Backend.domain.rental.product.vo.image.ProductImages;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
+import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.global.util.FileSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,21 +25,21 @@ public class ImageServiceImpl implements ImageService {
     private final FileSender fileSender;
 
     @Override
-    public void registerImageWithProduct(ProductImages productImages, Product product) {
-        ImageUrls imageUrls = uploadImagesToS3(productImages);
-        Images images = ImageFactory.createImagesFromUrls(imageUrls, product);
-        saveImages(images);
+    public void registerImageWithProduct(ProductImageCollection productImageCollection, Product product) {
+        ImageUrlCollection imageUrlCollection = uploadImagesToS3(productImageCollection);
+        ImageCollection imageCollection = ImageFactory.createImagesFromUrls(imageUrlCollection, product);
+        saveImages(imageCollection);
     }
 
     @Override
-    public ImageUrls uploadImagesToS3(ProductImages productImages) {
+    public ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection) {
         try{
             List<ImageUrl> imageUrlList = new ArrayList<>();
-            for (MultipartFile file : productImages.getProductImages()){
+            for (MultipartFile file : productImageCollection.getProductImages()){
                 ImageUrl imageUrl = ImageUrl.of(fileSender.sendFile(file));
                 imageUrlList.add(imageUrl);
             }
-            return ImageUrls.of(imageUrlList);
+            return ImageUrlCollection.of(imageUrlList);
         }catch (Exception e){
             throw new RuntimeException();
         }
@@ -54,8 +53,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void saveImages(Images images){
-        imageRepository.saveAll(images.getImages());
+    public void saveImages(ImageCollection imageCollection){
+        imageRepository.saveAll(imageCollection.getImages());
     }
 
 

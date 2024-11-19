@@ -1,19 +1,17 @@
-package com.gulbi.Backend.domain.rental.product.vo;
-
-import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
+package com.gulbi.Backend.domain.rental.product.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProductImageDtoList {
+public class ProductImageDtos {
     private final List<ProductImageDto> productImages;
 
-    public ProductImageDtoList(List<ProductImageDto> productImages) {
+    public ProductImageDtos(List<ProductImageDto> productImages) {
         this.productImages = productImages;
     }
 
-    public static ProductImageDtoList of(List<ProductImageDto> images){
-        return new ProductImageDtoList(images);
+    public static ProductImageDtos of(List<ProductImageDto> images){
+        return new ProductImageDtos(images);
     }
 
     public List<String> toUrlList() {

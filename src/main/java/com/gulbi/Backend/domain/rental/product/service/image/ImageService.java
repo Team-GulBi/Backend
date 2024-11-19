@@ -1,14 +1,14 @@
 package com.gulbi.Backend.domain.rental.product.service.image;
 
 import com.gulbi.Backend.domain.rental.product.entity.Product;
-import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrls;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtos;
-import com.gulbi.Backend.domain.rental.product.vo.image.Images;
-import com.gulbi.Backend.domain.rental.product.vo.image.ProductImages;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
+import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 
 public interface ImageService {
-    public void registerImageWithProduct(ProductImages files, Product product);
-    public ImageUrls uploadImagesToS3(ProductImages productImages);
+    public void registerImageWithProduct(ProductImageCollection files, Product product);
+    public ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection);
     public ProductImageDtos getImageByProductId(Long productId);
-    public void saveImages(Images images);
+    public void saveImages(ImageCollection imageCollection);
 }

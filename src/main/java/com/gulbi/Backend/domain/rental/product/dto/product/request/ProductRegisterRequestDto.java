@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.dto.request;
+package com.gulbi.Backend.domain.rental.product.dto.product.request;
 
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import lombok.AllArgsConstructor;

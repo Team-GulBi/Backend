@@ -2,12 +2,12 @@ package com.gulbi.Backend.domain.rental.product.service;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
-import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
-import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.factory.ProductFactory;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
-import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtos;
+import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailResponseDto getProductDetail(Long productId) {
         ProductDto product = getProductById(productId);
-        ProductImageDtos imageList = getProductImagesByProductId(productId);
+        ProductImageDtoCollection imageList = getProductImagesByProductId(productId);
         List<ReviewWithAvgProjection> reviewWithAvg = getProductReviewsByProductId(productId);
         return ProductDetailResponseDto.of(product, imageList, reviewWithAvg);
     }
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
         return productCrudService.getProductDtoById(productId);
     }
 
-    private ProductImageDtos getProductImagesByProductId(Long productId) {
+    private ProductImageDtoCollection getProductImagesByProductId(Long productId) {
         return imageService.getImageByProductId(productId);
     }
 

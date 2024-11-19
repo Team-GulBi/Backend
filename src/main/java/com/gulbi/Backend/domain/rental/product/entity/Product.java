@@ -64,7 +64,7 @@ public class Product extends BaseEntity {
 
     // 생성자
     @Builder
-    public Product(User user, Category bCategory, Category mCategory, Category sCategory, String tag, String title, String name, int views, int price,
+    private Product(User user, Category bCategory, Category mCategory, Category sCategory, String tag, String title, String name, int views, int price,
                    String sido, String sigungu, String bname, String description, float rating) {
         this.user = user;
         this.bCategory = bCategory;

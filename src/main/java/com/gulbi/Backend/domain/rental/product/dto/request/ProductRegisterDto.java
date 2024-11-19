@@ -9,7 +9,7 @@ public class ProductRegisterDto {
 
     private final String tag;
     private final String title;
-    private final String productName;
+    private final String name;
     private final String price;
     private final String sido;
     private final String sigungu;
@@ -23,7 +23,7 @@ public class ProductRegisterDto {
                                User user) {
         this.tag = productRegisterRequest.getTag();
         this.title = productRegisterRequest.getTitle();
-        this.productName = productRegisterRequest.getProductName();
+        this.name = productRegisterRequest.getName();
         this.price = productRegisterRequest.getPrice();
         this.sido = productRegisterRequest.getSido();
         this.sigungu = productRegisterRequest.getSigungu();

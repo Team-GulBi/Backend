@@ -38,7 +38,7 @@ public class ProductRegisterDto {
         return new ProductRegisterDto(
                 product.getTag(),
                 product.getTitle(),
-                product.getProductName(),
+                product.getName(),
                 product.getPrice(),
                 product.getSido(),
                 product.getSigungu(),

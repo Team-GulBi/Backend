@@ -6,7 +6,7 @@ import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
-import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtos;
+import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.global.util.FileSender;
@@ -46,9 +46,9 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ProductImageDtos getImageByProductId(Long productId) {
+    public ProductImageDtoCollection getImageByProductId(Long productId) {
         List<ProductImageDto> images = imageRepository.findByImageWithProduct(productId);
-        return ProductImageDtos.of(images);
+        return ProductImageDtoCollection.of(images);
 
     }
 

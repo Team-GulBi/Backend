@@ -1,8 +1,8 @@
 package com.gulbi.Backend.domain.rental.product.controller;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
-import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailResponseDto;
-import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.ProductService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;

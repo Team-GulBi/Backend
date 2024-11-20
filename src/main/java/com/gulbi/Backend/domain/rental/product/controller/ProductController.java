@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.controller;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
@@ -26,7 +27,6 @@ public class ProductController {
     private final ImageService imageService;
 
 
-    @CrossOrigin("http://localhost:5173/")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto product,
                                                     @RequestParam("images") List<MultipartFile> images) throws IOException {
@@ -46,16 +46,11 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/{query}/{filtering}")
-//    public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("filtering")String filtering){
-//        long startTime = System.currentTimeMillis();
-//        System.out.println(query);
-////            List<ProductResponseProjection> data =productService.searchProductWithTitle(query);
-//            List<ProductResponseDto> data =productService.searchProductWithTitle(query);
-//            RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
-//        long endTime = System.currentTimeMillis(); // 끝나는 시간 기록
-//        long executionTime = endTime - startTime; // 실행 시간 계산
-//        System.out.println("Execution time: " + executionTime + " ms");
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping("/search/{query}/{detail}")
+    public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("detail")String detail){
+        ProductSearchRequestDto productSearchRequestDto = ProductSearchRequestDto.of(detail, query);
+        productService.searchProduct(productSearchRequestDto);
+        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        return ResponseEntity.ok(response);
+    }
 }

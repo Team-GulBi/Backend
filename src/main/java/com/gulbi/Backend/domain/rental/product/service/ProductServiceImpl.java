@@ -3,18 +3,25 @@ package com.gulbi.Backend.domain.rental.product.service;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.factory.ProductFactory;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
+import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
+import com.gulbi.Backend.domain.rental.product.service.product.ProductSearchService;
+import com.gulbi.Backend.domain.rental.product.service.product.strategy.ProductSearchByTitleStrategy;
+import com.gulbi.Backend.domain.rental.product.service.product.strategy.ProductSearchStrategy;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final ReviewService reviewService;
     private final ProductFactory productFactory;
+    private final ProductSearchService productSearchService;
 
     // Public methods
     @Override
@@ -32,8 +40,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductOverViewResponse> searchProductWithTitle(String query) {
-        return productCrudService.getProductOverViewByQuery(query);
+    public List<ProductOverViewResponse> searchProduct(ProductSearchRequestDto productSearchRequestDto) {
+        return productSearchService.searchProductByQuery(productSearchRequestDto);
     }
 
     @Override

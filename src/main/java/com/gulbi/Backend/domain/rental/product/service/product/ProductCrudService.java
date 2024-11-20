@@ -1,7 +1,8 @@
-package com.gulbi.Backend.domain.rental.product.service;
+package com.gulbi.Backend.domain.rental.product.service.product;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 
 import java.util.List;
@@ -10,5 +11,7 @@ public interface ProductCrudService {
     public void saveProduct(Product product);
     public ProductDto getProductDtoById(Long productId);
     public Product getProductById(Long productId);
-    public List<ProductOverViewResponse> getProductOverViewByQuery(String query);
+    public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3);
+    public List<ProductOverViewResponse> getProductOverViewByTitle(String title);
+
 }

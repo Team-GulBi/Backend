@@ -1,8 +1,8 @@
 package com.gulbi.Backend.domain.rental.product.controller;
 
 import com.gulbi.Backend.domain.rental.product.code.CategorySuccessCode;
-import com.gulbi.Backend.domain.rental.product.dto.CategoryProjection;
-import com.gulbi.Backend.domain.rental.product.service.category.CategoryService;
+import com.gulbi.Backend.domain.rental.product.dto.category.CategoryProjection;
+import com.gulbi.Backend.domain.rental.product.service.category.CategoryCrudService;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +17,21 @@ import java.util.List;
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryService categoryService;
+    private final CategoryCrudService categoryCrudService;
 
 
     @GetMapping("/bcategory")
     public ResponseEntity<RestApiResponse> getBigCategory(){
-        List<CategoryProjection> list = categoryService.getBigCategories();
+        List<CategoryProjection> list = categoryCrudService.getBigCategories();
+//        RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS);
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);
-
         return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/mcategory/{categoryId}")
     public ResponseEntity<RestApiResponse> getMidCategory(@PathVariable("categoryId") Integer categoryId){
-        List<CategoryProjection> list = categoryService.getBelowCategoriesByParentId(categoryId);
+        List<CategoryProjection> list = categoryCrudService.getBelowCategoriesByParentId(categoryId);
 
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);
 

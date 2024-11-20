@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.service.category;
 
-import com.gulbi.Backend.domain.rental.product.dto.CategoryProjection;
+import com.gulbi.Backend.domain.rental.product.dto.category.CategoryProjection;
+import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,13 +10,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryCrudServiceImpl implements CategoryCrudService {
 
     private final CategoryRepository categoryRepository;
     @Override
     public List<CategoryProjection> getBigCategories() {
 
-        List<CategoryProjection> bigCategoryList= categoryRepository.findAllNoParent();
+        List<CategoryProjection> bigCategoryList= categoryRepository.findAllNoParentProjection();
 
         return bigCategoryList;
     }
@@ -26,4 +27,12 @@ public class CategoryServiceImpl implements CategoryService {
 
         return belowCategoryList;
     }
+
+    @Override
+    public Category getCategoryById(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
+//        System.out.println(category.getName());
+        return category;
+    }
+
 }

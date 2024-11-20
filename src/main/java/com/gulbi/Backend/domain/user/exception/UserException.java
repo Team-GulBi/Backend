@@ -6,7 +6,6 @@ import com.gulbi.Backend.global.response.ResponseApiCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
 
 public abstract class UserException extends BusinessException {
-
     public UserException(ResponseApiCode errorCode){
         super(errorCode);
     }

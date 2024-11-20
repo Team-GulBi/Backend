@@ -6,10 +6,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Getter
 @Entity
 @Table(name = "products")
-@Getter
 @NoArgsConstructor
 public class Product extends BaseEntity {
 

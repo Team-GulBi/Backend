@@ -5,10 +5,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Getter
 @Entity
 @Table(name = "images")
-@Getter
 @NoArgsConstructor
 public class Image extends BaseEntity {
     @Id

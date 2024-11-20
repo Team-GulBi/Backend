@@ -46,6 +46,16 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Authenticated User not found"));
     }
+    public User getDummyUser(){
+        User user = User.builder()
+                .email("1")
+                .phoneNumber("2")
+                .nickname("z")
+                .password("2")
+                .build();
+        userRepository.save(user);
+        return user;
+    }
     private String getAuthenticatedEmail() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

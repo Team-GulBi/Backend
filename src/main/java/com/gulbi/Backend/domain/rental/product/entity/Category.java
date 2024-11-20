@@ -3,13 +3,12 @@ package com.gulbi.Backend.domain.rental.product.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
+@Getter
 @Entity
 @Table(name = "categories")
-@Getter
 @Builder(access = AccessLevel.PUBLIC)
-@NoArgsConstructor(access = AccessLevel.PUBLIC) // 기본 생성자 접근 제어자 설정
-@AllArgsConstructor(access = AccessLevel.PUBLIC) // 모든 필드를 초기화하는 생성자 접근 제어자 설정
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Category {
     @Id
@@ -22,5 +21,6 @@ public class Category {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
+
 
 }

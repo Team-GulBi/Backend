@@ -15,7 +15,18 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query(value = "SELECT p.id AS id, p.main_image AS mainImage, p.title AS title, p.price AS price FROM products p WHERE p.title LIKE CONCAT('%', :query, '%')", nativeQuery = true)
-    public List<ProductOverViewResponse> findProductByQuery(@Param("query")String query);
+    public List<ProductOverViewResponse> findProductsByTitle(@Param("query")String query);
+
+    @Query(value = "SELECT p.id AS id, p.main_image AS mainImage, p.title AS title, p.price AS price " +
+            "FROM products p " +
+            "WHERE " +
+            "p.tag LIKE CONCAT('%', :query1, '%')" +
+            "AND" +
+            "(:query2 IS NULL OR p.tag LIKE CONCAT('%', :query2, '%'))" +
+            "AND" +
+            "(:query3 IS NULL OR p.tag LIKE CONCAT('%', :query3, '%') ) ", nativeQuery = true)
+    public List<ProductOverViewResponse> findProductsByTag(@Param("query1") String tagQuery1, @Param("query2") String tagQuery2, @Param("query3") String tagQuery3);
+
 
     @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.bCategory, p.mCategory, p.sCategory, p.createdAt) " +
             "FROM Product p WHERE p.id = :id")

@@ -1,11 +1,11 @@
 package com.gulbi.Backend.domain.rental.product.controller;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
-import com.gulbi.Backend.domain.rental.product.dto.response.ProductDetailResponseDto;
-import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.ProductService;
-import com.gulbi.Backend.domain.rental.product.vo.ProductImages;
+import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +29,9 @@ public class ProductController {
     @CrossOrigin("http://localhost:5173/")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto product,
-                                                    @RequestPart("images") List<MultipartFile> images) throws IOException {
-            ProductImages productImages = ProductImages.of(images);
-            product.setProductImages(productImages);
+                                                    @RequestParam("images") List<MultipartFile> images) throws IOException {
+            ProductImageCollection productImageCollection = ProductImageCollection.of(images);
+            product.setProductImageCollection(productImageCollection);
             productService.registerProduct(product);
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
 

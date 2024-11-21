@@ -1,12 +1,9 @@
 package com.gulbi.Backend.domain.rental.product.factory;
 
 import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductDto;
-import com.gulbi.Backend.domain.rental.product.dto.product.ProductRegisterDto;
-import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.service.category.CategoryBusinessService;
-import com.gulbi.Backend.domain.rental.product.service.category.CategoryCrudService;
-import com.gulbi.Backend.domain.rental.product.vo.MainImage;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +25,7 @@ public class ProductFactory{
                 .user(user)
                 .tag(productRegisterRequestDto.getTag())
                 .title(productRegisterRequestDto.getTitle())
+                .name(productRegisterRequestDto.getName())
                 .price(Integer.parseInt(productRegisterRequestDto.getPrice()))
                 .sido(productRegisterRequestDto.getSido())
                 .sigungu(productRegisterRequestDto.getSigungu())

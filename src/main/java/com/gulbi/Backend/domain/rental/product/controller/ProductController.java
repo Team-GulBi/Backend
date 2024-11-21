@@ -51,4 +51,12 @@ public class ProductController {
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<RestApiResponse> updateProductViews(@PathVariable("productId") Long productId){
+        productService.updateProductViews(productId);
+        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        return ResponseEntity.ok(response);
+
+    }
 }

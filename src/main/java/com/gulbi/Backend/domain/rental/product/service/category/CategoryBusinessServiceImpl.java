@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.service.category;
 
 import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductDto;
+import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

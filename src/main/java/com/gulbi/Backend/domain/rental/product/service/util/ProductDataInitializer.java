@@ -25,16 +25,16 @@ public class ProductDataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         long startTime = System.currentTimeMillis();
-        List<User> testUsers = Arrays.asList(
-                User.builder().nickname("testUser1").email("123@naver.com").phoneNumber("010-0000-0000").password("as1!").build(),
-                User.builder().nickname("testUser2").email("124@naver.com").phoneNumber("010-0000-0001").password("as2!").build(),
-                User.builder().nickname("testUser3").email("125@naver.com").phoneNumber("010-0000-0002").password("as3!").build(),
-                User.builder().nickname("testUser4").email("126@naver.com").phoneNumber("010-0000-0003").password("as4!").build(),
-                User.builder().nickname("testUser5").email("127@naver.com").phoneNumber("010-0000-0004").password("as5!").build()
-                );
-        userRepository.saveAll(testUsers);
+//        List<User> testUsers = Arrays.asList(
+//                User.builder().nickname("testUser1").email("123@naver.com").phoneNumber("010-0000-0000").password("as1!").build(),
+//                User.builder().nickname("testUser2").email("124@naver.com").phoneNumber("010-0000-0001").password("as2!").build(),
+//                User.builder().nickname("testUser3").email("125@naver.com").phoneNumber("010-0000-0002").password("as3!").build(),
+//                User.builder().nickname("testUser4").email("126@naver.com").phoneNumber("010-0000-0003").password("as4!").build(),
+//                User.builder().nickname("testUser5").email("127@naver.com").phoneNumber("010-0000-0004").password("as5!").build()
+//                );
+//        userRepository.saveAll(testUsers);
 
-
+        List<User> testUsers = userRepository.findAll();
         List<Product> products = new ArrayList<>();
         List<Review> reviews = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.rental.product.repository;
 
+import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
 import com.gulbi.Backend.domain.rental.product.entity.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image,Long > {
-    @Query("SELECT I FROM Image I WHERE I.product.id = :productId")
-    public Optional<List<Image>> findByImageWithProduct(@Param("productId") Long productId);
+    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.ProductImageDto(i.id, i.product.id, i.url) " +
+            "FROM Image i WHERE i.product.id = :productId")
+    public List<ProductImageDto> findByImageWithProduct(@Param("productId") Long productId);
+
+
+
 }

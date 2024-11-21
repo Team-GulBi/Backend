@@ -25,10 +25,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     public List<ProductOverViewResponse> searchProductByQuery(ProductSearchRequestDto productSearchRequestDto) {
         String detail = productSearchRequestDto.getDetail().trim();
         String query = productSearchRequestDto.getQuery();
-        System.out.println("Map에 등록된 전략들: " + productSearchStrategies.keySet());
-        System.out.println("들어온 전략 key" + detail);
         ProductSearchStrategy productSearchStrategy = productSearchStrategies.get(detail);
-
         return productSearchStrategy.search(query);
     }
 }

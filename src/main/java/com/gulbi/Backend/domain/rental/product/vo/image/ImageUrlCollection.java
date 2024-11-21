@@ -15,4 +15,7 @@ public class ImageUrlCollection {
     public List<ImageUrl> getImageUrls(){
         return new ArrayList<>(imageUrlList);
     }
+    public ImageUrl getMainImageUrl(){
+        return getImageUrls().get(0);
+    }
 }

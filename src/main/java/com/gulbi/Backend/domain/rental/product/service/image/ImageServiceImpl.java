@@ -25,10 +25,9 @@ public class ImageServiceImpl implements ImageService {
     private final FileSender fileSender;
 
     @Override
-    public void registerImageWithProduct(ProductImageCollection productImageCollection, Product product) {
-        ImageUrlCollection imageUrlCollection = uploadImagesToS3(productImageCollection);
+    public void registerImageWithProduct(ImageUrlCollection imageUrlCollection, Product product) {
         ImageCollection imageCollection = ImageFactory.createImagesFromUrls(imageUrlCollection, product);
-        saveImages(imageCollection);
+        saveImages(imageCollection); //이미지 저장과 메인 이미지를 반환하는 두가지 책임..
     }
 
     @Override

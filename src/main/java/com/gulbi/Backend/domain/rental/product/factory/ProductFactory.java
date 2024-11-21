@@ -34,6 +34,7 @@ public class ProductFactory{
                 .bCategory(categoryInProductDto.getBCategoryId())
                 .mCategory(categoryInProductDto.getBCategoryId())
                 .sCategory(categoryInProductDto.getSCategoryId())
+                .mainImage(productRegisterRequestDto.getMainImage().getImageUrl())
                 .build();
 
     }

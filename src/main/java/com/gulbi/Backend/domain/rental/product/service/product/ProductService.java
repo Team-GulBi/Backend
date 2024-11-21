@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.service;
+package com.gulbi.Backend.domain.rental.product.service.product;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
@@ -10,14 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ProductService {
-    public void registerProduct(ProductRegisterRequestDto product) throws IOException;
+    public List<ProductOverViewResponse> searchProductOverview(ProductSearchRequestDto productSearchRequestDto);
+    public void registrationProduct(ProductRegisterRequestDto productRegisterRequestDto);
     public ProductDetailResponseDto getProductDetail(Long productId);
-    public List<ProductOverViewResponse> searchProduct(ProductSearchRequestDto productSearchRequestDto);
-    public Product createProductWithCategoryAndUser(ProductRegisterRequestDto product);
-    public void saveProductAndImages(Product product, ProductRegisterRequestDto productRequest);
-
-
-
 
 
 }

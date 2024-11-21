@@ -13,6 +13,6 @@ public interface ProductService {
     public List<ProductOverViewResponse> searchProductOverview(ProductSearchRequestDto productSearchRequestDto);
     public void registrationProduct(ProductRegisterRequestDto productRegisterRequestDto);
     public ProductDetailResponseDto getProductDetail(Long productId);
-
+    public void updateProductViews(Long productId);
 
 }

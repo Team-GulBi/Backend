@@ -13,5 +13,6 @@ public interface ProductCrudService {
     public Product getProductById(Long productId);
     public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3);
     public List<ProductOverViewResponse> getProductOverViewByTitle(String title);
+    public void updateProductViews(Long productId);
 
 }

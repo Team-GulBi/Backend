@@ -41,4 +41,9 @@ public class ProductCrudServiceImpl implements ProductCrudService{
         return productRepository.findProductsByTag(tag, tag2, tag3);
     }
 
+    @Override
+    public void updateProductViews(Long productId){
+        productRepository.updateProductViews(productId);
+    }
+
 }

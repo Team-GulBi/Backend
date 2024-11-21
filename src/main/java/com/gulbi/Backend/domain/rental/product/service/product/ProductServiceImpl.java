@@ -26,6 +26,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductDetailService productDetailService;
     private final ProductRegistrationService productRegistrationService;
     private final ProductSearchService productSearchService;
+    private final ProductUpdatingService productUpdatingService;
 
     @Override
     public List<ProductOverViewResponse> searchProductOverview(ProductSearchRequestDto productSearchRequestDto) {
@@ -38,6 +39,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailResponseDto getProductDetail(Long productId){
         return productDetailService.getProductDetail(productId);
+    }
+
+    @Override
+    public void updateProductViews(Long productId) {
+        productUpdatingService.updateProductViews(productId);
     }
 
 }

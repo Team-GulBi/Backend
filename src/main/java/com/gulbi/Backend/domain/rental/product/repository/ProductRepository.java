@@ -3,7 +3,9 @@ package com.gulbi.Backend.domain.rental.product.repository;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -34,6 +36,10 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     @Query("SELECT p FROM Product p WHERE p.id = :id")
     public Optional<Product> findProductById(@Param("id") Long id);
+    @Transactional
+    @Modifying
+    @Query("UPDATE Product p SET p.views = p.views + 1 WHERE p.id = :id ")
+    public void updateProductViews(@Param("id") Long id);
 
 
 

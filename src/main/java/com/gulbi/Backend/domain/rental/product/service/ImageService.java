@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ImageService {
     public void registerImageWithProduct(List<MultipartFile> files, Product product);
+
 }

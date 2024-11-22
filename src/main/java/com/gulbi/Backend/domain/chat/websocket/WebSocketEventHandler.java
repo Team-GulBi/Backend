@@ -2,16 +2,18 @@ package com.gulbi.Backend.domain.chat.websocket;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.StompSubProtocolErrorHandler;
-import org.springframework.web.socket.messaging.StompSubProtocolHandler;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class WebSocketEventHandler {
+
+    // 세션 ID와 사용자 ID 매핑 (스레드 안전)
+    private static final Map<Long, String> onlineUsers = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
@@ -20,19 +22,20 @@ public class WebSocketEventHandler {
 
     // 연결 시 이벤트 처리
     public void handleConnect(StompHeaderAccessor headerAccessor) {
-        String sessionId = headerAccessor.getSessionId();
-        log.info("WebSocket 연결됨. 세션 ID: {}", sessionId);
+        Long userId = Long.valueOf(headerAccessor.getUser().getName()); // 사용자 ID 추출
+        onlineUsers.put(userId, headerAccessor.getSessionId());  // 세션 ID와 사용자 ID 저장
+        log.info("WebSocket 연결됨. 사용자 ID: {}, 세션 ID: {}", userId, headerAccessor.getSessionId());
     }
 
     // 연결 종료 시 이벤트 처리
     public void handleDisconnect(StompHeaderAccessor headerAccessor) {
-        String sessionId = headerAccessor.getSessionId();
-        log.info("WebSocket 연결 종료. 세션 ID: {}", sessionId);
+        Long userId = Long.valueOf(headerAccessor.getUser().getName());  // 사용자 ID 추출
+        onlineUsers.remove(userId);  // 사용자 세션 종료 시 온라인 리스트에서 제거
+        log.info("WebSocket 연결 종료. 사용자 ID: {}", userId);
     }
 
-    // 메시지 처리 이벤트
-    public void handleMessage(SimpMessageHeaderAccessor headerAccessor, Object message) {
-        log.info("WebSocket 메시지 수신: {}", message);
-        // 여기서 메시지 처리 로직 추가 가능 (DB 저장, 알림 등)
+    // 온라인 상태 확인 메서드
+    public boolean isUserOnline(Long userId) {
+        return onlineUsers.containsKey(userId);  // 온라인 상태 확인 (Map에 존재하는지 확인)
     }
 }

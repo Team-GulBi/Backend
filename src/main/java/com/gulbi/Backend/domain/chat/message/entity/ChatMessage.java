@@ -3,7 +3,9 @@ package com.gulbi.Backend.domain.chat.message.entity;
 import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -16,28 +18,25 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
+    private String content;
+    private LocalDateTime timestamp;
+    private boolean isRead;
+    private boolean isOnline;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
+    @ManyToOne
     private User sender;
 
-    @Column(nullable = false)
-    private String content;
+    @ManyToOne
+    private ChatRoom chatRoom;
 
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
-
-    @Column(nullable = false)
-    private boolean isRead = false;
-
-    public ChatMessage(ChatRoom chatRoom, User sender, String content) {
-        this.chatRoom = chatRoom;
-        this.sender = sender;
+    @Builder
+    public ChatMessage(String content, User sender, ChatRoom chatRoom, LocalDateTime timestamp, boolean isOnline) {
         this.content = content;
-        this.timestamp = LocalDateTime.now();
+        this.sender = sender;
+        this.chatRoom = chatRoom;
+        this.timestamp = timestamp;
+        this.isOnline = isOnline;
+        this.isRead = false;  // 기본값으로 읽지 않음
     }
 
     public void markAsRead() {

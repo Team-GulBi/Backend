@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.chat.message.dto;
 
+import com.gulbi.Backend.domain.chat.message.entity.ChatMessage;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,15 @@ public class ChatMessageDto {
         this.senderId = senderId;
         this.chatRoomId = chatRoomId;
         this.timestamp = timestamp;
+    }
+    public static ChatMessageDto from(ChatMessage chatMessage) {
+        return new ChatMessageDto(
+                chatMessage.getId(),
+                chatMessage.getContent(),
+                chatMessage.getSender().getId(),
+                chatMessage.getChatRoom().getId(),
+                chatMessage.getTimestamp()
+        );
     }
 
     // Getter, Setter

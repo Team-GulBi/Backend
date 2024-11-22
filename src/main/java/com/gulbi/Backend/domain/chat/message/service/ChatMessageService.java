@@ -2,18 +2,17 @@ package com.gulbi.Backend.domain.chat.message.service;
 
 import com.gulbi.Backend.domain.chat.message.dto.ChatMessageDto;
 import com.gulbi.Backend.domain.chat.message.entity.ChatMessage;
-import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.chat.message.repository.ChatMessageRepository;
+import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.chat.room.service.ChatRoomService;
+import com.gulbi.Backend.domain.chat.websocket.WebSocketEventHandler;
 import com.gulbi.Backend.domain.user.entity.User;
-import com.gulbi.Backend.domain.user.service.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,39 +20,36 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomService chatRoomService;
-    private final UserService userService;
+    private final WebSocketEventHandler webSocketEventHandler;
 
-    @Transactional
+    //메시지 저장 및 오프라인 사용자 처리
     public ChatMessage sendMessage(Long chatRoomId, String content, User sender) {
-        if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("Message content cannot be empty.");
-        }
+        // 메시지 저장
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
-        ChatMessage message = new ChatMessage(chatRoom, sender, content);
-        return chatMessageRepository.save(message);
+        boolean isRecipientOnline = webSocketEventHandler.isUserOnline(chatRoom.getUser2().getId()); // 상대방 온라인 여부 확인
+
+        ChatMessage chatMessage = ChatMessage.builder()
+                .content(content)
+                .sender(sender)
+                .chatRoom(chatRoom)
+                .timestamp(LocalDateTime.now())
+                .isOnline(isRecipientOnline) // 실시간 상태 반영
+                .build();
+
+        return chatMessageRepository.save(chatMessage);
     }
 
     public List<ChatMessageDto> getMessages(Long chatRoomId) {
-        List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(chatRoomId);
-
-        // ChatMessage를 ChatMessageDTO로 변환
-        return messages.stream()
-                .map(message -> new ChatMessageDto(
-                        message.getId(),
-                        message.getContent(),
-                        message.getSender().getId(),  // User ID
-                        message.getChatRoom().getId(),  // ChatRoom ID
-                        message.getTimestamp()
-                ))
-                .collect(Collectors.toList());
-
+        return chatMessageRepository.findByChatRoomId(chatRoomId)
+                .stream()
+                .map(ChatMessageDto::from)
+                .toList();
     }
 
-
-    @Transactional
     public void markMessageAsRead(Long messageId) {
         ChatMessage message = chatMessageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found"));
+                .orElseThrow(() -> new IllegalArgumentException("메시지를 찾을 수 없습니다."));
         message.markAsRead();
+        chatMessageRepository.save(message);
     }
 }

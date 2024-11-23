@@ -2,10 +2,8 @@ package com.gulbi.Backend.domain.rental.product.controller;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
-import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.*;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
-import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
-import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.product.ProductService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
@@ -28,11 +26,9 @@ public class ProductController {
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto product,
-                                                    @RequestParam("images") List<MultipartFile> images) throws IOException {
-            ProductImageCollection productImageCollection = ProductImageCollection.of(images);
-            product.setProductImageCollection(productImageCollection);
-            productService.registrationProduct(product);
+    public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto productInfo,
+                                                    @ModelAttribute("images") ProductImageCreateRequestDto images) throws IOException {
+            productService.registrationProduct(productInfo,images);
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }
@@ -52,11 +48,22 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{productId}")
+    @PatchMapping("/views/{productId}")
     public ResponseEntity<RestApiResponse> updateProductViews(@PathVariable("productId") Long productId){
         productService.updateProductViews(productId);
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
 
+    }
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<RestApiResponse> updateProduct(@RequestPart(value = "product", required = true)ProductUpdateRequestDto productUpdateRequestDto,
+                                                         @RequestPart(value = "category", required = false) ProductCategoryUpdateRequestDto productCategoryUpdateRequestDto,
+                                                         @RequestPart(value = "imagesAdd", required = false) ProductImageCreateRequestDto productImageCreateRequestDto,
+                                                         @RequestPart(value = "imagesDelete", required = false)ProductImageDeleteRequestDto productImageDeleteRequestDto)
+    {
+        productService.updateProduct(productUpdateRequestDto, productCategoryUpdateRequestDto, productImageDeleteRequestDto,productImageCreateRequestDto);
+        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        return ResponseEntity.ok(response);
     }
 }

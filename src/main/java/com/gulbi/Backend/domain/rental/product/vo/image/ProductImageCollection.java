@@ -24,4 +24,8 @@ public class ProductImageCollection {
         return productImages.get(0);
     }
 
+    public boolean isEmpty(){
+        return productImages == null;
+    }
+
 }

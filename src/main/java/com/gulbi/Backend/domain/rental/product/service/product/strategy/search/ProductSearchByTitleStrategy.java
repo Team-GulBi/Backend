@@ -1,9 +1,7 @@
-package com.gulbi.Backend.domain.rental.product.service.product.strategy;
+package com.gulbi.Backend.domain.rental.product.service.product.strategy.search;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
-import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
-import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

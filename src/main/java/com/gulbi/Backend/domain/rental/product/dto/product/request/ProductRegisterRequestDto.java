@@ -7,27 +7,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 public class ProductRegisterRequestDto {
-    private String tag;
-    private String title;
-    private String name;
-    private String price;
-    private String sido;
-    private String sigungu;
-    private String bname;
-    private String description;
-    private String bcategoryId;
-    private String mcategoryId;
-    private String scategoryId;
+    private final String tag;
+    private final String title;
+    private final String name;
+    private final String price;
+    private final String sido;
+    private final String sigungu;
+    private final String bname;
+    private final String description;
+    private final String bcategoryId;
+    private final String mcategoryId;
+    private final String scategoryId;
     @Setter
     private ProductImageCollection productImageCollection;
     @Setter
     private ImageUrl mainImage;
 
-    public ProductRegisterRequestDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description, ImageUrl mainImage) {
+    public ProductRegisterRequestDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description, ImageUrl mainImage, String bcategoryId, String mcategoryId, String scategoryId) {
         this.tag = tag;
         this.title = title;
         this.name = productName;
@@ -36,6 +34,9 @@ public class ProductRegisterRequestDto {
         this.sigungu = sigungu;
         this.bname = bname;
         this.description = description;
+        this.bcategoryId = bcategoryId;
+        this.mcategoryId = mcategoryId;
+        this.scategoryId = scategoryId;
     }
     }
 

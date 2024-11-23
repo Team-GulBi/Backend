@@ -5,17 +5,17 @@ import lombok.Getter;
 
 @Getter
 public class CategoryInProductDto {
-    private final Category bCategoryId;
-    private final Category mCategoryId;
-    private final Category sCategoryId;
+    private final Category bCategory;
+    private final Category mCategory;
+    private final Category sCategory;
 
-    private CategoryInProductDto(Category bCategoryId, Category mCategoryId, Category sCategoryId){
-        this.bCategoryId = bCategoryId;
-        this.mCategoryId = mCategoryId;
-        this.sCategoryId = sCategoryId;
+    private CategoryInProductDto(Category bCategory, Category mCategory, Category sCategory){
+        this.bCategory = bCategory;
+        this.mCategory = mCategory;
+        this.sCategory = sCategory;
     }
 
-    public static CategoryInProductDto of(Category bCategoryId, Category mCategoryId, Category sCategoryId){
-        return new CategoryInProductDto(bCategoryId, mCategoryId, sCategoryId);
+    public static CategoryInProductDto of(Category bCategory, Category mCategory, Category sCategory){
+        return new CategoryInProductDto(bCategory, mCategory, sCategory);
     }
 }

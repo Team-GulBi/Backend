@@ -1,7 +1,7 @@
 package com.gulbi.Backend.domain.rental.review.factory;
 
 import com.gulbi.Backend.domain.rental.product.entity.Product;
-import com.gulbi.Backend.domain.rental.product.service.ProductCrudService;
+import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequestDto;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
 import com.gulbi.Backend.domain.user.entity.User;

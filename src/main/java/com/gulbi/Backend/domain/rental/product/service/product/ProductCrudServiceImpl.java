@@ -1,12 +1,15 @@
-package com.gulbi.Backend.domain.rental.product.service;
+package com.gulbi.Backend.domain.rental.product.service.product;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.lang.model.element.NestingKind;
+import java.util.Arrays;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -29,7 +32,13 @@ public class ProductCrudServiceImpl implements ProductCrudService{
     }
 
     @Override
-    public List<ProductOverViewResponse> getProductOverViewByQuery(String query) {
-        return productRepository.findProductByQuery(query);
+    public List<ProductOverViewResponse> getProductOverViewByTitle(String title) {
+        return productRepository.findProductsByTitle(title);
     }
+
+    @Override
+    public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3) {
+        return productRepository.findProductsByTag(tag, tag2, tag3);
+    }
+
 }

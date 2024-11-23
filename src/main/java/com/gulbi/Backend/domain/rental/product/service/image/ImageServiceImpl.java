@@ -1,17 +1,19 @@
 package com.gulbi.Backend.domain.rental.product.service.image;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
-import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
-import com.gulbi.Backend.domain.rental.product.entity.Image;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
+import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
-import com.gulbi.Backend.domain.rental.product.vo.ProductImageDtoList;
-import com.gulbi.Backend.global.util.Base64Util;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
+import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
+import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
+import com.gulbi.Backend.global.util.FileSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,32 +22,38 @@ import java.util.List;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
+    private final FileSender fileSender;
 
     @Override
-    public void registerImageWithProduct(ProductRegisterRequestDto files, Product product) {
-        List<Image> imageList = new ArrayList<>();
+    public void registerImageWithProduct(ImageUrlCollection imageUrlCollection, Product product) {
+        ImageCollection imageCollection = ImageFactory.createImagesFromUrls(imageUrlCollection, product);
+        saveImages(imageCollection); //이미지 저장과 메인 이미지를 반환하는 두가지 책임..
+    }
 
-        for (MultipartFile file : files.getProductImages().getProductImages()) {
-            try {
-                String strBytes = Base64Util.MultipartFileToString(file); // global > util에 만들어놨어용
-                Image image = Image.builder().url(strBytes).product(product).build();
-                imageList.add(image);
-            } catch (IOException e) {
-                throw new RuntimeException("Error processing file: " + file.getOriginalFilename(), e);
+    @Override
+    public ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection) {
+        try{
+            List<ImageUrl> imageUrlList = new ArrayList<>();
+            for (MultipartFile file : productImageCollection.getProductImages()){
+                ImageUrl imageUrl = ImageUrl.of(fileSender.sendFile(file));
+                imageUrlList.add(imageUrl);
             }
-        }
-
-        // 이미지 리스트를 한 번에 저장
-        if (!imageList.isEmpty()) {
-            imageRepository.saveAll(imageList);
+            return ImageUrlCollection.of(imageUrlList);
+        }catch (Exception e){
+            throw new RuntimeException();
         }
     }
 
     @Override
-    public ProductImageDtoList getImageByProductId(Long productId) {
+    public ProductImageDtoCollection getImageByProductId(Long productId) {
         List<ProductImageDto> images = imageRepository.findByImageWithProduct(productId);
-        return ProductImageDtoList.of(images);
+        return ProductImageDtoCollection.of(images);
 
+    }
+
+    @Override
+    public void saveImages(ImageCollection imageCollection){
+        imageRepository.saveAll(imageCollection.getImages());
     }
 
 

@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.rental.product.dto.product.request;
 
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,8 +24,10 @@ public class ProductRegisterRequestDto {
     private String scategoryId;
     @Setter
     private ProductImageCollection productImageCollection;
+    @Setter
+    private ImageUrl mainImage;
 
-    public ProductRegisterRequestDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description) {
+    public ProductRegisterRequestDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description, ImageUrl mainImage) {
         this.tag = tag;
         this.title = title;
         this.name = productName;

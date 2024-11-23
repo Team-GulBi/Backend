@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -45,6 +47,22 @@ public class UserService {
         String email = getAuthenticatedEmail();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Authenticated User not found"));
+    }
+    public User getDummyUser() {
+        // 유니크한 email을 생성하기 위해 UUID를 사용
+        String uniqueEmail = "user_" + UUID.randomUUID().toString() + "@example.com";
+        String uniquePhone = "010" + UUID.randomUUID().toString() + "5680";
+        String uniqueName = "김" + UUID.randomUUID().toString();
+        String uniquePassWord = "dsd" + UUID.randomUUID().toString();
+
+        User user = User.builder()
+                .email(uniqueEmail)  // 유니크한 email을 사용
+                .phoneNumber(uniquePhone)
+                .nickname(uniqueName)
+                .password(uniquePassWord)
+                .build();
+        userRepository.save(user);
+        return user;
     }
     private String getAuthenticatedEmail() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

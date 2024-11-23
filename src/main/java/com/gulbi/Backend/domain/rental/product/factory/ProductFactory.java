@@ -32,9 +32,9 @@ public class ProductFactory{
                 .bname(productRegisterRequestDto.getBname())
                 .description(productRegisterRequestDto.getDescription())
                 .views(0)
-                .bCategory(categoryInProductDto.getBCategoryId())
-                .mCategory(categoryInProductDto.getBCategoryId())
-                .sCategory(categoryInProductDto.getSCategoryId())
+                .bCategory(categoryInProductDto.getBCategory())
+                .mCategory(categoryInProductDto.getMCategory())
+                .sCategory(categoryInProductDto.getSCategory())
                 .mainImage(productRegisterRequestDto.getMainImage().getImageUrl())
                 .build();
 

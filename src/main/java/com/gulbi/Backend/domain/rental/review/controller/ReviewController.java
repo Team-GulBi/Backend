@@ -28,4 +28,11 @@ public class ReviewController {
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping
+    public ResponseEntity<RestApiResponse> updateReview(@RequestBody ReviewUpdateRequestDto reviewUpdateRequestDto){
+        reviewService.updateReview(reviewUpdateRequestDto);
+        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        return ResponseEntity.ok(response);
+    }
 }

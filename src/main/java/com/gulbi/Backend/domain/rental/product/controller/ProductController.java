@@ -9,9 +9,12 @@ import com.gulbi.Backend.domain.rental.product.service.product.ProductService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +27,12 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductCrudService productCrudService;
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RestApiResponse> register(@RequestPart("body") ProductRegisterRequestDto productInfo,
-                                                    @ModelAttribute("images") ProductImageCreateRequestDto images) throws IOException {
+    public ResponseEntity<RestApiResponse> register(@Validated @RequestPart("body") ProductRegisterRequestDto productInfo,
+                                                    @Validated @ModelAttribute("images") ProductImageCreateRequestDto images
+                                                    ) throws IOException {
             productService.registrationProduct(productInfo,images);
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
         return ResponseEntity.ok(response);

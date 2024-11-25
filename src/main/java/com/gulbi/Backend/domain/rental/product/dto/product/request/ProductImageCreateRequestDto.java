@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
 @Getter
 public class ProductImageCreateRequestDto {
     private final ProductImageCollection productImageCollection;
@@ -15,12 +16,14 @@ public class ProductImageCreateRequestDto {
     @Setter
     private Product product;
 
-
     public ProductImageCreateRequestDto(List<MultipartFile> images) {
         this.productImageCollection = parse(images);
     }
 
-    private ProductImageCollection parse(List<MultipartFile> images){
+    private ProductImageCollection parse(List<MultipartFile> images) {
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
         return ProductImageCollection.of(images);
     }
 }

@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.service.image;
 
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageDeleteRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
@@ -54,6 +55,13 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void saveImages(ImageCollection imageCollection){
         imageRepository.saveAll(imageCollection.getImages());
+    }
+
+    @Override
+    public void deleteImages(ProductImageDeleteRequestDto productImageDeleteRequestDto) {
+        System.out.println(productImageDeleteRequestDto.getImagesId());
+
+        imageRepository.deleteImages(productImageDeleteRequestDto);
     }
 
 

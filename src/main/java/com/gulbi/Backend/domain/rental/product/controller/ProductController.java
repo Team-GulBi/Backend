@@ -4,6 +4,7 @@ import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.*;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.ProductService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductCrudService productCrudService;
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -56,12 +58,13 @@ public class ProductController {
 
     }
 
-    @PatchMapping("/{productId}")
-    public ResponseEntity<RestApiResponse> updateProduct(@RequestPart(value = "product", required = true)ProductUpdateRequestDto productUpdateRequestDto,
+    @PatchMapping()
+    public ResponseEntity<RestApiResponse> updateProduct(@RequestPart(value = "productInfo")ProductUpdateRequestDto productUpdateRequestDto,
+                                                         @ModelAttribute("images") ProductImageCreateRequestDto productImageCreateRequestDto,
                                                          @RequestPart(value = "category", required = false) ProductCategoryUpdateRequestDto productCategoryUpdateRequestDto,
-                                                         @RequestPart(value = "imagesAdd", required = false) ProductImageCreateRequestDto productImageCreateRequestDto,
                                                          @RequestPart(value = "imagesDelete", required = false)ProductImageDeleteRequestDto productImageDeleteRequestDto)
     {
+        System.out.println(productImageCreateRequestDto.getProductImageCollection());
         productService.updateProduct(productUpdateRequestDto, productCategoryUpdateRequestDto, productImageDeleteRequestDto,productImageCreateRequestDto);
         RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
         return ResponseEntity.ok(response);

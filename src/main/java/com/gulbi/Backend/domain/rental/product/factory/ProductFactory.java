@@ -26,7 +26,7 @@ public class ProductFactory{
                 .tag(productRegisterRequestDto.getTag())
                 .title(productRegisterRequestDto.getTitle())
                 .name(productRegisterRequestDto.getName())
-                .price(Integer.parseInt(productRegisterRequestDto.getPrice()))
+                .price(productRegisterRequestDto.getPrice())
                 .sido(productRegisterRequestDto.getSido())
                 .sigungu(productRegisterRequestDto.getSigungu())
                 .bname(productRegisterRequestDto.getBname())

@@ -10,7 +10,7 @@ public class ProductRegisterDto {
     private final String tag;
     private final String title;
     private final String name;
-    private final String price;
+    private final Integer price;
     private final String sido;
     private final String sigungu;
     private final String bname;

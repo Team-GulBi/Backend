@@ -13,7 +13,7 @@ public class ProductRegisterDto {
     private String tag;
     private String title;
     private String productName;
-    private String price;
+    private Integer price;
     private String sido;
     private String sigungu;
     private String bname;
@@ -23,7 +23,7 @@ public class ProductRegisterDto {
     private Category cCategory;
     private ProductImageCollection productImageCollection;
 
-    public ProductRegisterDto(String tag, String title, String productName, String price, String sido, String sigungu, String bname, String description) {
+    public ProductRegisterDto(String tag, String title, String productName, Integer price, String sido, String sigungu, String bname, String description) {
         this.tag = tag;
         this.title = title;
         this.productName = productName;

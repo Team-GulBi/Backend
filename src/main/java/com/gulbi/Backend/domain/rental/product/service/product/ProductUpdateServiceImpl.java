@@ -31,15 +31,13 @@ public class ProductUpdateServiceImpl implements ProductUpdatingService{
                 .ifPresent(productUpdateRequestDto::setCategoryInProduct);
         Optional.of(productUpdateRequestDto)
                 .ifPresent(productCrudService::updateProductInfo);
-//
-//        Optional.ofNullable(productImageDeleteRequestDto)
-//                        .ifPresent(imageService::deleteImages);
-//
-//        Optional.ofNullable(productImageCreateRequestDto)
-//                .ifPresent(dto ->{
-//                        productImageCreateRequestDto.setProductId(productUpdateRequestDto.getProductId());
-//                        imageService.registerImageWithProduct(imageService.uploadImagesToS3(dto.getProductImageCollection()), resolveProduct(dto.getProductId()));
-//                });
+        Optional.ofNullable(productImageDeleteRequestDto)
+                        .ifPresent(imageService::deleteImages);
+        Optional.ofNullable(productImageCreateRequestDto.getProductImageCollection())
+                .ifPresent(dto ->{
+                        productImageCreateRequestDto.setProductId(productUpdateRequestDto.getProductId());
+                        imageService.registerImageWithProduct(imageService.uploadImagesToS3(dto), resolveProduct(productImageCreateRequestDto.getProductId()));
+                });
 
     }
 

@@ -1,6 +1,6 @@
 package com.gulbi.Backend.domain.rental.product.dto;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductImageDtoCollection {

@@ -1,7 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.service.category;
 
 import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductDto;
-import com.gulbi.Backend.domain.rental.product.dto.request.ProductRegisterRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductCategoryUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ public class CategoryBusinessServiceImpl implements CategoryBusinessService{
     }
 
     @Override
-    public CategoryInProductDto resolveCategories(Integer bCategoryId, Integer mCategoryId, Integer sCategoryId) {
-        Category bCategory = categoryCrudService.getCategoryById(bCategoryId);
-        Category mCategory = categoryCrudService.getCategoryById(mCategoryId);
-        Category sCategory = categoryCrudService.getCategoryById(sCategoryId);
+    public CategoryInProductDto resolveCategories(ProductCategoryUpdateRequestDto productCategoryUpdateRequestDto){
+        Category bCategory = categoryCrudService.getCategoryById(Integer.valueOf(productCategoryUpdateRequestDto.getBCategoryId()));
+        Category mCategory = categoryCrudService.getCategoryById(Integer.valueOf(productCategoryUpdateRequestDto.getMCategoryId()));
+        Category sCategory = categoryCrudService.getCategoryById(Integer.valueOf(productCategoryUpdateRequestDto.getSCategoryId()));
         return CategoryInProductDto.of(bCategory, mCategory, sCategory);
     }
 }

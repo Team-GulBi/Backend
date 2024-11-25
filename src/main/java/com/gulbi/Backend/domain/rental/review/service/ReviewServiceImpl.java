@@ -2,6 +2,7 @@ package com.gulbi.Backend.domain.rental.review.service;
 
 import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequestDto;
+import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
 import com.gulbi.Backend.domain.rental.review.factory.ReviewFactory;
@@ -30,8 +31,20 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public Review createReviewWithUserAndProduct(ReviewCreateRequestDto review) {
+    public void deleteReview(Long reviewId){
+        reviewCrudService.deleteReview(reviewId);
+    }
+
+    @Override
+    public void updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto){
+        reviewCrudService.updateReview(reviewUpdateRequestDto);
+    }
+
+
+    private Review createReviewWithUserAndProduct(ReviewCreateRequestDto review) {
         return reviewFactory.createWithRegisterRequest(review);
     }
+
+
 
 }

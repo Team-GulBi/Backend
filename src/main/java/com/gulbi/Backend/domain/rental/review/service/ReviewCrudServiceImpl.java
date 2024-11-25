@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.rental.review.service;
 
+import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
 import com.gulbi.Backend.domain.rental.review.repository.ReviewRepository;
@@ -23,5 +24,16 @@ public class ReviewCrudServiceImpl implements ReviewCrudService{
     public List<ReviewWithAvgProjection> getReviewWithRateAvg(Long productId) {
         return reviewRepository.findAllReviewAndAvgByProductId(productId);
     }
-    //인수인계: 리뷰 반환 관련해서 reviewCrud 만들고 있음.
+
+    @Override
+    public void deleteReview(Long reviewId){
+        reviewRepository.deleteReviewByReviewId(reviewId);
+    }
+    @Override
+    public void updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto){
+        String content = reviewUpdateRequestDto.getContent();
+        Integer rating = reviewUpdateRequestDto.getRating();
+        Long reviewId = reviewUpdateRequestDto.getReviewId();
+        reviewRepository.updateReviewInfo(rating, content, reviewId);
+    }
 }

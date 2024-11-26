@@ -25,8 +25,32 @@ public abstract class ProductException extends BusinessException {
         }
     }
 
-    public static class NoUpdateProductException extends ProductException{
+    public static class NoUpdateProductException extends ProductException {
         public NoUpdateProductException(ResponseApiCode errorCode) {
+            super(errorCode);
+        }
+    }
+
+    public static class MissingProductFieldException extends ProductException {
+        public MissingProductFieldException(ResponseApiCode errorCode) {
+            super(errorCode);
+        }
+    }
+    public static class ProductValidationException extends ProductException {
+        public ProductValidationException(ResponseApiCode errorCode) {
+            super(errorCode);
+        }
+    }
+
+    public static class DatabaseErrorException extends ProductException {
+        public DatabaseErrorException(ResponseApiCode errorCode) {
+            super(errorCode);
+        }
+    }
+
+    public static class InvalidProductSearchDetailException extends ProductException{
+
+        public InvalidProductSearchDetailException(ResponseApiCode errorCode) {
             super(errorCode);
         }
     }

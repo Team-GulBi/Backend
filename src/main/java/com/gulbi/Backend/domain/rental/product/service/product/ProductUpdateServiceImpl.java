@@ -21,6 +21,7 @@ public class ProductUpdateServiceImpl implements ProductUpdatingService{
     private final ImageService imageService;
     @Override
     public void updateProductViews(Long productId){
+        resolveProduct(productId); // 유효성 검사
         productCrudService.updateProductViews(productId);
     }
 

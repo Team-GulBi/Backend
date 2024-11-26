@@ -53,16 +53,21 @@ public class ProductCrudServiceImpl implements ProductCrudService{
 
     @Override
     public List<ProductOverViewResponse> getProductOverViewByTitle(String title) {
-        return Optional.ofNullable(productRepository.findProductsByTitle(title))
-                .orElseThrow(
-                        ()-> new ProductException.NoProductFoundForTitleException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TITLE));
+        List<ProductOverViewResponse> overViewResponses = productRepository.findProductsByTitle(title);
+        if(overViewResponses.isEmpty()){
+            throw new ProductException.NoProductFoundForTitleException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TITLE);
+        }
+        return overViewResponses;
+
     }
 
     @Override
     public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3) {
-        return Optional.ofNullable(productRepository.findProductsByTag(tag,tag2,tag3))
-                .orElseThrow(
-                        ()-> new ProductException.NoProductFoundForTitleException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TAGS));
+        List<ProductOverViewResponse> overViewResponses =  productRepository.findProductsByTag(tag,tag2,tag3);
+        if(overViewResponses.isEmpty()){
+            throw new ProductException.NoProductFoundForTagsException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TAGS);
+        }
+        return overViewResponses;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.entity;
 
+import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
+import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -69,6 +71,41 @@ public class Product extends BaseEntity {
     @Builder
     private Product(User user, Category bCategory, Category mCategory, Category sCategory, String tag, String title, String name, int views, int price,
                    String sido, String sigungu, String bname, String description, float rating, String mainImage) {
+
+        if (user == null) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_USER);
+        }
+        if (bCategory == null) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_CATEGORY);
+        }
+        if (mCategory == null) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_CATEGORY);
+        }
+        if (sCategory == null) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_CATEGORY);
+        }
+        if (title == null || title.isEmpty()) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_TITLE);
+        }
+        if (name == null || name.isEmpty()) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_NAME);
+        }
+        if (views < 0) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.INVALID_VIEWS);
+        }
+        if (price < 0) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.INVALID_PRICE);
+        }
+        if (sido == null || sido.isEmpty()) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_SIDO);
+        }
+        if (sigungu == null || sigungu.isEmpty()) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_SIGUNGU);
+        }
+        if (description == null || description.isEmpty()) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_DESCRIPTION);
+        }
+
         this.user = user;
         this.bCategory = bCategory;
         this.mCategory = mCategory;

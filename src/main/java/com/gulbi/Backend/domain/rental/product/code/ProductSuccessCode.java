@@ -4,7 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public enum ProductSuccessCode implements ResponseApiCode {
 
-    PRODUCT_REGISTER_SUCCESS(HttpStatus.OK,"P001","상품이 성공적으로 등록 되었습니다.");
+    PRODUCT_REGISTER_SUCCESS(HttpStatus.OK,"P001","상품이 성공적으로 등록 되었습니다."),
+    PRODUCT_FOUND_SUCCESS(HttpStatus.OK,"P002","상품이 성공적으로 조회 되었습니다."),
+    PRODUCT_VIEWS_UPDATED_SUCCESS(HttpStatus.OK,"P003","상품의 조회수가 성공적으로 갱신 되었습니다."),
+    PRODUCT_INFO_UPDATED_SUCCESS(HttpStatus.OK,"P003","상품 정보가 성공적으로 갱신 되었습니다.");
 
     private HttpStatus status;
     private String code;

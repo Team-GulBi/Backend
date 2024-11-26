@@ -11,6 +11,9 @@ import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
+import jakarta.persistence.PersistenceException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +25,15 @@ public class ProductCrudServiceImpl implements ProductCrudService{
     private final ProductRepository productRepository;
     @Override
     public void saveProduct(Product product) {
-        productRepository.save(product);
+        try {
+            productRepository.save(product);
+        } catch (DataIntegrityViolationException e) {
+            throw new ProductException.ProductValidationException(ProductErrorCode.PRODUCT_VALIDATION_FAILED);
+        } catch (JpaSystemException | PersistenceException e) {
+            throw new ProductException.DatabaseErrorException(ProductErrorCode.DATABASE_ERROR);
+        } catch (IllegalArgumentException e) {
+            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_REQUIRED_FIELD);
+        }
     }
 
     @Override

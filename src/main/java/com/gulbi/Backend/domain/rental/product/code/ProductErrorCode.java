@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 public enum ProductErrorCode implements ResponseApiCode {
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND,"E001","해당 상품 ID와 일치하는 상품을 찾을 수 없습니다."),
     PRODUCT_NOT_FOUND_BY_TITLE(HttpStatus.NOT_FOUND,"E002", "해당 제목을 가진 상품이 존재하지 않습니다."),
-    PRODUCT_NOT_FOUND_BY_TAGS(HttpStatus.NOT_FOUND,"E003","해당 태그를 가진 상품이 존재하지 않습니다.");
+    PRODUCT_NOT_FOUND_BY_TAGS(HttpStatus.NOT_FOUND,"E003","해당 태그를 가진 상품이 존재하지 않습니다."),
+    NO_UPDATED_COLUMNS(HttpStatus.NOT_FOUND,"E004", "변경사항이 없습니다.");
     private HttpStatus status;
     private String code;
     private String message;

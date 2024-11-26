@@ -27,6 +27,7 @@ public class ProductUpdateServiceImpl implements ProductUpdatingService{
 
     @Override
     public void updateProductInfo(ProductUpdateRequestDto productUpdateRequestDto, ProductCategoryUpdateRequestDto productCategoryUpdateRequestDto, ProductImageDeleteRequestDto productImageDeleteRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto){
+        resolveProduct(productUpdateRequestDto.getProductId());
         Optional.ofNullable(productCategoryUpdateRequestDto)
                 .map(categoryBusinessService::resolveCategories)
                 .ifPresent(productUpdateRequestDto::setCategoryInProduct);

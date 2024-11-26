@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<label for="message">Message:</label>
+<input type="text" id="message" placeholder="Enter your message">
+<button id="send">Send</button>
+<button id="connect">Connect</button>
+<button id="disconnect">Disconnect</button>
+<pre id="output"></pre>
+
+<script>
+    let socket;
+
+    // WebSocket URL (adjust as needed)
+    const wsUrl = "ws://localhost:8080/ws-stomp";
+
+    // JWT Token
+    const token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6Miwic3ViIjoic3RyaW5nMSIsImlhdCI6MTczMjM0ODgwNywiZXhwIjoxNzMyMzUyNDA3fQ.368lHyBxjqbdLtnUV6IXtOyqUwlwywjxjNZ4QDLpvfo"; // Replace with your token
+
+    document.getElementById('connect').onclick = () => {
+        // Open WebSocket connection
+        socket = new WebSocket(wsUrl);
+
+        // Set headers for authentication (e.g., JWT)
+        socket.onopen = () => {
+            console.log('Connected to WebSocket');
+            appendMessage('Connected to WebSocket');
+        };
+
+        // Listen for incoming messages
+        socket.onmessage = (event) => {
+            console.log('Message received:', event.data);
+            appendMessage(`Received: ${event.data}`);
+        };
+
+        // Handle WebSocket errors
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            appendMessage('WebSocket error');
+        };
+
+        // Handle connection close
+        socket.onclose = () => {
+            console.log('Disconnected from WebSocket');
+            appendMessage('Disconnected from WebSocket');
+        };
+    };
+
+    document.getElementById('send').onclick = () => {
+        const message = document.getElementById('message').value;
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            // Send a test message
+            const payload = JSON.stringify({
+                chatroomId: "123", // Replace with an actual chatroomId
+                senderId: "1",     // Replace with an actual userId
+                content: message
+            });
+
+            socket.send(payload);
+            appendMessage(`Sent: ${payload}`);
+        } else {
+            console.error('WebSocket is not connected');
+            appendMessage('WebSocket is not connected');
+        }
+    };
+
+    document.getElementById('disconnect').onclick = () => {
+        if (socket) {
+            socket.close();
+        }
+    };
+
+    // Helper function to append messages to the output
+    function appendMessage(message) {
+        const output = document.getElementById('output');
+        output.textContent += message + '\n';
+    }
+</script>
+</body>
+</html>

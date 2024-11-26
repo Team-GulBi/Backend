@@ -10,7 +10,8 @@ public enum ImageErrorCode implements ResponseApiCode {
 
     IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "E200", "이미지 삭제에 실패했습니다."),
     INVALID_IMAGE_ID(HttpStatus.BAD_REQUEST, "E201", "잘못된 이미지 ID가 제공되었습니다."),
-    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E002", "이미지 관련 데이터베이스 오류가 발생했습니다.");
+    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E002", "이미지 관련 데이터베이스 오류가 발생했습니다."),
+    NOT_VALIDATED_IMAGE_URL(HttpStatus.BAD_REQUEST, "E002", "올바르지 않은 이미지 URL 형식 입니다.");
 
 
 

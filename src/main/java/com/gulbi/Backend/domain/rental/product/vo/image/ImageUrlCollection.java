@@ -1,7 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.vo.image;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
-import com.gulbi.Backend.domain.rental.product.exception.ImageUrlCollectionException;
+import com.gulbi.Backend.domain.rental.product.exception.ImageVoException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class ImageUrlCollection {
     }
     public static ImageUrlCollection of(List<ImageUrl> imageUrlList){
         if (imageUrlList.isEmpty()){
-            throw new ImageUrlCollectionException.ImageUrlNotFoundException(ProductErrorCode.IMAGEURL_NOT_FOUND);
+            throw new ImageVoException.ImageUrlNotFoundException(ProductErrorCode.IMAGEURL_NOT_FOUND);
         }
         return new ImageUrlCollection(imageUrlList);
     }
@@ -24,7 +24,7 @@ public class ImageUrlCollection {
     }
     public ImageUrl getMainImageUrl() {
         return Optional.ofNullable(getImageUrls().isEmpty() ? null : getImageUrls().get(0))
-                .orElseThrow(() -> new ImageUrlCollectionException.ImageUrlNotFoundException(ProductErrorCode.IMAGEURL_NOT_FOUND));
+                .orElseThrow(() -> new ImageVoException.ImageUrlNotFoundException(ProductErrorCode.IMAGEURL_NOT_FOUND));
     }
 
 

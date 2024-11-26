@@ -41,7 +41,7 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<RestApiResponse> productDetail(@PathVariable("productId") Long productId) {
         ProductDetailResponseDto data = productService.getProductDetail(productId);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
+        RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_FOUND_SUCCESS,data);
         return ResponseEntity.ok(response);
     }
 
@@ -49,14 +49,14 @@ public class ProductController {
     public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("detail")String detail){
         ProductSearchRequestDto productSearchRequestDto = ProductSearchRequestDto.of(detail, query);
         List<ProductOverViewResponse> data = productService.searchProductOverview(productSearchRequestDto);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS,data);
+        RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_FOUND_SUCCESS,data);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/views/{productId}")
     public ResponseEntity<RestApiResponse> updateProductViews(@PathVariable("productId") Long productId){
         productService.updateProductViews(productId);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_VIEWS_UPDATED_SUCCESS);
         return ResponseEntity.ok(response);
 
     }
@@ -69,7 +69,7 @@ public class ProductController {
     {
         System.out.println(productImageCreateRequestDto.getProductImageCollection());
         productService.updateProduct(productUpdateRequestDto, productCategoryUpdateRequestDto, productImageDeleteRequestDto,productImageCreateRequestDto);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_INFO_UPDATED_SUCCESS);
         return ResponseEntity.ok(response);
     }
 }

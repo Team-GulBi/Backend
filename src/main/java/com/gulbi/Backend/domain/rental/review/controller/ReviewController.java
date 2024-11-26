@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.rental.review.controller;
 
+import com.gulbi.Backend.domain.rental.review.code.ReviewSuccessCode;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
@@ -20,21 +21,21 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<RestApiResponse> createReview(@RequestBody @Validated ReviewCreateRequestDto request){
         reviewService.registerReview(request);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<RestApiResponse> deleteReview(@PathVariable("reviewId") Long reviewId){
         reviewService.deleteReview(reviewId);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_DELETED_SUCCESS);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping
     public ResponseEntity<RestApiResponse> updateReview(@RequestBody ReviewUpdateRequestDto reviewUpdateRequestDto){
         reviewService.updateReview(reviewUpdateRequestDto);
-        RestApiResponse response = new RestApiResponse(SuccessCode.REGISTER_SUCCESS);
+        RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_INFO_UPDATED_SUCCESS);
         return ResponseEntity.ok(response);
     }
 }

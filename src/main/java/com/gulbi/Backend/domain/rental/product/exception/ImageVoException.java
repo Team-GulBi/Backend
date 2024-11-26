@@ -20,4 +20,11 @@ public abstract class ImageVoException extends BusinessException {
             super(code);
         }
     }
+
+    public static class ImageCollectionIsEmptyException extends ImageException{
+
+        public ImageCollectionIsEmptyException(ResponseApiCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

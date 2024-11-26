@@ -62,7 +62,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "p.mCategory = :mCategory, " +
             "p.sCategory = :sCategory " +
             "WHERE p.id = :#{#dto.productId}")
-    Long updateProductInfo(@Param("dto") ProductUpdateRequestDto dto,
+    Integer updateProductInfo(@Param("dto") ProductUpdateRequestDto dto,
                            @Param("bCategory") Category bCategory,
                            @Param("mCategory") Category mCategory,
                            @Param("sCategory") Category sCategory);
@@ -80,7 +80,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "p.description = COALESCE(:#{#dto.description}, p.description), " +
             "p.mainImage = COALESCE(:#{#dto.mainImage}, p.mainImage) " +
             "WHERE p.id = :#{#dto.productId}")
-    Long updateProductInfo(@Param("dto") ProductUpdateRequestDto dto);
+    Integer updateProductInfo(@Param("dto") ProductUpdateRequestDto dto);
 
 
 

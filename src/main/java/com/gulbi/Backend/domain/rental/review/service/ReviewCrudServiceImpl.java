@@ -1,10 +1,17 @@
 package com.gulbi.Backend.domain.rental.review.service;
 
+import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
+import com.gulbi.Backend.domain.rental.product.exception.ProductException;
+import com.gulbi.Backend.domain.rental.review.code.ReviewErrorCode;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
+import com.gulbi.Backend.domain.rental.review.exception.ReviewException;
 import com.gulbi.Backend.domain.rental.review.repository.ReviewRepository;
+import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,12 +24,22 @@ public class ReviewCrudServiceImpl implements ReviewCrudService{
 
     @Override
     public void saveReview(Review review) {
-        reviewRepository.save(review);
+        try{
+        reviewRepository.save(review);}
+        catch (DataIntegrityViolationException | JpaSystemException | PersistenceException e){
+            throw new ReviewException.DatabaseErrorException(ReviewErrorCode.DATABASE_ERROR);
+        } catch (IllegalArgumentException e){
+            throw new ReviewException.MissingReviewFiledException(ReviewErrorCode.DATABASE_ERROR);
+        }
     }
 
     @Override
     public List<ReviewWithAvgProjection> getReviewWithRateAvg(Long productId) {
-        return reviewRepository.findAllReviewAndAvgByProductId(productId);
+        List<ReviewWithAvgProjection> reviews = reviewRepository.findAllReviewAndAvgByProductId(productId);
+        if(reviews.isEmpty()){
+            throw new ReviewException.ReviewNotFoundException(ReviewErrorCode.REVIEW_NOT_FOUND);
+        }
+        return reviews;
     }
 
     @Override

@@ -5,7 +5,9 @@ import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -39,7 +41,16 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                 if (jwtUtil.validateToken(token, email)) {
                     User user = userRepository.findByEmail(email)
                             .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-                    attributes.put("user", user); // WebSocket 핸들러에서 사용자 정보 사용 가능
+
+                    // 인증 객체 생성 및 SecurityContext에 저장 (권한 제거)
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(
+                            user, // Principal
+                            null, // Credentials (보통 null로 설정)
+                            null  // Authorities (권한 제거)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    attributes.put("user", user); // WebSocket 핸들러에서도 사용자 정보 사용 가능
                 } else {
                     throw new RuntimeException("Invalid JWT Token");
                 }
@@ -47,7 +58,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         }
         return true;
     }
-
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,

@@ -44,7 +44,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Product p SET p.views = p.views + 1 WHERE p.id = :id ")
-    public void updateProductViews(@Param("id") Long id);
+    public Long updateProductViews(@Param("id") Long id);
 
     @Transactional
     @Modifying
@@ -62,7 +62,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "p.mCategory = :mCategory, " +
             "p.sCategory = :sCategory " +
             "WHERE p.id = :#{#dto.productId}")
-    void updateProductInfo(@Param("dto") ProductUpdateRequestDto dto,
+    Integer updateProductInfo(@Param("dto") ProductUpdateRequestDto dto,
                            @Param("bCategory") Category bCategory,
                            @Param("mCategory") Category mCategory,
                            @Param("sCategory") Category sCategory);
@@ -80,7 +80,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "p.description = COALESCE(:#{#dto.description}, p.description), " +
             "p.mainImage = COALESCE(:#{#dto.mainImage}, p.mainImage) " +
             "WHERE p.id = :#{#dto.productId}")
-    void updateProductInfo(@Param("dto") ProductUpdateRequestDto dto);
+    Integer updateProductInfo(@Param("dto") ProductUpdateRequestDto dto);
 
 
 

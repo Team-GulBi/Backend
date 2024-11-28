@@ -1,10 +1,12 @@
 package com.gulbi.Backend.domain.rental.product.service.product;
 
+import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
 import com.gulbi.Backend.domain.rental.product.service.product.strategy.search.ProductSearchStrategy;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductSearchServiceImpl implements ProductSearchService {
@@ -34,7 +37,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     public List<ProductOverViewResponse> searchProductByQuery(ProductSearchRequestDto productSearchRequestDto) {
         String detail = productSearchRequestDto.getDetail().trim();
         String query = productSearchRequestDto.getQuery();
-        ProductSearchStrategy productSearchStrategy = productSearchStrategies.get(detail);
+        ProductSearchStrategy productSearchStrategy = (ProductSearchStrategy) Optional.ofNullable(productSearchStrategies.get(detail))
+                .orElseThrow( () ->new ProductException.InvalidProductSearchDetailException(ProductErrorCode.UNSUPPORTED_SEARCH_CONDITION));
+
         return productSearchStrategy.search(query);
     }
 

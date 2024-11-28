@@ -21,11 +21,13 @@ public class ProductUpdateServiceImpl implements ProductUpdatingService{
     private final ImageService imageService;
     @Override
     public void updateProductViews(Long productId){
+        resolveProduct(productId); // 유효성 검사
         productCrudService.updateProductViews(productId);
     }
 
     @Override
     public void updateProductInfo(ProductUpdateRequestDto productUpdateRequestDto, ProductCategoryUpdateRequestDto productCategoryUpdateRequestDto, ProductImageDeleteRequestDto productImageDeleteRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto){
+        resolveProduct(productUpdateRequestDto.getProductId());
         Optional.ofNullable(productCategoryUpdateRequestDto)
                 .map(categoryBusinessService::resolveCategories)
                 .ifPresent(productUpdateRequestDto::setCategoryInProduct);

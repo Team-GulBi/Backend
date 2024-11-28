@@ -11,6 +11,7 @@ public class BusinessException extends RuntimeException{
 
     public BusinessException(ResponseApiCode errorCode){
         super(errorCode.getMessage());
+        this.responseApiCode = errorCode;
         this.status=errorCode.getStatus();
         this.code=errorCode.getCode();
     }

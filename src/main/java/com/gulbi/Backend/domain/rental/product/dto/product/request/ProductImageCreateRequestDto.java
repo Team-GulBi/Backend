@@ -2,6 +2,7 @@ package com.gulbi.Backend.domain.rental.product.dto.product.request;
 
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 public class ProductImageCreateRequestDto {
+    @Valid
     private final ProductImageCollection productImageCollection;
     @Setter
     private Long productId;

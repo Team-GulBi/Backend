@@ -42,15 +42,17 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                     User user = userRepository.findByEmail(email)
                             .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 
-                    // 인증 객체 생성 및 SecurityContext에 저장 (권한 제거)
+                    // 인증 객체 생성
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
                             user, // Principal
-                            null, // Credentials (보통 null로 설정)
+                            null, // Credentials
                             null  // Authorities (권한 제거)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    attributes.put("user", user); // WebSocket 핸들러에서도 사용자 정보 사용 가능
+                    // SecurityContext를 attributes에 저장
+                    attributes.put("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+                    attributes.put("user", user);  // 기존 코드 유지
                 } else {
                     throw new RuntimeException("Invalid JWT Token");
                 }

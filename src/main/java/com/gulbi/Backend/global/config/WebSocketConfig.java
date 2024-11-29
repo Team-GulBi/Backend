@@ -1,7 +1,8 @@
 package com.gulbi.Backend.global.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gulbi.Backend.domain.chat.websocket.StompHandler;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -11,6 +12,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final StompHandler stompHandler;
+
+    public WebSocketConfig(StompHandler stompHandler) {
+        this.stompHandler = stompHandler;
+    }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app"); // 메시지 송신 경로
@@ -26,4 +32,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws-stomp")
                 .setAllowedOriginPatterns("*");
     }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompHandler);
+    }
+
 }

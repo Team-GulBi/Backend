@@ -9,12 +9,17 @@ import com.gulbi.Backend.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 
 import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/messages")
@@ -42,22 +47,33 @@ public class ChatMessageController {
     }
 
     // 웹소켓 메시지 처리
-    // /pub/chat/message로 메시지를 보내고, /sub/chat/room/{chatRoomId}로 받는 구조.
+
     @MessageMapping("/chat/message")
-    public void sendMessage(ChatMessageDto messageDto) {
+    public void sendMessage(ChatMessageDto messageDto, @Header("simpSessionAttributes") Map<String, Object> sessionAttributes) {
+        // SecurityContext 복원
+        SecurityContext context = (SecurityContext) sessionAttributes.get("SPRING_SECURITY_CONTEXT");
+
+        if (context != null) {
+            SecurityContextHolder.setContext(context);  // SecurityContext를 복원
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("User not authenticated");
+        }
+
+        User sender = (User) authentication.getPrincipal();
         log.info("WebSocket 메시지 처리: {}", messageDto);
 
-        // 1. 현재 로그인된 사용자 가져오기
-        User sender = userService.getAuthenticatedUser();
-
-        // 2. 메시지 저장 (DB 저장)
+        // 메시지 저장 (DB 저장)
         ChatMessage savedMessage = chatMessageService.sendMessage(
                 messageDto.getChatRoomId(),
                 messageDto.getContent(),
                 sender
         );
 
-        // 3. 특정 구독자들에게 메시지 전달
+        // 특정 구독자들에게 메시지 전달
         messagingTemplate.convertAndSend(
                 "/sub/chat/room/" + messageDto.getChatRoomId(),
                 ChatMessageDto.from(savedMessage) // 저장된 메시지를 DTO로 변환 후 전달

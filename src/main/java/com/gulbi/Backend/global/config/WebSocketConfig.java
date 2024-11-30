@@ -19,15 +19,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app"); // 메시지 송신 경로
-        registry.enableSimpleBroker("/queue", "/topic", "/sub");
+        registry.setApplicationDestinationPrefixes("/app"); // 메시지 송신 경로 pub으로 수정예정 
+        registry.enableSimpleBroker("/queue", "/topic", "/sub"); //수신 경로
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
                 .setAllowedOriginPatterns("*")
-                .addInterceptors(new JwtHandshakeInterceptor())
                 .withSockJS();
         registry.addEndpoint("/ws-stomp")
                 .setAllowedOriginPatterns("*");

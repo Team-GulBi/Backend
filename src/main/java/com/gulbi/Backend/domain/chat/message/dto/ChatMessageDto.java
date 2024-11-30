@@ -50,6 +50,9 @@ public class ChatMessageDto {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
 }
 
 

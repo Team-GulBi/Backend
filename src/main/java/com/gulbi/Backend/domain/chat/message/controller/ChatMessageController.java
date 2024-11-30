@@ -6,6 +6,7 @@ import com.gulbi.Backend.domain.chat.message.service.ChatMessageService;
 import com.gulbi.Backend.domain.chat.room.service.ChatRoomService;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.UserService;
+import com.gulbi.Backend.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ChatMessageController {
     private final ChatRoomService chatRoomService;
     private final UserService userService;
     private final SimpMessageSendingOperations messagingTemplate;
-
+    private final JwtUtil jwtUtil;
 
     // 채팅방 메시지 목록 조회
     @GetMapping("/{chatRoomId}")
@@ -49,28 +50,20 @@ public class ChatMessageController {
     // 웹소켓 메시지 처리
 
     @MessageMapping("/chat/message")
-    public void sendMessage(ChatMessageDto messageDto, @Header("simpSessionAttributes") Map<String, Object> sessionAttributes) {
-        // SecurityContext 복원
-        SecurityContext context = (SecurityContext) sessionAttributes.get("SPRING_SECURITY_CONTEXT");
+    public void sendMessage(ChatMessageDto messageDto, @Header("Authorization") String Authorization) {
 
-        if (context != null) {
-            SecurityContextHolder.setContext(context);  // SecurityContext를 복원
-        }
+        // JWT에서 userId를 claims에서 추출
+        String token = jwtUtil.extractJwt(Authorization); // JWT 추출
+        Long userId = Long.valueOf(jwtUtil.parseClaims(token).get("id").toString()); // claims에서 userId 추출
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("User not authenticated");
-        }
-
-        User sender = (User) authentication.getPrincipal();
-        log.info("WebSocket 메시지 처리: {}", messageDto);
+        // 메시지 DTO에 senderId 설정
+        messageDto.setSenderId(userId);
 
         // 메시지 저장 (DB 저장)
         ChatMessage savedMessage = chatMessageService.sendMessage(
                 messageDto.getChatRoomId(),
                 messageDto.getContent(),
-                sender
+                userService.getUserById(messageDto.getSenderId()) // senderId로 사용자 정보 조회
         );
 
         // 특정 구독자들에게 메시지 전달

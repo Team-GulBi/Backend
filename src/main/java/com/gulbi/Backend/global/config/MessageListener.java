@@ -18,7 +18,7 @@ public class MessageListener {
     private final WebSocketEventHandler webSocketEventHandler;  // WebSocket 이벤트 처리 (온라인 상태 확인)
 
     // RabbitMQ 큐에서 메시지를 받아서 처리
-    @RabbitListener(queues = "chat-queue")
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
     public void receiveMessage(ChatMessage chatMessage) {
         // 사용자가 온라인일 때만 메시지를 WebSocket으로 전송
         if (isUserOnline(chatMessage.getChatRoom().getUser1().getId())) {
@@ -27,8 +27,7 @@ public class MessageListener {
             sendToWebSocket(chatMessage);
         } else {
             // 사용자가 여전히 오프라인이라면 큐에서 계속 대기시킬 수 있도록 처리
-            // 필요에 따라 메시지를 계속 큐에 넣거나 로그를 남길 수 있음
-            rabbitTemplate.convertAndSend("chat-queue", chatMessage);
+            rabbitTemplate.convertAndSend("chat-queue", chatMessage);  // 오프라인 사용자일 경우 다시 큐에 넣기
         }
     }
 
@@ -49,5 +48,10 @@ public class MessageListener {
     // 사용자가 온라인 상태인지 확인하는 메서드
     private boolean isUserOnline(Long userId) {
         return webSocketEventHandler.isUserOnline(userId);  // WebSocket 상태 체크 (WebSocketEventHandler에 포함됨)
+    }
+
+    // RabbitMQ 큐에 메시지를 전송
+    public void sendMessageToQueue(ChatMessage chatMessage) {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, chatMessage);  // 큐에 메시지 보내기
     }
 }

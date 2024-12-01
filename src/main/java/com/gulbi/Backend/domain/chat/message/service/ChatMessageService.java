@@ -7,6 +7,7 @@ import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.chat.room.service.ChatRoomService;
 import com.gulbi.Backend.domain.chat.websocket.WebSocketEventHandler;
 import com.gulbi.Backend.domain.user.entity.User;
+import com.gulbi.Backend.global.config.MessageListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomService chatRoomService;
     private final WebSocketEventHandler webSocketEventHandler;
-
+    private final MessageListener messageListener;
     //메시지 저장 및 오프라인 사용자 처리
     public ChatMessage sendMessage(Long chatRoomId, String content, User sender) {
         // 메시지 저장
@@ -36,8 +37,16 @@ public class ChatMessageService {
                 .isOnline(isRecipientOnline) // 실시간 상태 반영
                 .build();
 
-        return chatMessageRepository.save(chatMessage);
+        // 메시지 저장 후, 상대방이 오프라인이면 메시지를 큐에 추가
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
+
+        if (!isRecipientOnline) {
+            messageListener.sendMessageToQueue(savedMessage);  // 큐로 메시지 전송
+        }
+
+        return savedMessage;
     }
+
 
     public List<ChatMessageDto> getMessages(Long chatRoomId) {
         return chatMessageRepository.findByChatRoomId(chatRoomId)

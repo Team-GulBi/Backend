@@ -4,6 +4,7 @@ import com.gulbi.Backend.domain.chat.message.entity.ChatMessage;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
 @Getter
 public class ChatMessageDto {
     private Long id;
@@ -30,26 +31,6 @@ public class ChatMessageDto {
         );
     }
 
-    // Getter, Setter
-    public Long getId() {
-        return id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public Long getSenderId() {
-        return senderId;
-    }
-
-    public Long getChatRoomId() {
-        return chatRoomId;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
     public void setSenderId(Long senderId) {
         this.senderId = senderId;
     }

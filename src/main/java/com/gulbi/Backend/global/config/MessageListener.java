@@ -2,18 +2,13 @@ package com.gulbi.Backend.global.config;
 
 import com.gulbi.Backend.domain.chat.message.dto.ChatMessageDto;
 import com.gulbi.Backend.domain.chat.websocket.UserConnectedEvent;
-import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.messaging.handler.annotation.Header;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,44 +22,39 @@ public class MessageListener {
     private final SimpMessageSendingOperations messagingTemplate;
     private final RabbitTemplate rabbitTemplate;
 
-    // 이미 처리된 메시지 ID를 저장할 Set
-    private final Set<Long> processedMessageIds = new HashSet<>();
-
-    // 온라인 사용자 상태 관리 (예: 사용자 ID와 상태 저장)
+    // 온라인 사용자 목록
     private final Map<Long, Boolean> onlineUsers = new HashMap<>();
+    private final Map<Long, Boolean> messageSentStatus = new HashMap<>();  // 메시지 중복 방지용 맵
+    private final Set<Long> processedMessageIds = new HashSet<>(); // 이미 처리한 메시지를 추적하는 Set
 
-    // 큐에서 메시지 수신 (수동 ACK 적용)
+    // 큐에서 메시지 수신
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
-    public void receiveMessage(ChatMessageDto chatMessageDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) {
-        try {
-            // 중복 메시지 확인
-            if (processedMessageIds.contains(chatMessageDto.getId())) {
-                log.info("Duplicate message detected, skipping: {}", chatMessageDto.getId());
-                channel.basicAck(tag, false);  // 중복 메시지 ACK 처리
-                return;
-            }
+    public void receiveMessage(ChatMessageDto chatMessageDto) {
+        Long senderId = chatMessageDto.getSenderId();
+        Long messageId = chatMessageDto.getId();  // 메시지 고유 ID
 
-            // 메시지를 Set에 추가하여 처리된 것으로 표시
-            processedMessageIds.add(chatMessageDto.getId());
-            log.info("Received Message: {}", chatMessageDto);
-
-            // 사용자 온라인 상태 확인 후 메시지 전송
-            if (onlineUsers.getOrDefault(chatMessageDto.getSenderId(), false)) {
-                sendToWebSocket(chatMessageDto);  // 온라인 사용자에게 즉시 전송
-            } else {
-                storeMessageForLater(chatMessageDto);  // 오프라인 사용자에 대한 메시지 저장
-            }
-
-            channel.basicAck(tag, false);  // 메시지 처리 완료 후 ACK
-        } catch (Exception e) {
-            log.error("Error processing message: {}, retrying... {}", chatMessageDto.getId(), e.getMessage());
-            try {
-                channel.basicNack(tag, false, true);  // 처리 실패 시 NACK 및 재처리
-            } catch (IOException ioException) {
-                log.error("Failed to NACK message: {}", ioException.getMessage());
-            }
+        if (processedMessageIds.contains(messageId)) {
+            // 이미 처리된 메시지라면 무시하고 반환
+            log.info("Duplicate Message Skipped: {}", messageId);
+            return;
         }
+
+        // 메시지가 처음이라면 처리
+        log.info("Received Message: {}", chatMessageDto);
+
+        // 사용자 온라인 상태 확인
+        if (onlineUsers.getOrDefault(senderId, false)) {
+            // 온라인 상태면 WebSocket으로 메시지 전송
+            sendToWebSocket(chatMessageDto);
+        } else {
+            // 오프라인 상태면 메시지 큐에 저장
+            storeMessageForLater(chatMessageDto);
+        }
+
+        // 메시지 처리 완료로 마킹
+        processedMessageIds.add(messageId);  // 처리 완료된 메시지로 마킹
     }
+
 
     // 사용자 연결 이벤트 처리 (온라인 상태로 변경)
     @EventListener
@@ -91,11 +81,14 @@ public class MessageListener {
 
         while (hasMoreMessages) {
             ChatMessageDto chatMessageDto = (ChatMessageDto) rabbitTemplate.receiveAndConvert(RabbitMQConfig.QUEUE_NAME);
+
             if (chatMessageDto != null) {
-                if (chatMessageDto.getChatRoomId().equals(userId)) {
+                Long receiverId = chatMessageDto.getChatRoomId();  // 수신자 확인
+                if (receiverId.equals(userId)) {
                     sendToWebSocket(chatMessageDto);
                 } else {
-                    requeueMessage(chatMessageDto);
+                    log.info("Requeuing message for user {}.", receiverId);
+                    requeueMessage(chatMessageDto);  // 수신자 아닌 경우 재큐잉
                 }
             } else {
                 hasMoreMessages = false;
@@ -113,17 +106,25 @@ public class MessageListener {
 
     // 오프라인 사용자의 메시지를 큐에 저장
     private void storeMessageForLater(ChatMessageDto chatMessageDto) {
-        try {
+        Long senderId = chatMessageDto.getSenderId();
+        Long messageId = chatMessageDto.getId();
+
+        // 이미 처리된 메시지인 경우 추가로 큐에 넣지 않음
+        if (processedMessageIds.contains(messageId)) {
+            log.info("Skipping message storage for already processed message: {}", messageId);
+            return;
+        }
+
+        if (!onlineUsers.getOrDefault(senderId, false)) {
+            // 오프라인 상태에서만 큐에 보내기
             rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, chatMessageDto);
-            log.info("Stored message for user {} to be sent later.", chatMessageDto.getChatRoomId());
-        } catch (Exception e) {
-            log.error("Failed to store message for user {}: {}", chatMessageDto.getChatRoomId(), e.getMessage());
+            log.info("Stored message for user {} to be sent later.", senderId);
+            processedMessageIds.add(messageId); // 큐에 보냈으므로 처리 완료로 마킹
         }
     }
 
     // 메시지를 다시 큐에 넣는 로직
     private void requeueMessage(ChatMessageDto chatMessageDto) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, chatMessageDto);
-        log.info("Requeued message for user {}.", chatMessageDto.getChatRoomId());
     }
 }

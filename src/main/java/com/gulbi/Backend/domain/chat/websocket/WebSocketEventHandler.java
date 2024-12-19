@@ -62,6 +62,7 @@ public class WebSocketEventHandler {
                         .orElse(null);
             }
         }
+        log.warn("헤더에서 사용자 정보를 가져오지 못했습니다.");
         return null;
     }
 

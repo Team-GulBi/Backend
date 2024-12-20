@@ -27,7 +27,7 @@ public class CategoryCrudServiceImpl implements CategoryCrudService {
     }
 
     @Override
-    public List<CategoryProjection> getBelowCategoriesByParentId(Integer categoryId) {
+    public List<CategoryProjection> getBelowCategoriesByParentId(Long categoryId) {
         List<CategoryProjection> belowCategoryList= categoryRepository.findBelowCategory(categoryId);
         if(belowCategoryList.isEmpty()){
             throw new CategoryException.CategoryNotFoundException(CategoryErrorCode.NOT_FOUND_CATEGORY);
@@ -36,10 +36,9 @@ public class CategoryCrudServiceImpl implements CategoryCrudService {
     }
 
     @Override
-    public Category getCategoryById(Integer categoryId) {
-        return categoryRepository.findById(categoryId).orElseThrow(
+    public Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(Math.toIntExact(categoryId)).orElseThrow(
                 () ->new CategoryException.CategoryNotFoundException(CategoryErrorCode.NOT_FOUND_CATEGORY)
         );
     }
-
 }

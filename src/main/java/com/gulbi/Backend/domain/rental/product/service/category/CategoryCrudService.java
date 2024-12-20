@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CategoryCrudService {
     public List<CategoryProjection> getBigCategories();
-    public List<CategoryProjection> getBelowCategoriesByParentId(Integer categoryId);
-    public Category getCategoryById(Integer categoryId);
+    public List<CategoryProjection> getBelowCategoriesByParentId(Long categoryId);
+    public Category getCategoryById(Long categoryId);
 }

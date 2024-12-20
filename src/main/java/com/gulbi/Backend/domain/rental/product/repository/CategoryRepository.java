@@ -21,7 +21,7 @@ public interface CategoryRepository extends JpaRepository<Category,Integer> {
     // 대분류만 꺼냄, 대분류는 부모님이 안계심
 
     @Query("SELECT c.id AS id, c.name AS name FROM Category c WHERE c.parent.id = :parentId")
-    List<CategoryProjection> findBelowCategory(@Param("parentId") Integer parentId);
+    List<CategoryProjection> findBelowCategory(@Param("parentId") Long parentId);
 
     Optional<Category> findByName(String name);
     List<Category> findByParent(Category category);

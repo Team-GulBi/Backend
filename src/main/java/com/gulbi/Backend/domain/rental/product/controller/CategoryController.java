@@ -30,13 +30,10 @@ public class CategoryController {
     }
 
     @GetMapping("/mcategory/{categoryId}")
-    public ResponseEntity<RestApiResponse> getMidCategory(@PathVariable("categoryId") Integer categoryId){
+    public ResponseEntity<RestApiResponse> getMidCategory(@PathVariable("categoryId") Long categoryId){
         List<CategoryProjection> list = categoryCrudService.getBelowCategoriesByParentId(categoryId);
-
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);
-
         return ResponseEntity.ok(response);
     }
-
     //1. 대분류 전부 리턴, 2. 대분류의 id값 들어오면 대응하는 모든 중분류 보여주기 3. 중분류의 id값이 들어오면 대응하는 모든 소분류 보여주기
 }

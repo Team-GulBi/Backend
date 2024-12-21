@@ -50,6 +50,10 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
+    @Operation(
+            summary = "상품의 상세정보 조회",
+            description = "상품의 PK값으로 상품의 상세정보 조회"
+    )
     public ResponseEntity<RestApiResponse> productDetail(@PathVariable("productId") Long productId) {
         ProductDetailResponseDto data = productService.getProductDetail(productId);
         RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_FOUND_SUCCESS,data);
@@ -57,7 +61,12 @@ public class ProductController {
     }
 
     @GetMapping("/search/{query}/{detail}")
-    public ResponseEntity<RestApiResponse> searchProduct(@PathVariable("query")String query, @PathVariable("detail")String detail){
+    @Operation(
+            summary = "조건에 맞는 상품 검색",
+            description = "query는 검색어, detail은 필터(태그별,제목별,위치별 등등)"
+    )
+    public ResponseEntity<RestApiResponse> searchProduct(@Parameter(description = "검색어",required = true)@PathVariable("query")String query,
+                                                         @Parameter(description = "필터",required = true)@PathVariable("detail")String detail){
         ProductSearchRequestDto productSearchRequestDto = ProductSearchRequestDto.of(detail, query);
         List<ProductOverViewResponse> data = productService.searchProductOverview(productSearchRequestDto);
         RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_FOUND_SUCCESS,data);

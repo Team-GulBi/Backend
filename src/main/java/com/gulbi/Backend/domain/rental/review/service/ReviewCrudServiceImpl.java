@@ -36,9 +36,9 @@ public class ReviewCrudServiceImpl implements ReviewCrudService{
     @Override
     public List<ReviewWithAvgProjection> getReviewWithRateAvg(Long productId) {
         List<ReviewWithAvgProjection> reviews = reviewRepository.findAllReviewAndAvgByProductId(productId);
-        if(reviews.isEmpty()){
-            throw new ReviewException.ReviewNotFoundException(ReviewErrorCode.REVIEW_NOT_FOUND);
-        }
+//        if(reviews.isEmpty()){
+//            throw new ReviewException.ReviewNotFoundException(ReviewErrorCode.REVIEW_NOT_FOUND);
+//        } 리뷰가 없는 상품도 있을 수 있는데 예외처리를 하니까 처세가 안됨.
         return reviews;
     }
 

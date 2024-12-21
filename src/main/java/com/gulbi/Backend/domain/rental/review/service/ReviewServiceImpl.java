@@ -1,6 +1,6 @@
 package com.gulbi.Backend.domain.rental.review.service;
 
-import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
+import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewCreateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;

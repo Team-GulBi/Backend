@@ -4,16 +4,19 @@ import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.*;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
-import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.ProductService;
-import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
-import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,12 +31,20 @@ public class ProductController {
 
     private final ProductService productService;
 
-
+    @RequestBody(content = @Content(
+            encoding = @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE)))
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RestApiResponse> register(@Validated @RequestPart("body") ProductRegisterRequestDto productInfo,
-                                                    @Validated @ModelAttribute("images") ProductImageCreateRequestDto images
-                                                    ) throws IOException {
-            productService.registrationProduct(productInfo,images);
+    @Operation(
+            summary = "상품등록",
+            description = "상품정보, 상품이미지를 이용하여 상품을 등록 합니다."
+    )
+    public ResponseEntity<RestApiResponse> register(
+            @Parameter(description = "상품정보", required = true, content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)) @RequestPart("body") ProductRegisterRequestDto productInfo
+            ,
+            @Parameter(description = "상품 이미지 파일", required = true)
+            @RequestPart("images") List<MultipartFile> productImages)
+    {
+            productService.registrationProduct(productInfo,ProductImageCreateRequestDto.of(productImages));
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }
@@ -67,7 +78,6 @@ public class ProductController {
                                                          @RequestPart(value = "category", required = false) ProductCategoryUpdateRequestDto productCategoryUpdateRequestDto,
                                                          @RequestPart(value = "imagesDelete", required = false)ProductImageDeleteRequestDto productImageDeleteRequestDto)
     {
-        System.out.println(productImageCreateRequestDto.getProductImageCollection());
         productService.updateProduct(productUpdateRequestDto, productCategoryUpdateRequestDto, productImageDeleteRequestDto,productImageCreateRequestDto);
         RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_INFO_UPDATED_SUCCESS);
         return ResponseEntity.ok(response);

@@ -1,31 +1,45 @@
 package com.gulbi.Backend.domain.rental.product.dto.product.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
-@Getter
 public class ProductImageCreateRequestDto {
     @Valid
     private final ProductImageCollection productImageCollection;
+
     @Setter
+    @Getter
+    @Schema(hidden = true)
     private Long productId;
+
     @Setter
+    @Getter
+    @Schema(hidden = true)
     private Product product;
 
-    public ProductImageCreateRequestDto(List<MultipartFile> images) {
-        this.productImageCollection = parse(images);
+    private ProductImageCreateRequestDto(List<MultipartFile> images) {
+        this.productImageCollection = ProductImageCollection.of(images);
     }
 
-    private ProductImageCollection parse(List<MultipartFile> images) {
-        if (images == null || images.isEmpty()) {
-            return null;
-        }
-        return ProductImageCollection.of(images);
+    public static ProductImageCreateRequestDto of(List<MultipartFile> images){
+        return new ProductImageCreateRequestDto(images);
     }
+
+    public ProductImageCollection getProductImageCollection(){
+        if(!productImageCollection.isEmpty()){
+            return this.productImageCollection;
+        }
+        return null;
+    }
+
+
+
 }

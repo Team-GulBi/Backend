@@ -4,6 +4,7 @@ import com.gulbi.Backend.domain.rental.product.code.CategorySuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.category.CategoryProjection;
 import com.gulbi.Backend.domain.rental.product.service.category.CategoryCrudService;
 import com.gulbi.Backend.global.response.RestApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,15 +22,23 @@ public class CategoryController {
 
 
     @GetMapping("/bcategory")
+    @Operation(
+            summary = "모든 대분류 조회 ",
+            description = "모든 대분류 카테고리를 조회"
+    )
+
     public ResponseEntity<RestApiResponse> getBigCategory(){
         List<CategoryProjection> list = categoryCrudService.getBigCategories();
-//        RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS);
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);
         return ResponseEntity.ok(response);
 
     }
 
     @GetMapping("/mcategory/{categoryId}")
+    @Operation(
+            summary = "대분류, 중분류 카테고리 조회",
+            description = "대분류, 중분류 카테고리 조회, EX) 대분류 카테고리 id = 1 일때 해당 api를 사용하면 1에 대응 하는 중분류를 보여줌"
+    )
     public ResponseEntity<RestApiResponse> getMidCategory(@PathVariable("categoryId") Long categoryId){
         List<CategoryProjection> list = categoryCrudService.getBelowCategoriesByParentId(categoryId);
         RestApiResponse response = new RestApiResponse(CategorySuccessCode.GET_CATEGORY_SUCCESS,list);

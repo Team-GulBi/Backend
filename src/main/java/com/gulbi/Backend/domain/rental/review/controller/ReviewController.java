@@ -6,6 +6,7 @@ import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
 import com.gulbi.Backend.domain.user.response.SuccessCode;
 import com.gulbi.Backend.global.response.RestApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
     private final ReviewService reviewService;
     @PostMapping
+    @Operation(
+            summary = "상품 리뷰 생성"
+    )
     public ResponseEntity<RestApiResponse> createReview(@RequestBody @Validated ReviewCreateRequestDto request){
         reviewService.registerReview(request);
         RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_REGISTER_SUCCESS);
@@ -26,6 +30,10 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{reviewId}")
+    @Operation(
+            summary = "리뷰 삭제",
+            description = "지우고자 하는 리뷰Id를 넣어주세요"
+    )
     public ResponseEntity<RestApiResponse> deleteReview(@PathVariable("reviewId") Long reviewId){
         reviewService.deleteReview(reviewId);
         RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_DELETED_SUCCESS);
@@ -33,6 +41,9 @@ public class ReviewController {
     }
 
     @PatchMapping
+    @Operation(
+            summary = "리뷰수정"
+    )
     public ResponseEntity<RestApiResponse> updateReview(@RequestBody ReviewUpdateRequestDto reviewUpdateRequestDto){
         reviewService.updateReview(reviewUpdateRequestDto);
         RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_INFO_UPDATED_SUCCESS);

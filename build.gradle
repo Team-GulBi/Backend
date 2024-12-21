@@ -47,6 +47,11 @@ dependencies {
 	implementation "org.apache.tika:tika-parsers-standard-package:2.9.1"
 	// MySQL JDBC 드라이버의 버전을 명시합니다.
 	runtimeOnly 'mysql:mysql-connector-java:8.0.33'  // 여기서 8.0.33은 예시입니다.
+
+	//elk
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 }
 
 tasks.named('test') {

@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.service.product;
+package com.gulbi.Backend.domain.rental.product.service.product.search;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;

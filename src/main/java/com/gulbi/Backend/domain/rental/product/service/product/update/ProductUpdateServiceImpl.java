@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.service.product;
+package com.gulbi.Backend.domain.rental.product.service.product.update;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductCategoryUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageCreateRequestDto;
@@ -7,7 +7,7 @@ import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductUpdate
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.service.category.CategoryBusinessService;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
-import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
+import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +31,19 @@ public class ProductUpdateServiceImpl implements ProductUpdatingService{
         Optional.ofNullable(productCategoryUpdateRequestDto)
                 .map(categoryBusinessService::resolveCategories)
                 .ifPresent(productUpdateRequestDto::setCategoryInProduct);
+
         Optional.of(productUpdateRequestDto)
                 .ifPresent(productCrudService::updateProductInfo);
+
         Optional.ofNullable(productImageDeleteRequestDto)
                         .ifPresent(imageService::deleteImages);
+
         Optional.ofNullable(productImageCreateRequestDto.getProductImageCollection())
                 .ifPresent(dto ->{
+                        if(!dto.isEmpty()){
                         productImageCreateRequestDto.setProductId(productUpdateRequestDto.getProductId());
                         imageService.registerImageWithProduct(imageService.uploadImagesToS3(dto), resolveProduct(productImageCreateRequestDto.getProductId()));
+                        }
                 });
 
     }

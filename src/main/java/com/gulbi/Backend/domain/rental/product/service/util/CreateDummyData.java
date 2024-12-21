@@ -1,4 +1,4 @@
-//package com.gulbi.Backend.domain.rental.product.util;
+//package com.gulbi.Backend.domain.rental.product.service.util;
 //
 //import com.gulbi.Backend.domain.rental.product.entity.Category;
 //import com.gulbi.Backend.domain.rental.product.entity.Product;

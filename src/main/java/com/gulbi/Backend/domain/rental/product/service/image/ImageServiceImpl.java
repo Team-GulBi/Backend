@@ -1,15 +1,13 @@
 package com.gulbi.Backend.domain.rental.product.service.image;
 
 import com.gulbi.Backend.domain.rental.product.code.ImageErrorCode;
-import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageDeleteRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ImageException;
-import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
 import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
-import com.gulbi.Backend.domain.rental.product.service.product.ProductCrudService;
+import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
@@ -26,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,10 +51,13 @@ public class ImageServiceImpl implements ImageService {
             return ImageUrlCollection.of(imageUrlList);
         }catch (ImageException e){ // 추후 센더에 예외 생기면 센더에서 예외 호출 예정
             throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+
 
     @Override
     public ProductImageDtoCollection getImageByProductId(Long productId) {
@@ -98,5 +100,11 @@ public class ImageServiceImpl implements ImageService {
         productCrudService.getProductById(productId);
     }
 
+    private String temp(){
+        String randomUtl = "https://"+UUID.randomUUID();
+        return randomUtl;
+    }
 
 }
+
+

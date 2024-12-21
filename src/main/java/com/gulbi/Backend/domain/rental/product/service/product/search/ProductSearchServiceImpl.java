@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.service.product;
+package com.gulbi.Backend.domain.rental.product.service.product.search;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
@@ -8,10 +8,10 @@ import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearch
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
-import com.gulbi.Backend.domain.rental.product.service.product.strategy.search.ProductSearchStrategy;
+import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
+import com.gulbi.Backend.domain.rental.product.service.product.search.strategy.search.ProductSearchStrategy;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.service.ReviewService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

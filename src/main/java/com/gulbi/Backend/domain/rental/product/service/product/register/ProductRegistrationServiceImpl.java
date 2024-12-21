@@ -1,15 +1,14 @@
-package com.gulbi.Backend.domain.rental.product.service.product;
+package com.gulbi.Backend.domain.rental.product.service.product.register;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageCreateRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.factory.ProductFactory;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
+import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
-import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 @Service

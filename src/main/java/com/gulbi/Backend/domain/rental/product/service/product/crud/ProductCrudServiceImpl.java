@@ -1,11 +1,9 @@
-package com.gulbi.Backend.domain.rental.product.service.product;
+package com.gulbi.Backend.domain.rental.product.service.product.crud;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
-import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductUpdateRequestDto;
-import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
@@ -17,7 +15,6 @@ import jakarta.persistence.PersistenceException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor

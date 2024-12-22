@@ -40,9 +40,10 @@ public class ProductController {
             @Parameter(description = "상품정보", required = true, content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)) @RequestPart("body") ProductRegisterRequestDto productInfo
             ,
             @Parameter(description = "상품 이미지 파일", required = true)
-            @RequestPart("images") List<MultipartFile> productImages)
+            @RequestPart("images") List<MultipartFile> productImages,
+            @RequestPart("mainImage") List<MultipartFile> productMainImage)
     {
-            productService.registrationProduct(productInfo,ProductImageCreateRequestDto.of(productImages));
+            productService.registrationProduct(productInfo,ProductImageCreateRequestDto.of(productImages),ProductMainImageCreateRequestDto.of(productMainImage));
             RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }

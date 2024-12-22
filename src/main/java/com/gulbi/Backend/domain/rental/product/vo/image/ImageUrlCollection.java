@@ -20,11 +20,23 @@ public class ImageUrlCollection {
         return new ImageUrlCollection(imageUrlList);
     }
     public List<ImageUrl> getImageUrls(){
+        if(!imageUrlList.isEmpty()){
         return new ArrayList<>(imageUrlList);
+        }
+        return null;
     }
     public ImageUrl getMainImageUrl() {
         return Optional.ofNullable(getImageUrls().isEmpty() ? null : getImageUrls().get(0))
                 .orElseThrow(() -> new ImageVoException.ImageUrlNotFoundException(ProductErrorCode.IMAGEURL_NOT_FOUND));
+    }
+
+    public ImageUrlCollection append(ImageUrl imageUrl) {
+        if(!imageUrlList.isEmpty()){
+        List<ImageUrl> newImageUrls = new ArrayList<>(this.imageUrlList);
+        newImageUrls.add(imageUrl);
+        return new ImageUrlCollection(newImageUrls);
+        }
+        return null;
     }
 
 

@@ -21,10 +21,6 @@ public class ProductImageCollection {
         return new ArrayList<>(productImages);
     }
 
-    public MultipartFile getProductMainImage(){
-        return productImages.get(0);
-    }
-
     public boolean isEmpty(){
         return productImages == null;
     }

@@ -23,6 +23,7 @@ services:
     networks:
       - app-tier
 
+# cd 테스트
 #  phpmyadmin:
 #    image: phpmyadmin
 #    restart: always

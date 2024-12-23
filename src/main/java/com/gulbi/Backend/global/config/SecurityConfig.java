@@ -18,7 +18,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,17 +29,25 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(withDefaults())  // CORS 설정 추가
-                .csrf(csrf -> csrf.disable())  // CSRF 보호 비활성화
+                .cors(withDefaults())  // 아래 addCorsMappings 설정이 적용됨
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 세션을 사용하지 않음
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/signin", "/api/v1/auth/signup").permitAll()  // 로그인, 회원가입 엔드포인트는 허용
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config").permitAll() // Swagger 관련 엔드포인트 허용
+                        .requestMatchers("/api/v1/auth/signin", "/api/v1/auth/signup").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config").permitAll()
                         .anyRequest().permitAll())
-                        //.anyRequest().authenticated())  // 나머지는 인증 필요
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  // JWT 필터 추가
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**") // 모든 경로에 대해 적용
+                .allowedOrigins("https://yajoba-frontend.vercel.app", "http://localhost") // 허용할 도메인
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
+                .allowedHeaders("*") // 허용할 헤더
+                .allowCredentials(true); // 쿠키 허용 여부
     }
 
     @Bean

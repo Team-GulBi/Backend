@@ -27,12 +27,16 @@ public class ChatMessage {
     private User sender;
 
     @ManyToOne
+    private User receiver;
+
+    @ManyToOne
     private ChatRoom chatRoom;
 
     @Builder
-    public ChatMessage(String content, User sender, ChatRoom chatRoom, LocalDateTime timestamp, boolean isOnline) {
+    public ChatMessage(String content, User sender, User receiver, ChatRoom chatRoom, LocalDateTime timestamp, boolean isOnline) {
         this.content = content;
         this.sender = sender;
+        this.receiver = receiver;
         this.chatRoom = chatRoom;
         this.timestamp = timestamp;
         this.isOnline = isOnline;

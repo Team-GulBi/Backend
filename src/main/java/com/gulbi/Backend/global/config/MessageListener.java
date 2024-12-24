@@ -1,6 +1,9 @@
 package com.gulbi.Backend.global.config;
 
 import com.gulbi.Backend.domain.chat.message.dto.ChatMessageDto;
+import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
+import com.gulbi.Backend.domain.chat.room.service.ChatRoomService;
+import com.gulbi.Backend.domain.chat.websocket.WebSocketEventHandler;
 import com.gulbi.Backend.domain.chat.websocket.UserConnectedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +12,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -19,68 +23,87 @@ public class MessageListener {
 
     private final SimpMessageSendingOperations messagingTemplate;
     private final RabbitTemplate rabbitTemplate;
+    private final WebSocketEventHandler webSocketEventHandler;
+    private final ChatRoomService chatRoomService;
 
-    // 온라인 사용자 목록
-    private final Map<Long, Boolean> onlineUsers = new HashMap<>();
+    // 중복 메시지 방지를 위한 처리 상태 추적
+    private final Set<Long> processedMessages = new HashSet<>();
 
-    // 큐에서 메시지 수신
-    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
-    public void receiveMessage(ChatMessageDto chatMessageDto) {
-        Long senderId = chatMessageDto.getSenderId();
+    private Long findReceiverIdFromChatRoom(Long chatRoomId, Long senderId) {
+        ChatRoom chatRoom = chatRoomService.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("ChatRoom not found with id: " + chatRoomId));
 
-        // 사용자 온라인 상태 확인
-        if (onlineUsers.getOrDefault(senderId, false)) {
-            // 온라인 상태면 WebSocket으로 메시지 전송
-            log.info("User {} is online. Sending message to WebSocket: {}", senderId, chatMessageDto);
-            sendToWebSocket(chatMessageDto);
+        if (chatRoom.getUser1().getId().equals(senderId)) {
+            return chatRoom.getUser2().getId();
+        } else if (chatRoom.getUser2().getId().equals(senderId)) {
+            return chatRoom.getUser1().getId();
         } else {
-            // 오프라인 상태면 메시지 큐에 저장
-            log.info("User {} is offline. Storing message for later delivery: {}", senderId, chatMessageDto);
-            storeMessageForLater(chatMessageDto);
+            throw new IllegalArgumentException("SenderId does not match any users in the chat room");
         }
     }
 
-    // 사용자 연결 이벤트 처리 (온라인 상태로 변경)
+    // 메시지 수신 및 처리
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+    public void receiveMessage(ChatMessageDto chatMessageDto) {
+        if (chatMessageDto == null) {
+            log.error("Received null ChatMessageDto");
+            return;
+        }
+
+        Long senderId = chatMessageDto.getSenderId();
+        Long chatRoomId = chatMessageDto.getChatRoomId();
+        Long receiverId = findReceiverIdFromChatRoom(chatRoomId, senderId);
+
+        chatMessageDto.setReceiverId(receiverId);
+
+        // 이미 처리된 메시지인지 확인 (중복 방지)
+        if (processedMessages.contains(chatMessageDto.getId())) {
+            log.info("Message {} already processed, skipping.", chatMessageDto.getId());
+            return;
+        }
+
+        // 수신자가 온라인 상태인지 확인
+        boolean isReceiverOnline = webSocketEventHandler.isUserOnline(receiverId);
+        log.info("Receiver {} isOnline: {}", receiverId, isReceiverOnline);
+
+        if (isReceiverOnline) {
+            // Receiver가 온라인 상태일 때 WebSocket으로 메시지 전송
+            log.info("Receiver {} is online. Sending message: {}", receiverId, chatMessageDto);
+            sendToWebSocket(chatMessageDto);
+        } else {
+            // Receiver가 오프라인 상태일 때 메시지를 큐에 저장
+            log.info("Receiver {} is offline. Storing message for later: {}", receiverId, chatMessageDto);
+            storeMessageForLater(chatMessageDto);
+        }
+
+        // 큐에서 메시지를 처리한 후에 processedMessages에 추가
+        processedMessages.add(chatMessageDto.getId());
+    }
+
+
+    // 사용자 연결 이벤트 처리
     @EventListener
     public void onUserConnected(UserConnectedEvent event) {
         Long userId = event.getUserId();
-        onlineUsers.put(userId, true);  // 사용자를 온라인 상태로 설정
-        log.info("User {} is now online.", userId);
+        log.info("User {} connected. Processing queued messages.", userId);
 
-        // 온라인 상태로 변경된 사용자에게 큐에 보관된 메시지 전달
-        receiveMessageFromQueueForUser(userId);
-    }
-
-    // 사용자 연결 해제 이벤트 처리 (오프라인 상태로 변경)
-    @EventListener
-    public void onUserDisconnected(UserConnectedEvent event) {
-        Long userId = event.getUserId();
-        onlineUsers.put(userId, false);  // 사용자를 오프라인 상태로 설정
-        log.info("User {} is now offline.", userId);
-    }
-
-    // 오프라인 상태의 사용자에게 큐에서 보관된 메시지 전송
-    public void receiveMessageFromQueueForUser(Long userId) {
-        boolean hasMoreMessages = true;
-
-        while (hasMoreMessages) {
-            ChatMessageDto chatMessageDto = (ChatMessageDto) rabbitTemplate.receiveAndConvert(RabbitMQConfig.QUEUE_NAME);
-
-            if (chatMessageDto != null) {
-                Long receiverId = chatMessageDto.getChatRoomId();  // 수신자 확인
-                if (receiverId.equals(userId)) {
-                    sendToWebSocket(chatMessageDto);
-                } else {
-                    log.info("Requeuing message for user {}.", receiverId);
-                    requeueMessage(chatMessageDto);  // 수신자 아닌 경우 재큐잉
-                }
+        // 큐에서 메시지를 하나씩 확인하고 처리
+        ChatMessageDto chatMessageDto;
+        while ((chatMessageDto = (ChatMessageDto) rabbitTemplate.receiveAndConvert(RabbitMQConfig.QUEUE_NAME)) != null) {
+            // 메시지가 처리된 상태가 아니라면 전송
+            if (chatMessageDto.getReceiverId().equals(userId) && !processedMessages.contains(chatMessageDto.getId())) {
+                log.info("Delivering queued message to user {}: {}", userId, chatMessageDto);
+                sendToWebSocket(chatMessageDto);
+                processedMessages.add(chatMessageDto.getId());  // 처리된 메시지 추가
             } else {
-                hasMoreMessages = false;
+                // 잘못된 수신자 메시지는 다시 큐에 저장
+                log.info("Requeuing message for receiver {}: {}", chatMessageDto.getReceiverId(), chatMessageDto);
+                storeMessageForLater(chatMessageDto);
             }
         }
     }
 
-    // 메시지를 WebSocket으로 전송
+    // WebSocket으로 메시지 전송
     private void sendToWebSocket(ChatMessageDto chatMessageDto) {
         messagingTemplate.convertAndSend(
                 "/sub/chat/room/" + chatMessageDto.getChatRoomId(),
@@ -88,14 +111,8 @@ public class MessageListener {
         );
     }
 
-    // 오프라인 사용자의 메시지를 큐에 저장
+    // 메시지를 큐에 저장
     private void storeMessageForLater(ChatMessageDto chatMessageDto) {
-        log.info("Storing message for later delivery: {}", chatMessageDto);
-        rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, chatMessageDto);
-    }
-
-    // 메시지를 다시 큐에 넣는 로직
-    private void requeueMessage(ChatMessageDto chatMessageDto) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, chatMessageDto);
     }
 }

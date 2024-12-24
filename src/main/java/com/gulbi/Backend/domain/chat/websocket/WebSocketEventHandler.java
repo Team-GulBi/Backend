@@ -1,72 +1,65 @@
 package com.gulbi.Backend.domain.chat.websocket;
-
-import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.web.socket.messaging.SessionConnectEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.context.ApplicationListener;
+import com.gulbi.Backend.domain.user.entity.User;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-public class WebSocketEventHandler {
+public class WebSocketEventHandler implements ApplicationListener<SessionConnectEvent> {
 
     private final UserRepository userRepository;
-    private final ApplicationEventPublisher eventPublisher;
-
     private static final Map<Long, String> onlineUsers = new ConcurrentHashMap<>();
+    private static final Map<String, Long> sessionUserMap = new ConcurrentHashMap<>();
 
-    public WebSocketEventHandler(UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
+    public WebSocketEventHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.eventPublisher = eventPublisher;
     }
+    @Override
+    public void onApplicationEvent(SessionConnectEvent event) {
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    @PostConstruct
-    public void init() {
-        log.info("WebSocketEventHandler 초기화 완료");
-    }
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName(); // 사용자 이메일
+            log.info("WebSocket 연결된 사용자: {}", username);
 
-    // 웹소켓 연결 이벤트 처리
-    public void handleConnect(StompHeaderAccessor headerAccessor) {
-        Long userId = getUserIdFromHeader(headerAccessor);
-        if (userId != null) {
-            onlineUsers.put(userId, headerAccessor.getSessionId());
-            log.info("WebSocket 연결됨. 사용자 ID: {}, 세션 ID: {}", userId, headerAccessor.getSessionId());
-
-            // 연결되었으니 메시지 소비 이벤트 발행
-            eventPublisher.publishEvent(new UserConnectedEvent(userId));
-        } else {
-            log.warn("WebSocket 연결 실패: 사용자 ID가 null입니다.");
-        }
-    }
-
-    public void handleDisconnect(StompHeaderAccessor headerAccessor) {
-        Long userId = getUserIdFromHeader(headerAccessor);
-        if (userId != null) {
-            onlineUsers.remove(userId);
-            log.info("WebSocket 연결 종료. 사용자 ID: {}", userId);
-        }
-    }
-
-    private Long getUserIdFromHeader(StompHeaderAccessor headerAccessor) {
-        if (headerAccessor.getUser() != null) {
-            Object principal = headerAccessor.getUser();
-            if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
-                String email = userDetails.getUsername();
-                return userRepository.findByEmail(email)
-                        .map(User::getId)
-                        .orElse(null);
+            Long userId = userRepository.findByEmail(username).get().getId();
+            if (userId != null) {
+                // 세션 ID를 통해 해당 세션에 연결된 사용자 ID를 매핑
+                String sessionId = headerAccessor.getSessionId();
+                sessionUserMap.put(sessionId, userId);
+                log.info("세션 ID: {}로 사용자 ID {} 추가", sessionId, userId);
+            } else {
+                log.warn("사용자 ID를 찾을 수 없음.");
             }
+        } else {
+            log.warn("WebSocket 연결 실패: 인증되지 않은 사용자");
         }
-        log.warn("헤더에서 사용자 정보를 가져오지 못했습니다.");
-        return null;
     }
+    @EventListener
+    public void handleDisconnect(SessionDisconnectEvent event) {
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String sessionId = headerAccessor.getSessionId();
+
+        // 세션에서 사용자 ID를 가져옴
+        sessionUserMap.remove(sessionId); // 연결 종료된 세션의 사용자 ID를 제거
+
+        log.info("WebSocket 종료된 세션 ID: {}",sessionId);
+    }
+
 
     public boolean isUserOnline(Long userId) {
-        return onlineUsers.containsKey(userId);
+        return sessionUserMap.containsValue(userId);
     }
 }

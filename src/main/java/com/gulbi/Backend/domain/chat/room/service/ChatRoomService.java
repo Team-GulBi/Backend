@@ -20,6 +20,9 @@ public class ChatRoomService {
     public List<ChatRoom> findChatRoomsByUserId(Long userId) {
         return chatRoomRepository.findByUser1IdOrUser2Id(userId, userId);
     }
+    public Optional<ChatRoom> findById(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId);
+    }
     // 채팅방 가져오기 (ID로 검색)
     public ChatRoom getChatRoomById(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
@@ -47,5 +50,6 @@ public class ChatRoomService {
         ChatRoom newRoom = new ChatRoom(user1, user2);
         return chatRoomRepository.save(newRoom);
     }
+
 
 }

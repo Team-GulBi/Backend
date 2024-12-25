@@ -33,7 +33,7 @@ public class ChatMessageService {
 
         // 상대방이 현재 채팅방에 있는지 확인 (user1과 user2 비교)
         boolean isRecipientOnline = checkRecipientOnline(chatRoom, sender);
-
+        log.info("{} isRecipientOnline", isRecipientOnline);
         // 메시지 생성 및 저장
         ChatMessage chatMessage = ChatMessage.builder()
                 .content(content)
@@ -83,4 +83,5 @@ public class ChatMessageService {
             return webSocketEventHandler.isUserOnline(chatRoom.getUser1().getId());
         }
     }
+
 }

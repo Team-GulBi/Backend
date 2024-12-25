@@ -11,7 +11,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -67,11 +69,19 @@ public class MessageListener {
 //        processedMessages.add(chatMessageDto.getId());
 //    }
 
-    // 사용자 연결 이벤트 처리
+    // 구독 이벤트 처리
     @EventListener
-    public void onUserConnected(UserConnectedEvent event) {
-        Long userId = event.getUserId();
-        log.info("User {} connected. Processing queued messages.", userId);
+    public void onUserSubscribed(SessionSubscribeEvent event) {
+        // StompHeaderAccessor를 사용하여 세션 ID 추출
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String sessionId = headerAccessor.getSessionId(); // 세션 ID 가져오기
+        Long userId = webSocketEventHandler.getUserIdBySessionId(sessionId); // 세션 ID를 통해 사용자 ID 가져오기
+        if (userId == null) {
+            log.warn("Session {} not associated with any user.", sessionId);
+            return;
+        }
+
+        log.info("User {} subscribed to a channel. Processing queued messages.", userId);
 
         ChatMessageDto chatMessageDto;
         while ((chatMessageDto = (ChatMessageDto) rabbitTemplate.receiveAndConvert(RabbitMQConfig.QUEUE_NAME)) != null) {

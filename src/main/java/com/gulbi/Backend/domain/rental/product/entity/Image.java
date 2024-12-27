@@ -5,10 +5,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Getter
 @Entity
 @Table(name = "images")
-@Getter
 @NoArgsConstructor
 public class Image extends BaseEntity {
     @Id
@@ -23,7 +22,7 @@ public class Image extends BaseEntity {
     private String url;
     //데이터 타입이 너무 큰거 같아서 최적화 고려 해야함
     @Builder
-    public Image(Product product, String url) {
+    private Image(Product product, String url) {
         this.product = product;
         this.url = url;
     }

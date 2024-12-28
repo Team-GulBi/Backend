@@ -1,5 +1,7 @@
 package com.gulbi.Backend.global.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import com.gulbi.Backend.global.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -44,7 +45,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // 모든 경로에 대해 적용
-                .allowedOrigins("https://yajoba-frontend.vercel.app", "http://localhost") // 허용할 도메인
+                .allowedOrigins("https://yajoba-frontend.vercel.app", "http://localhost",
+                        "http://3.38.240.132", "http://192.168.219.78") // 허용할 도메인
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
                 .allowedHeaders("*") // 허용할 헤더
                 .allowCredentials(true); // 쿠키 허용 여부
@@ -56,7 +58,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

@@ -46,7 +46,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // 모든 경로에 대해 적용
                 .allowedOrigins("https://yajoba-frontend.vercel.app", "http://localhost",
-                        "http://3.38.240.132", "http://192.168.219.78:5173") // 허용할 도메인
+                        "http://3.38.240.132", "http://192.168.219.*:5173") // 허용할 도메인
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
                 .allowedHeaders("*") // 허용할 헤더
                 .allowCredentials(true); // 쿠키 허용 여부

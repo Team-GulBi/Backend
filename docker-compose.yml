@@ -35,6 +35,18 @@ services:
     networks:
       - app-tier
 
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    env_file:
+      - .env
+    ports:
+      - "5672:5672"  # AMQP 포트
+      - "61613:61613"  # STOMP 포트
+      - "15672:15672"  # 관리 UI 포트
+    restart: always
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
     container_name: elasticsearch

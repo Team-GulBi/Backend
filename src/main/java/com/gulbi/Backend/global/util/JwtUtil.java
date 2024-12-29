@@ -1,6 +1,7 @@
 package com.gulbi.Backend.global.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,6 +64,17 @@ public class JwtUtil {
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+    public String extractJwt(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7); // "Bearer " 부분을 제외하고 토큰을 추출
+        }
+        return null; // 토큰이 없는 경우 null 리턴
+    }
+
+    // JWT에서 클레임을 추출
+    public Claims parseClaims(String jwtToken) {
+        return extractAllClaims(jwtToken); // JWT에서 클레임을 추출
     }
 
     // 토큰이 만료되었는지 확인

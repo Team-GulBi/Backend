@@ -22,15 +22,13 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 
     @Override
     public void registerProduct(ProductRegisterRequestDto productRegisterRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto, ProductMainImageCreateRequestDto productMainImageCreateRequestDto){
-
-        ImageUrl mainImageUrl = uploadImages(productMainImageCreateRequestDto.getProductImageCollection()).getMainImageUrl();
         ImageUrlCollection imageUrlCollection = uploadImages(productImageCreateRequestDto.getProductImageCollection());
-        ImageUrlCollection finalImageUrlCollection = imageUrlCollection.append(mainImageUrl);
-
+        ImageUrl mainImageUrl = uploadImages(productMainImageCreateRequestDto.getProductImageCollection()).getMainImageUrl();
         productRegisterRequestDto.setMainImage(mainImageUrl);
         Product product = createWithRegisterRequestDto(productRegisterRequestDto);
         saveProduct(product);
-        saveImages(finalImageUrlCollection,product);
+        saveImages(imageUrlCollection,product);
+        saveMainImage(mainImageUrl,product);
     }
 
     private ImageUrlCollection uploadImages(ProductImageCollection productImageCollection){
@@ -44,6 +42,9 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         productCrudService.saveProduct(product);
     }
     private void saveImages(ImageUrlCollection imageUrlCollection, Product product){
-        imageCrudService.registerImageWithProduct(imageUrlCollection,product);
+        imageCrudService.registerImagesWithProduct(imageUrlCollection,product);
+    }
+    private void saveMainImage(ImageUrl imageUrl, Product product){
+        imageCrudService.saveMainImage(imageUrl,product);
     }
 }

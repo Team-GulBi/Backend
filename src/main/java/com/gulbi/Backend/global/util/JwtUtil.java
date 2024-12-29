@@ -4,12 +4,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Component
 public class JwtUtil {
@@ -21,9 +23,10 @@ public class JwtUtil {
     private long EXPIRATION_TIME;
 
     // JWT 생성 - 이메일을 subject로, ID는 claims에 추가
-    public String generateToken(String email, Long userId) {
+    public String generateToken(String email, Long userId, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId); // 사용자 ID를 claims에 추가
+        claims.put("role", role);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -78,4 +81,24 @@ public class JwtUtil {
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class); // role 클레임에서 역할을 추출
+    }
+
+    public Long extractUserIdFromRequest() {
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                        .getRequest();
+        String token = extractToken(request.getHeader("Authorization"));
+        return extractUserId(token);
+    }
+
+    private String extractToken(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("인증되지 않은 사용자입니다.");
+        }
+        return authorizationHeader.substring(7);
+    }
+
 }

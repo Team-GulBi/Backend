@@ -17,7 +17,7 @@ public class Image extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)  // 사용자와 다대일 관계 설정
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
+    //todo: 중복안되게 ㄱㄱㄱ
     @Column(length = 100000)
     private String url;
     //데이터 타입이 너무 큰거 같아서 최적화 고려 해야함

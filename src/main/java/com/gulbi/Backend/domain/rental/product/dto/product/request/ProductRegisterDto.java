@@ -1,6 +1,7 @@
 package com.gulbi.Backend.domain.rental.product.dto.product.request;
 
 import com.gulbi.Backend.domain.rental.product.dto.category.CategoryInProductDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.register.ProductRegisterRequestDto;
 import com.gulbi.Backend.domain.user.entity.User;
 import lombok.Getter;
 

@@ -2,7 +2,7 @@ package com.gulbi.Backend.domain.rental.product.service.product.crud;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
-import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductUpdateRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.update.ProductUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 
 import java.util.List;

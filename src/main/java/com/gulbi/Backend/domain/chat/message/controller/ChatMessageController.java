@@ -54,7 +54,7 @@ public class ChatMessageController {
 
         // JWT에서 userId를 claims에서 추출
         String token = jwtUtil.extractJwt(Authorization); // JWT 추출
-        Long userId = Long.valueOf(jwtUtil.parseClaims(token).get("id").toString()); // claims에서 userId 추출
+        Long userId = Long.valueOf(jwtUtil.extractClaims(token).get("id").toString()); // claims에서 userId 추출
 
         // 메시지 DTO에 senderId 설정
         messageDto.setSenderId(userId);

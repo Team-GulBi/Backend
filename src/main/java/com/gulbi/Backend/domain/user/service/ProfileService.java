@@ -17,15 +17,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Service
 public class ProfileService {
 
-    @Autowired
-    private ProfileRepository profileRepository;
+    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private UserService userService;
+    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository,JwtUtil jwtUtil,UserService userService) {
+        this.profileRepository = profileRepository;
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+    }
     public void createProfile(ProfileRequestDto request, UserDetails userDetails) {
         // 이메일을 통해 User 객체를 찾기
         String email = userDetails.getUsername(); // UserDetails에서 이메일 추출

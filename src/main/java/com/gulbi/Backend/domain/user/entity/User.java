@@ -36,7 +36,7 @@ public class User extends BaseEntity {
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
                 .password(encodedPassword)
-                .phoneNumber(dto.getPhoneNumber()) // phoneNumber는 RegisterRequestDto에서 추가 필요
+                .phoneNumber(dto.getPhoneNumber())
                 .build();
     }
 }

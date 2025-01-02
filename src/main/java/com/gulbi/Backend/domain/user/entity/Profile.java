@@ -2,15 +2,13 @@ package com.gulbi.Backend.domain.user.entity;
 
 
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor
@@ -26,7 +24,7 @@ public class Profile {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @NotNull // User가 반드시 필요
+    @NotNull
     private User user; // 사용자의 외래키 (FK)
 
     private String image; // 프로필 이미지 URL

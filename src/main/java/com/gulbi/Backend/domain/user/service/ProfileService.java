@@ -1,31 +1,32 @@
 package com.gulbi.Backend.domain.user.service;
-import jakarta.servlet.http.HttpServletResponse;
+
+import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
 import com.gulbi.Backend.domain.user.entity.Profile;
 import com.gulbi.Backend.domain.user.entity.User;
-import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.repository.ProfileRepository;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import com.gulbi.Backend.global.util.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProfileService {
 
-    @Autowired
-    private ProfileRepository profileRepository;
+    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private UserService userService;
+    public ProfileService(ProfileRepository profileRepository, UserRepository useRepository, JwtUtil jwtUtil,UserService userService) {
+        this.profileRepository = profileRepository;
+        this.userRepository = useRepository;
+        this.jwtUtil = jwtUtil;
+        this.userService=userService;
+    }
     public void createProfile(ProfileRequestDto request, UserDetails userDetails) {
         // 이메일을 통해 User 객체를 찾기
         String email = userDetails.getUsername(); // UserDetails에서 이메일 추출

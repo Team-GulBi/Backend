@@ -22,7 +22,11 @@ public class ProductImageCollection {
     }
 
     public boolean isEmpty(){
-        return productImages == null;
+        if(this.productImages.isEmpty() || this.productImages == null){
+            return true;
+        }
+        return false;
+
     }
 
 }

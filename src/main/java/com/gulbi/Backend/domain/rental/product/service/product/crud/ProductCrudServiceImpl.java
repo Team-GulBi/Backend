@@ -3,7 +3,9 @@ package com.gulbi.Backend.domain.rental.product.service.product.crud;
 import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.update.ProductExistingMainImageUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.update.ProductUpdateRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.update.ProductMainImageUpdateDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
@@ -77,17 +79,30 @@ public class ProductCrudServiceImpl implements ProductCrudService{
     }
 
     @Override
-    public void updateProductInfo(ProductUpdateRequestDto productUpdateRequestDto) {
-            Optional.ofNullable(productUpdateRequestDto.getCategoryInProduct())
-                .ifPresentOrElse(
-                        dto -> productRepository.updateProductInfo(
-                                productUpdateRequestDto,
-                                dto.getBCategory(),
-                                dto.getMCategory(),
-                                dto.getSCategory()
-                        ),
-                        () -> productRepository.updateProductInfo(productUpdateRequestDto)
-                );
+    public void updateProductInfo(ProductUpdateRequestDto dto) {
+
+        productRepository.updateProductInfo(
+                dto.getProductId(),
+                dto.getTag(),
+                dto.getTitle(),
+                dto.getName(),
+                dto.getPrice(),
+                dto.getSido(),
+                dto.getSigungu(),
+                dto.getBname(),
+                dto.getDescription()
+
+        );
+        if(dto.getCategoryInProduct() !=null) {
+            productRepository.updateProductCategories(dto.getProductId(),
+                    dto.getCategoryInProduct().getBCategory(),
+                    dto.getCategoryInProduct().getMCategory(),
+                    dto.getCategoryInProduct().getSCategory());
+        }
+    }
+    @Override
+    public void updateProductMainImage(ProductMainImageUpdateDto productMainImageUpdateDto){
+        productRepository.updateProductMainImage(productMainImageUpdateDto.getMainImageUrl().getImageUrl(),productMainImageUpdateDto.getProductId());
     }
 }
 

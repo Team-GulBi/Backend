@@ -2,7 +2,7 @@
 //
 //import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageCreateRequestDto;
+//import com.gulbi.Backend.domain.rental.product.dto.product.request.register.ProductImageCreateRequestDto;
 //import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 //import com.gulbi.Backend.domain.user.service.UserService;
 //import com.gulbi.Backend.global.util.entity.LogData;

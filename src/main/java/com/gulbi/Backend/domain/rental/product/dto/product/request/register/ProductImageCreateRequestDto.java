@@ -1,8 +1,6 @@
-package com.gulbi.Backend.domain.rental.product.dto.product.request;
+package com.gulbi.Backend.domain.rental.product.dto.product.request.register;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
-import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;

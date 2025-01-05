@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.product.dto.product.request;
+package com.gulbi.Backend.domain.rental.product.dto.product.request.update;
 
 import lombok.Getter;
 

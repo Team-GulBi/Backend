@@ -7,7 +7,7 @@ import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewRespon
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
-import com.gulbi.Backend.domain.rental.product.service.image.ImageService;
+import com.gulbi.Backend.domain.rental.product.service.image.ImageCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.search.strategy.search.ProductSearchStrategy;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
@@ -22,13 +22,13 @@ import java.util.Optional;
 @Service
 public class ProductSearchServiceImpl implements ProductSearchService {
     private final ProductCrudService productCrudService;
-    private final ImageService imageService;
+    private final ImageCrudService imageCrudService;
     private final ReviewService reviewService;
     private final Map<String, ProductSearchStrategy> productSearchStrategies;
     @Autowired
-    public ProductSearchServiceImpl(ProductCrudService productCrudService, ImageService imageService, ReviewService reviewService, Map<String, ProductSearchStrategy> productSearchStrategies) {
+    public ProductSearchServiceImpl(ProductCrudService productCrudService, ImageCrudService imageCrudService, ReviewService reviewService, Map<String, ProductSearchStrategy> productSearchStrategies) {
         this.productCrudService = productCrudService;
-        this.imageService = imageService;
+        this.imageCrudService = imageCrudService;
         this.reviewService = reviewService;
         this.productSearchStrategies = productSearchStrategies;
     }
@@ -56,7 +56,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     private ProductImageDtoCollection getProductImagesByProductId(Long productId) {
-        return imageService.getImageByProductId(productId);
+        return imageCrudService.getImageByProductId(productId);
     }
 
     private List<ReviewWithAvgProjection> getProductReviewsByProductId(Long productId) {

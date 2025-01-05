@@ -2,22 +2,23 @@ package com.gulbi.Backend.domain.user.controller;
 
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
-import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/profiles")
 public class ProfileController {
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
+
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @PostMapping
     public ResponseEntity<String> createProfile(@RequestBody ProfileRequestDto request) {
@@ -36,7 +37,7 @@ public class ProfileController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         // ProfileService에서 JWT 토큰을 반환받음
         String newToken = profileService.updateProfile(request, userDetails);
-        // 응답 헤더에 토큰 추가
+        // 응답 헤더에 토큰 추가 (jwt role 변경으로 유효하지 않은 헤더정보를 최신화해줘야함)
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + newToken)
                 .body("Profile updated successfully");

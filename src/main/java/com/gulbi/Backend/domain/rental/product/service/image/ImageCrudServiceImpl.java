@@ -3,6 +3,7 @@ package com.gulbi.Backend.domain.rental.product.service.image;
 import com.gulbi.Backend.domain.rental.product.code.ImageErrorCode;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageDeleteRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.update.ProductMainImageUpdateDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ImageException;
 import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
@@ -24,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +35,8 @@ public class ImageCrudServiceImpl implements ImageCrudService {
     private final FileSender fileSender;
 
     @Override
-    public void registerImageWithProduct(ImageUrlCollection imageUrlCollection, Product product) {
-        ImageCollection imageCollection = ImageFactory.createImagesFromUrls(imageUrlCollection, product);
+    public void registerImagesWithProduct(ImageUrlCollection imageUrlCollection, Product product) {
+        ImageCollection imageCollection = ImageFactory.createImages(imageUrlCollection, product);
         saveImages(imageCollection);
     }
 
@@ -50,6 +50,7 @@ public class ImageCrudServiceImpl implements ImageCrudService {
             }
             return ImageUrlCollection.of(imageUrlList);
         }catch (ImageException e){ // 추후 센더에 예외 생기면 센더에서 예외 호출 예정
+
             throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3);
         }
         catch (IOException e) {
@@ -57,6 +58,10 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         }
     }
 
+    @Override
+    public void updateMainImageFlags(ProductMainImageUpdateDto productMainImageUpdateDto) {
+        imageRepository.updateImagesFlagsToTrue(productMainImageUpdateDto.getMainImageUrl().getImageUrl());
+    }
 
 
     @Override
@@ -65,6 +70,16 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         List<ProductImageDto> images = imageRepository.findByImageWithProduct(productId);
         return ProductImageDtoCollection.of(images);
 
+    }
+
+
+    @Override
+    public void saveMainImage(ImageUrl mainImageUrl, Product product) {
+        imageRepository.save(ImageFactory.createImageToMain(mainImageUrl,product));
+    }
+    @Override
+    public void clearMainImageFlags(Product product){
+        imageRepository.resetMainImagesByProduct(product);
     }
 
     @Override
@@ -96,14 +111,11 @@ public class ImageCrudServiceImpl implements ImageCrudService {
 
     }
 
-    private void resolveProduct(Long productId){
-        productCrudService.getProductById(productId);
+
+    private Product resolveProduct(Long productId){
+        return productCrudService.getProductById(productId);
     }
 
-    private String temp(){
-        String randomUtl = "https://"+UUID.randomUUID();
-        return randomUtl;
-    }
 
 }
 

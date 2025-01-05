@@ -45,40 +45,45 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Product p " +
-            "SET p.tag = COALESCE(:#{#dto.tag}, p.tag), " +
-            "p.title = COALESCE(:#{#dto.title}, p.title), " +
-            "p.name = COALESCE(:#{#dto.name}, p.name), " +
-            "p.price = COALESCE(:#{#dto.price}, p.price), " +
-            "p.sido = COALESCE(:#{#dto.sido}, p.sido), " +
-            "p.sigungu = COALESCE(:#{#dto.sigungu}, p.sigungu), " +
-            "p.bname = COALESCE(:#{#dto.bname}, p.bname), " +
-            "p.description = COALESCE(:#{#dto.description}, p.description), " +
-            "p.mainImage = COALESCE(:#{#dto.mainImage}, p.mainImage), " +
-            "p.bCategory = :bCategory, " +
+            "SET p.bCategory = :bCategory, " +
             "p.mCategory = :mCategory, " +
             "p.sCategory = :sCategory " +
-            "WHERE p.id = :#{#dto.productId}")
-    Integer updateProductInfo(@Param("dto") ProductUpdateRequestDto dto,
-                           @Param("bCategory") Category bCategory,
-                           @Param("mCategory") Category mCategory,
-                           @Param("sCategory") Category sCategory);
-
+            "WHERE p.id = :productId")
+    void updateProductCategories(@Param("productId") Long productId,
+                                 @Param("bCategory") Category bCategory,
+                                 @Param("mCategory") Category mCategory,
+                                 @Param("sCategory") Category sCategory);
     @Transactional
     @Modifying
     @Query("UPDATE Product p " +
-            "SET p.tag = COALESCE(:#{#dto.tag}, p.tag), " +
-            "p.title = COALESCE(:#{#dto.title}, p.title), " +
-            "p.name = COALESCE(:#{#dto.name}, p.name), " +
-            "p.price = COALESCE(:#{#dto.price}, p.price), " +
-            "p.sido = COALESCE(:#{#dto.sido}, p.sido), " +
-            "p.sigungu = COALESCE(:#{#dto.sigungu}, p.sigungu), " +
-            "p.bname = COALESCE(:#{#dto.bname}, p.bname), " +
-            "p.description = COALESCE(:#{#dto.description}, p.description), " +
-            "p.mainImage = COALESCE(:#{#dto.mainImage}, p.mainImage) " +
-            "WHERE p.id = :#{#dto.productId}")
-    Integer updateProductInfo(@Param("dto") ProductUpdateRequestDto dto);
+            "SET p.tag = COALESCE(:tag, p.tag), " +
+            "p.title = COALESCE(:title, p.title), " +
+            "p.name = COALESCE(:name, p.name), " +
+            "p.price = COALESCE(:price, p.price), " +
+            "p.sido = COALESCE(:sido, p.sido), " +
+            "p.sigungu = COALESCE(:sigungu, p.sigungu), " +
+            "p.bname = COALESCE(:bname, p.bname), " +
+            "p.description = COALESCE(:description, p.description) " +
+            "WHERE p.id = :productId"
+    )
+    void updateProductInfo(
+            @Param("productId") Long productId,
+            @Param("tag") String tag,
+            @Param("title") String title,
+            @Param("name") String name,
+            @Param("price") Integer price,
+            @Param("sido") String sido,
+            @Param("sigungu") String sigungu,
+            @Param("bname") String bname,
+            @Param("description") String description
+    );
 
 
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Product p SET p.mainImage = :imageUrl WHERE p.id = :productId")
+    void updateProductMainImage(@Param("imageUrl") String imageUrl, @Param("productId") Long productId);
 
 
 

@@ -1,8 +1,12 @@
 package com.gulbi.Backend.domain.user.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginRequestDto {
     private String email;
     private String password;

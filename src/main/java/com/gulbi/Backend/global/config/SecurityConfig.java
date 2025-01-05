@@ -35,8 +35,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/signin", "/api/v1/auth/signup").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config").permitAll()
+                        .requestMatchers("/api/v1/auth/signin", "/api/v1/auth/signup")
+                        .permitAll()  // 로그인, 회원가입 엔드포인트는 허용
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config")
+                        .permitAll() // Swagger 관련 엔드포인트 허용
+                        //.requestMatchers("/api-completedprofile").hasRole("COMPLETED_PROFILE")
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -2,6 +2,8 @@ package com.gulbi.Backend.domain.user.service;
 
 import com.gulbi.Backend.domain.user.dto.LoginRequestDto;
 import com.gulbi.Backend.domain.user.dto.RegisterRequestDto;
+import com.gulbi.Backend.domain.user.entity.Profile;
+import com.gulbi.Backend.domain.user.repository.ProfileRepository;
 import com.gulbi.Backend.global.util.JwtUtil;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
@@ -23,6 +25,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final ProfileRepository profileRepository;
 
     public void register(RegisterRequestDto request){
         User user = User.builder()
@@ -40,7 +43,16 @@ public class UserService {
         );
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return jwtUtil.generateToken(user.getEmail(), user.getId()  );
+
+        Profile profile = profileRepository.findByUser(user).orElse(null);
+        String role = (profile == null || !isProfileComplete(profile)) ? "ROLE_INCOMPLETED_USER" : "ROLE_COMPLETED_USER";
+
+        return jwtUtil.generateToken(user.getEmail(), user.getId(), role);
+    }
+    public boolean isProfileComplete(Profile profile) {
+        return profile.getImage() != null && profile.getIntro() != null && profile.getPhone() != null &&
+                profile.getSignature() != null && profile.getSido() != null && profile.getSigungu() != null &&
+                profile.getBname() != null; //협의해야할듯 어떤필드 여부를 따질지
     }
 
     public User getAuthenticatedUser() {
@@ -73,4 +85,13 @@ public class UserService {
             throw new RuntimeException("No authenticated user");
         }
     }
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
 }

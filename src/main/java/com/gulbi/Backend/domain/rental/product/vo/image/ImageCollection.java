@@ -20,9 +20,9 @@ public class ImageCollection {
     }
 
     public List<Image> getImages(){
-        if(imageList.isEmpty()){
+        if(this.imageList.isEmpty()){
             throw  new ImageVoException.ImageCollectionIsEmptyException(ImageErrorCode.IMAGE_COLLECTION_IS_EMPTY);
         }
-        return new ArrayList<>(imageList);
+        return new ArrayList<>(this.imageList);
     }
 }

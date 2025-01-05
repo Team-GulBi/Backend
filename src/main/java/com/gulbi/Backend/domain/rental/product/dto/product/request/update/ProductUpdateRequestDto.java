@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
+
 @Getter
 public class ProductUpdateRequestDto {
-    @Schema(example = "1")
-    private final Long productId;
     @Schema(example = "수정1,수정2")
     private final String tag;
     @Schema(example = "제목수정")
@@ -29,13 +29,13 @@ public class ProductUpdateRequestDto {
 
     @Hidden
     @Setter
-    private  String mainImage;
-    @Hidden
-    @Setter
     private CategoryInProductDto categoryInProduct;
 
-    public ProductUpdateRequestDto(Long productId, String tag, String title, String productName, Integer price, String sido, String sigungu, String bname, String description) {
-        this.productId = productId;
+    @Hidden
+    @Setter
+    private Long productId;
+
+    private ProductUpdateRequestDto(String tag, String title, String productName, Integer price, String sido, String sigungu, String bname, String description) {
         this.tag = tag;
         this.title = title;
         this.name = productName;
@@ -44,5 +44,13 @@ public class ProductUpdateRequestDto {
         this.sigungu = sigungu;
         this.bname = bname;
         this.description = description;
+    }
+
+    public static ProductUpdateRequestDto of(String tag, String title, String productName, Integer price, String sido, String sigungu, String bname, String description) {
+        return new ProductUpdateRequestDto(tag, title, productName, price, sido, sigungu, bname, description);
+    }
+
+    public static ProductUpdateRequestDto of(){
+        return new ProductUpdateRequestDto(null, null, null, null, null, null, null, null);
     }
 }

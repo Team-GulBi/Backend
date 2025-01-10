@@ -1,7 +1,9 @@
 package com.gulbi.Backend.domain.rental.review.service;
 
 import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
+import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
+import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.review.code.ReviewErrorCode;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewUpdateRequestDto;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
@@ -21,7 +23,7 @@ import java.util.List;
 public class ReviewCrudServiceImpl implements ReviewCrudService{
 
     private final ReviewRepository reviewRepository;
-
+    private final ProductCrudService productCrudService;
     @Override
     public void saveReview(Review review) {
         try{
@@ -52,5 +54,14 @@ public class ReviewCrudServiceImpl implements ReviewCrudService{
         Integer rating = reviewUpdateRequestDto.getRating();
         Long reviewId = reviewUpdateRequestDto.getReviewId();
         reviewRepository.updateReviewInfo(rating, content, reviewId);
+    }
+
+    @Override
+    public void removeAllReviewsFromProductId(Long productId) {
+        reviewRepository.deleteAllReviewsByProduct(resolveProduct(productId));
+    }
+
+    private Product resolveProduct(Long productId){
+        return productCrudService.getProductById(productId);
     }
 }

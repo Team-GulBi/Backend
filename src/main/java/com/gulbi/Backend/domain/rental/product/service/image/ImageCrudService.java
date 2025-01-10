@@ -16,6 +16,7 @@ public interface ImageCrudService {
     public void clearMainImageFlags(Product product);
     public void saveImages(ImageCollection imageCollection);
     public void deleteImages(ProductImageDeleteRequestDto productImageDeleteRequestDto);
+    public void removeAllImagesFromProduct(Long productId);
     public ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection);
     public void updateMainImageFlags(ProductMainImageUpdateDto productMainImageUpdateDto);
 

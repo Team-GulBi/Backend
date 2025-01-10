@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.rental.review.repository;
 
+import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import com.gulbi.Backend.domain.rental.review.entity.Review;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,9 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("UPDATE Review r SET r.rating = :rating, r.content = :content WHERE r.id = :reviewId")
     public void updateReviewInfo(@Param("rating") Integer rating, @Param("content")String content, @Param("reviewId") Long reviewId);
 
-
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Review r WHERE r.product = :product")
+    public void deleteAllReviewsByProduct(@Param("product")Product product);
 
 }

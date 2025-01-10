@@ -104,6 +104,13 @@ public class ProductCrudServiceImpl implements ProductCrudService{
     public void updateProductMainImage(ProductMainImageUpdateDto productMainImageUpdateDto){
         productRepository.updateProductMainImage(productMainImageUpdateDto.getMainImageUrl().getImageUrl(),productMainImageUpdateDto.getProductId());
     }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        productRepository.deleteAllbyId(productId);
+    }
+
+
 }
 
 

@@ -34,5 +34,10 @@ public interface ImageRepository extends JpaRepository<Image,Long > {
     @Query("UPDATE Image i SET i.main = true WHERE i.url = :imageUrl")
     void updateImagesFlagsToTrue(@Param("imageUrl") String imageUrl);
 
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Image i WHERE i.product=:product")
+    void deleteAllImagesByProductId(@Param("product")Product product);
+
 
 }

@@ -153,11 +153,13 @@ public class ProductController {
         RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_INFO_UPDATED_SUCCESS);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<RestApiResponse> deleteProduct(@PathVariable("productId") Long productId){
+        productService.deleteProduct(productId);
+        RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_INFO_UPDATED_SUCCESS);
+        return ResponseEntity.ok(response);
+    }
 }
 
-//System.out.println(toBeUpdatedCategories);
-//        System.out.println(toBeUpdatedProductInfo); //상품 카테고리가 null
-//        System.out.println(toBeAddedImages);
-//        System.out.println(toBeUpdatedMainImageFile);
-//        System.out.println(toBeUpdatedMainImageWithUrl);
-//        System.out.println(toBeDeletedImages);
+

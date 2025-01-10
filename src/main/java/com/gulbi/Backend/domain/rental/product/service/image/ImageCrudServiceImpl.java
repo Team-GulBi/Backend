@@ -111,6 +111,11 @@ public class ImageCrudServiceImpl implements ImageCrudService {
 
     }
 
+    @Override
+    public void removeAllImagesFromProduct(Long productId) {
+        imageRepository.deleteAllImagesByProductId(resolveProduct(productId));
+    }
+
 
     private Product resolveProduct(Long productId){
         return productCrudService.getProductById(productId);

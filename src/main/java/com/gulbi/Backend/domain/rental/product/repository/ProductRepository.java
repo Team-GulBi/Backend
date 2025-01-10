@@ -85,7 +85,10 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("UPDATE Product p SET p.mainImage = :imageUrl WHERE p.id = :productId")
     void updateProductMainImage(@Param("imageUrl") String imageUrl, @Param("productId") Long productId);
 
-
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Product p WHERE p.id=:productId")
+    void deleteAllbyId(@Param("productId") Long productId);
 
 
 

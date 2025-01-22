@@ -69,6 +69,12 @@ public class ProfileService {
                     profile.getSigungu(), profile.getBname());
         }
     }
+    
+    public String getProfileImage(Long userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile not found for user ID: " + userId));
+        return profile.getImage();
+    }
 
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)

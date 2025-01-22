@@ -60,6 +60,8 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Authenticated User not found"));
     }
+
+
     public User getDummyUser() {
         // 유니크한 email을 생성하기 위해 UUID를 사용
         String uniqueEmail = "user_" + UUID.randomUUID().toString() + "@example.com";
@@ -92,6 +94,12 @@ public class UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+    // 닉네임 반환 메서드 (ID 기반)
+    public String getNicknameById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        return user.getNickname();
     }
 
 }

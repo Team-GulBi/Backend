@@ -21,7 +21,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ProductCrudService productCrudService;
 
     @Override
-    public void registerReview(ReviewCreateRequestDto review) {
+    public void addReviewToProduct(ReviewCreateRequestDto review) {
         reviewCrudService.saveReview(createReviewWithUserAndProduct(review));
     }
 

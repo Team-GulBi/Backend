@@ -2,8 +2,8 @@ package com.gulbi.Backend.domain.rental.product.vo.image;
 
 import com.gulbi.Backend.domain.rental.product.code.ImageErrorCode;
 import com.gulbi.Backend.domain.rental.product.exception.ImageVoException;
+import com.gulbi.Backend.global.error.ExceptionMetaData;
 import lombok.Getter;
-import org.apache.xmlbeans.impl.regex.Match;
 
 import java.util.regex.Pattern;
 
@@ -23,7 +23,8 @@ public class ImageUrl {
 
     private void ValidateImageUrl(String imageUrl){
         if (!Pattern.matches(REGEX, imageUrl)){
-            throw new ImageVoException.NotValidatedImageUrlException(ImageErrorCode.NOT_VALIDATED_IMAGE_URL);
+            ExceptionMetaData metadata=new ExceptionMetaData(imageUrl,this.getClass().getName());
+            throw new ImageVoException.NotValidatedImageUrlException(ImageErrorCode.NOT_VALIDATED_IMAGE_URL,metadata);
         }
     }
 

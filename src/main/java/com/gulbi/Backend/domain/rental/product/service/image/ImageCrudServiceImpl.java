@@ -15,6 +15,7 @@ import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
 import com.gulbi.Backend.global.util.FileSender;
+import com.gulbi.Backend.global.error.ExceptionMetaData;
 import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,19 +43,17 @@ public class ImageCrudServiceImpl implements ImageCrudService {
 
     @Override
     public ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection) {
-        try{
+        try {
             List<ImageUrl> imageUrlList = new ArrayList<>();
-            for (MultipartFile file : productImageCollection.getProductImages()){
+            for (MultipartFile file : productImageCollection.getProductImages()) {
                 ImageUrl imageUrl = ImageUrl.of(fileSender.sendFile(file));
                 imageUrlList.add(imageUrl);
             }
             return ImageUrlCollection.of(imageUrlList);
-        }catch (ImageException e){ // 추후 센더에 예외 생기면 센더에서 예외 호출 예정
-
-            throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (ImageException e) {
+            throw createImageUploadException(e);
+        } catch (IOException e) {
+            throw createImageProcessingException(e);
         }
     }
 
@@ -63,52 +62,49 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         imageRepository.updateImagesFlagsToTrue(productMainImageUpdateDto.getMainImageUrl().getImageUrl());
     }
 
-
     @Override
     public ProductImageDtoCollection getImageByProductId(Long productId) {
         resolveProduct(productId);
         List<ProductImageDto> images = imageRepository.findByImageWithProduct(productId);
         return ProductImageDtoCollection.of(images);
-
     }
-
 
     @Override
     public void saveMainImage(ImageUrl mainImageUrl, Product product) {
-        imageRepository.save(ImageFactory.createImageToMain(mainImageUrl,product));
+        imageRepository.save(ImageFactory.createImageToMain(mainImageUrl, product));
     }
+
     @Override
-    public void clearMainImageFlags(Product product){
+    public void clearMainImageFlags(Product product) {
         imageRepository.resetMainImagesByProduct(product);
     }
 
     @Override
-    public void saveImages(ImageCollection imageCollection){
+    public void saveImages(ImageCollection imageCollection) {
         try {
             imageRepository.saveAll(imageCollection.getImages());
-        } catch (DataIntegrityViolationException | JpaSystemException | PersistenceException |
-                 IllegalArgumentException e) {
-            throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3);
+        } catch (DataIntegrityViolationException | JpaSystemException | PersistenceException | IllegalArgumentException e) {
+            throw createImageUploadException(e);
         }
     }
 
     @Override
     public void deleteImages(ProductImageDeleteRequestDto productImageDeleteRequestDto) {
-        if(productImageDeleteRequestDto.getImagesId()==null){
-            throw new ImageException.NotContainedImageIdException(ImageErrorCode.NOT_CONTAINED_IMAGE_ID);
-        }
-        try{
-            imageRepository.deleteImages(productImageDeleteRequestDto);
-        } catch (DataIntegrityViolationException e) {
-            throw new ImageException.ImageDeleteValidationException(ImageErrorCode.IMAGE_DELETE_FAILED);
-        } catch (JpaSystemException | PersistenceException e) {
-            throw new ImageException.DatabaseErrorException(ImageErrorCode.DATABASE_ERROR);
-        } catch (IllegalArgumentException e) {
-            throw new ImageException.InvalidProductImageIdException(ImageErrorCode.INVALID_IMAGE_ID);
-        } catch (Exception e) {
-            throw new ImageException.ImageDeleteFailedException(ImageErrorCode.IMAGE_DELETE_FAILED);
+        if (productImageDeleteRequestDto.getImagesId() == null) {
+            throw createImageDeleteValidationException(productImageDeleteRequestDto);
         }
 
+        try {
+            imageRepository.deleteImages(productImageDeleteRequestDto);
+        } catch (DataIntegrityViolationException e) {
+            throw createImageDeleteValidationException(productImageDeleteRequestDto);
+        } catch (JpaSystemException | PersistenceException e) {
+            throw createImageDatabaseErrorException(e);
+        } catch (IllegalArgumentException e) {
+            throw createInvalidProductImageIdException(e);
+        } catch (Exception e) {
+            throw createImageDeleteFailedException(e);
+        }
     }
 
     @Override
@@ -116,12 +112,37 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         imageRepository.deleteAllImagesByProductId(resolveProduct(productId));
     }
 
-
-    private Product resolveProduct(Long productId){
+    private Product resolveProduct(Long productId) {
         return productCrudService.getProductById(productId);
     }
 
+    private ImageException.NotUploadImageToS3Exception createImageUploadException(Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
+        throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3, exceptionMetaData);
+    }
 
+    private ImageException.ImageDeleteValidationException createImageDeleteValidationException(ProductImageDeleteRequestDto dto) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(dto, this.getClass().getName());
+        throw new ImageException.ImageDeleteValidationException(ImageErrorCode.IMAGE_DELETE_FAILED, exceptionMetaData);
+    }
+
+    private ImageException.DatabaseErrorException createImageDatabaseErrorException(Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
+        throw new ImageException.DatabaseErrorException(ImageErrorCode.DATABASE_ERROR, exceptionMetaData);
+    }
+
+    private ImageException.InvalidProductImageIdException createInvalidProductImageIdException(Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
+        throw new ImageException.InvalidProductImageIdException(ImageErrorCode.INVALID_IMAGE_ID, exceptionMetaData);
+    }
+
+    private ImageException.ImageDeleteFailedException createImageDeleteFailedException(Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
+        throw new ImageException.ImageDeleteFailedException(ImageErrorCode.IMAGE_DELETE_FAILED, exceptionMetaData);
+    }
+
+    private RuntimeException createImageProcessingException(IOException e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
+        throw new RuntimeException("Error during file processing");
+    }
 }
-
-

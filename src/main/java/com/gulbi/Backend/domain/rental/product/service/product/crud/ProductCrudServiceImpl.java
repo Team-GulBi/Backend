@@ -17,10 +17,10 @@ import jakarta.persistence.PersistenceException;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class ProductCrudServiceImpl implements ProductCrudService {
+    private final String className = this.getClass().getName();
     private final ProductRepository productRepository;
 
     @Override
@@ -28,31 +28,38 @@ public class ProductCrudServiceImpl implements ProductCrudService {
         try {
             productRepository.save(product);
         } catch (DataIntegrityViolationException e) {
-            throw createProductValidationException(product);
+            createProductValidationException(product, e);
         } catch (JpaSystemException | PersistenceException e) {
-            throw createDatabaseErrorException(product);
+            createDatabaseErrorException(product, e);
         } catch (IllegalArgumentException e) {
-            throw createMissingProductFieldException(product);
+            createMissingProductFieldException(product, e);
         }
     }
 
     @Override
     public ProductDto getProductDtoById(Long productId) {
-        return productRepository.findProductDtoById(productId)
-                .orElseThrow(() -> createProductNotFoundException(productId));
+        Optional<ProductDto> productDtoOptional = productRepository.findProductDtoById(productId);
+        if (!productDtoOptional.isPresent()) {
+            createProductNotFoundException(productId);  // 예외 던지기
+        }
+        return productDtoOptional.get();  // 값이 있으면 반환
     }
 
     @Override
     public Product getProductById(Long productId) {
-        return productRepository.findProductById(productId)
-                .orElseThrow(() -> createProductNotFoundExceptionWithMetaData(productId));
+        Optional<Product> productOptional = productRepository.findProductById(productId);
+        if (!productOptional.isPresent()) {
+            createProductNotFoundExceptionWithMetaData(productId);  // 예외 던지기
+        }
+        return productOptional.get();  // 값이 있으면 반환
     }
+
 
     @Override
     public List<ProductOverViewResponse> getProductOverViewByTitle(String title) {
         List<ProductOverViewResponse> overViewResponses = productRepository.findProductsByTitle(title);
         if (overViewResponses.isEmpty()) {
-            throw createNoProductFoundForTitleException(title);
+            createNoProductFoundForTitleException(title);
         }
         return overViewResponses;
     }
@@ -61,17 +68,19 @@ public class ProductCrudServiceImpl implements ProductCrudService {
     public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3) {
         List<ProductOverViewResponse> overViewResponses = productRepository.findProductsByTag(tag, tag2, tag3);
         if (overViewResponses.isEmpty()) {
-            throw createNoProductFoundForTagsException(tag, tag2, tag3);
+            createNoProductFoundForTagsException(tag, tag2, tag3);
         }
         return overViewResponses;
     }
 
     @Override
     public void updateProductViews(Long productId) {
-        Optional.ofNullable(productRepository.updateProductViews(productId))
-                .filter(updatedRows -> updatedRows > 0)
-                .orElseThrow(() -> createNoUpdateProductException(productId));
+        int updatedRows = productRepository.updateProductViews(productId);
+        if (updatedRows <= 0) {
+            createNoUpdateProductException(productId);  // 예외 던지기
+        }
     }
+
 
     @Override
     public void updateProductInfo(ProductUpdateRequestDto dto) {
@@ -108,43 +117,86 @@ public class ProductCrudServiceImpl implements ProductCrudService {
         productRepository.deleteAllbyId(productId);
     }
 
-    private ProductException.ProductValidationException createProductValidationException(Product product) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(product, this.getClass().getName());
-        return new ProductException.ProductValidationException(ProductErrorCode.PRODUCT_VALIDATION_FAILED, exceptionMetaData);
+    private void createProductValidationException(Object args, Throwable e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ProductErrorCode.PRODUCT_VALIDATION_FAILED)
+                .build();
+        throw new ProductException.ProductValidationException(exceptionMetaData);
     }
 
-    private ProductException.DatabaseErrorException createDatabaseErrorException(Product product) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(product, this.getClass().getName());
-        return new ProductException.DatabaseErrorException(ProductErrorCode.DATABASE_ERROR, exceptionMetaData);
+    private void createDatabaseErrorException(Object args, Throwable e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ProductErrorCode.DATABASE_ERROR)
+                .build();
+        throw new ProductException.DatabaseErrorException(exceptionMetaData);
     }
 
-    private ProductException.MissingProductFieldException createMissingProductFieldException(Product product) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(product, this.getClass().getName());
-        return new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_REQUIRED_FIELD, exceptionMetaData);
+    private void createMissingProductFieldException(Object args, Throwable e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ProductErrorCode.MISSING_REQUIRED_FIELD)
+                .build();
+        throw new ProductException.MissingProductFieldException(exceptionMetaData);
     }
 
-    private ProductException.ProductNotFoundException createProductNotFoundException(Long productId) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(productId, this.getClass().getName());
-        return new ProductException.ProductNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND, exceptionMetaData);
+    private void createProductNotFoundException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND)
+                .build();
+        throw new ProductException.ProductNotFoundException(exceptionMetaData);
     }
 
-    private ProductException.ProductNotFoundException createProductNotFoundExceptionWithMetaData(Long productId) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(productId, this.getClass().getName());
-        return new ProductException.ProductNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND, exceptionMetaData);
+    private void createProductNotFoundExceptionWithMetaData(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND)
+                .build();
+        throw new ProductException.ProductNotFoundException(exceptionMetaData);
     }
 
-    private ProductException.NoProductFoundForTitleException createNoProductFoundForTitleException(String title) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(title, this.getClass().getName());
-        return new ProductException.NoProductFoundForTitleException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TITLE, exceptionMetaData);
+    private void createNoProductFoundForTitleException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TITLE)
+                .build();
+        throw new ProductException.NoProductFoundForTitleException(exceptionMetaData);
     }
 
-    private ProductException.NoProductFoundForTagsException createNoProductFoundForTagsException(String tag, String tag2, String tag3) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(tag + ", " + tag2 + ", " + tag3, this.getClass().getName());
-        return new ProductException.NoProductFoundForTagsException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TAGS, exceptionMetaData);
+    private void createNoProductFoundForTagsException(String tag, String tag2, String tag3) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(tag + ", " + tag2 + ", " + tag3)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TAGS)
+                .build();
+        throw new ProductException.NoProductFoundForTagsException(exceptionMetaData);
     }
 
-    private ProductException.NoUpdateProductException createNoUpdateProductException(Long productId) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(productId, this.getClass().getName());
-        return new ProductException.NoUpdateProductException(ProductErrorCode.NO_UPDATED_COLUMNS, exceptionMetaData);
+    private void createNoUpdateProductException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.NO_UPDATED_COLUMNS)
+                .build();
+        throw new ProductException.NoUpdateProductException(exceptionMetaData);
     }
 }

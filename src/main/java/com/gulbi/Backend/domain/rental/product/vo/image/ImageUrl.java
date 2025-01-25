@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.util.regex.Pattern;
 
 public class ImageUrl {
+    private final String className = this.getClass().getName();
     private static final String REGEX = "^https://.*";
     @Getter
     private final String imageUrl;
@@ -23,8 +24,13 @@ public class ImageUrl {
 
     private void ValidateImageUrl(String imageUrl){
         if (!Pattern.matches(REGEX, imageUrl)){
-            ExceptionMetaData metadata=new ExceptionMetaData(imageUrl,this.getClass().getName());
-            throw new ImageVoException.NotValidatedImageUrlException(ImageErrorCode.NOT_VALIDATED_IMAGE_URL,metadata);
+            ExceptionMetaData metadata=new ExceptionMetaData
+                    .Builder()
+                    .args(imageUrl)
+                    .className(className)
+                    .responseApiCode(ImageErrorCode.NOT_VALIDATED_IMAGE_URL)
+                    .build();
+            throw new ImageVoException.NotValidatedImageUrlException(metadata);
         }
     }
 

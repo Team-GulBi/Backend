@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImageCollection {
+    private final String className = this.getClass().getName();
     private final List<Image> imageList;
 
     private ImageCollection(List<Image> imageList) {
@@ -21,8 +22,12 @@ public class ImageCollection {
 
     public List<Image> getImages(){
         if(this.imageList.isEmpty()){
-            ExceptionMetaData exceptionMetaData = new ExceptionMetaData(imageList,this.getClass().getName());
-            throw  new ImageVoException.ImageCollectionIsEmptyException(ImageErrorCode.IMAGE_COLLECTION_IS_EMPTY, exceptionMetaData);
+            ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                    .Builder()
+                    .className(className)
+                    .responseApiCode(ImageErrorCode.IMAGE_COLLECTION_IS_EMPTY)
+                    .build();
+            throw  new ImageVoException.ImageCollectionIsEmptyException(exceptionMetaData);
         }
         return new ArrayList<>(this.imageList);
     }

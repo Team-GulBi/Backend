@@ -120,8 +120,13 @@ public class Product extends BaseEntity {
         this.mainImage = mainImage;
     }
 
-    private ProductException.MissingProductFieldException throwProductException(ProductErrorCode errorCode, Object fieldValue) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(fieldValue, this.getClass().getName());
-        throw new ProductException.MissingProductFieldException(errorCode, exceptionMetaData);
+    private ProductException.MissingProductFieldException throwProductException(ProductErrorCode errorCode, Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(this.getClass().getName())
+                .responseApiCode(errorCode)
+                .build();
+        throw new ProductException.MissingProductFieldException(exceptionMetaData);
     }
 }

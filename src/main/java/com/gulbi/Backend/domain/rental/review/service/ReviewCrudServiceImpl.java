@@ -29,9 +29,9 @@ public class ReviewCrudServiceImpl implements ReviewCrudService {
         try {
             reviewRepository.save(review);
         } catch (DataIntegrityViolationException | JpaSystemException | PersistenceException e) {
-            throw createDatabaseErrorException(review);
+            createDatabaseErrorException(review, this.getClass().getName(),e);
         } catch (IllegalArgumentException e) {
-            throw createMissingReviewFieldException(review);
+            createMissingReviewFieldException(review,this.getClass().getName(),e);
         }
     }
 
@@ -63,13 +63,23 @@ public class ReviewCrudServiceImpl implements ReviewCrudService {
         return productCrudService.getProductById(productId);
     }
 
-    private ReviewException.DatabaseErrorException createDatabaseErrorException(Review review) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(review, this.getClass().getName());
-        return new ReviewException.DatabaseErrorException(ReviewErrorCode.DATABASE_ERROR, exceptionMetaData);
+    private void createDatabaseErrorException(Review review, String className, Throwable throwable) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder()
+                .args(review)
+                .className(className)
+                .stackTrace(throwable)
+                .responseApiCode(ReviewErrorCode.DATABASE_ERROR)
+                .build();
+        throw new ReviewException.DatabaseErrorException(exceptionMetaData);
     }
 
-    private ReviewException.MissingReviewFiledException createMissingReviewFieldException(Review review) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(review, this.getClass().getName());
-        return new ReviewException.MissingReviewFiledException(ReviewErrorCode.DATABASE_ERROR,exceptionMetaData);
+    private void createMissingReviewFieldException(Review review, String className, Throwable throwable) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder()
+                .args(review)
+                .className(className)
+                .stackTrace(throwable)
+                .responseApiCode(ReviewErrorCode.DATABASE_ERROR)
+                .build();
+        throw  new ReviewException.MissingReviewFiledException(exceptionMetaData);
     }
 }

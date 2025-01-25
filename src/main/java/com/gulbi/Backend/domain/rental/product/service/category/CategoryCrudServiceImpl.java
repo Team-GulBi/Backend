@@ -16,12 +16,12 @@ import java.util.List;
 public class CategoryCrudServiceImpl implements CategoryCrudService {
 
     private final CategoryRepository categoryRepository;
-
+    private final String className = this.getClass().getName();
     @Override
     public List<CategoryProjection> getBigCategories() {
         List<CategoryProjection> bigCategoryList = categoryRepository.findAllNoParentProjection();
         if (bigCategoryList.isEmpty()) {
-            throwNotInitializedCategoryException("Big Categories");
+            throwNotInitializedCategoryException();
         }
         return bigCategoryList;
     }
@@ -30,29 +30,34 @@ public class CategoryCrudServiceImpl implements CategoryCrudService {
     public List<CategoryProjection> getBelowCategoriesByParentId(Long categoryId) {
         List<CategoryProjection> belowCategoryList = categoryRepository.findBelowCategory(categoryId);
         if (belowCategoryList.isEmpty()) {
-            throwCategoryException(CategoryErrorCode.NOT_FOUND_CATEGORY, "Category with ID: " + categoryId);
+            throwCategoryException(categoryId);
         }
         return belowCategoryList;
     }
 
     @Override
     public Category getCategoryById(Long categoryId) {
-        return categoryRepository.findById(Math.toIntExact(categoryId)).orElseThrow(
-                () -> {
-                    throwCategoryException(CategoryErrorCode.NOT_FOUND_CATEGORY, "Category ID: " + categoryId);
-                    return null; // 이 부분은 사실 필요하지 않음, 예외가 발생하면 여기까지 오지 않음
-                }
-        );
+        return categoryRepository.findById(Math.toIntExact(categoryId))
+                .orElseThrow(() -> throwCategoryException(categoryId));
     }
 
-    private CategoryException.NotInitializedCategoryException throwNotInitializedCategoryException(String fieldValue) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(fieldValue, this.getClass().getName());
-        throw new CategoryException.NotInitializedCategoryException(CategoryErrorCode.NOT_INITIALIZED_CATEGORIES, exceptionMetaData);
+    private CategoryException.NotInitializedCategoryException throwNotInitializedCategoryException() {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .className(className)
+                .responseApiCode(CategoryErrorCode.NOT_INITIALIZED_CATEGORIES)
+                .build();
+        throw new CategoryException.NotInitializedCategoryException(exceptionMetaData);
     }
 
 
-    private CategoryException.CategoryNotFoundException throwCategoryException(CategoryErrorCode errorCode, String fieldValue) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(fieldValue, this.getClass().getName());
-        throw new CategoryException.CategoryNotFoundException(errorCode, exceptionMetaData);
+    private CategoryException.CategoryNotFoundException throwCategoryException(Object fieldValue) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(fieldValue)
+                .className(className)
+                .responseApiCode(CategoryErrorCode.NOT_FOUND_CATEGORY)
+                .build();
+        throw new CategoryException.CategoryNotFoundException(exceptionMetaData);
     }
 }

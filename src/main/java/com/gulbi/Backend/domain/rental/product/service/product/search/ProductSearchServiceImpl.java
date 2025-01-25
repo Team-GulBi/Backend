@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Service
 public class ProductSearchServiceImpl implements ProductSearchService {
+    private final String className = this.getClass().getName();
     private final ProductCrudService productCrudService;
     private final ImageCrudService imageCrudService;
     private final ReviewService reviewService;
@@ -73,8 +74,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     // 예외를 생성하는 메서드
-    private ProductException.InvalidProductSearchDetailException createInvalidProductSearchDetailException(ProductSearchRequestDto productSearchRequestDto) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(productSearchRequestDto, this.getClass().getName());
-        return new ProductException.InvalidProductSearchDetailException(ProductErrorCode.UNSUPPORTED_SEARCH_CONDITION, exceptionMetaData);
+    private ProductException.InvalidProductSearchDetailException createInvalidProductSearchDetailException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder().args(args).className(className).responseApiCode(ProductErrorCode.UNSUPPORTED_SEARCH_CONDITION).build();
+        return new ProductException.InvalidProductSearchDetailException(exceptionMetaData);
     }
 }

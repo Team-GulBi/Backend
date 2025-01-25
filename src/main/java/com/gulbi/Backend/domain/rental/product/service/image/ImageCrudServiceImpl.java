@@ -30,7 +30,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ImageCrudServiceImpl implements ImageCrudService {
-
+    private final String className = this.getClass().getName();
     private final ImageRepository imageRepository;
     private final ProductCrudService productCrudService;
     private final FileSender fileSender;
@@ -51,9 +51,9 @@ public class ImageCrudServiceImpl implements ImageCrudService {
             }
             return ImageUrlCollection.of(imageUrlList);
         } catch (ImageException e) {
-            throw createImageUploadException(e);
+            throw createImageUploadException(productImageCollection,e);
         } catch (IOException e) {
-            throw createImageProcessingException(e);
+            throw createImageProcessingException(productImageCollection,e);
         }
     }
 
@@ -84,7 +84,7 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         try {
             imageRepository.saveAll(imageCollection.getImages());
         } catch (DataIntegrityViolationException | JpaSystemException | PersistenceException | IllegalArgumentException e) {
-            throw createImageUploadException(e);
+            throw createImageUploadException(imageCollection,e);
         }
     }
 
@@ -97,15 +97,17 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         try {
             imageRepository.deleteImages(productImageDeleteRequestDto);
         } catch (DataIntegrityViolationException e) {
-            throw createImageDeleteValidationException(productImageDeleteRequestDto);
+            throw createImageDeleteValidationException(productImageDeleteRequestDto,e);
         } catch (JpaSystemException | PersistenceException e) {
-            throw createImageDatabaseErrorException(e);
+            throw createImageDatabaseErrorException(productImageDeleteRequestDto,e);
         } catch (IllegalArgumentException e) {
-            throw createInvalidProductImageIdException(e);
+            throw createInvalidProductImageIdException(productImageDeleteRequestDto,e);
         } catch (Exception e) {
-            throw createImageDeleteFailedException(e);
+            throw createImageDeleteFailedException(productImageDeleteRequestDto,e);
         }
     }
+
+
 
     @Override
     public void removeAllImagesFromProduct(Long productId) {
@@ -116,33 +118,71 @@ public class ImageCrudServiceImpl implements ImageCrudService {
         return productCrudService.getProductById(productId);
     }
 
-    private ImageException.NotUploadImageToS3Exception createImageUploadException(Exception e) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
-        throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3, exceptionMetaData);
+    private ImageException.NotUploadImageToS3Exception createImageUploadException(Object args, Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3)
+                .build();
+        throw new ImageException.NotUploadImageToS3Exception(exceptionMetaData);
     }
 
-    private ImageException.ImageDeleteValidationException createImageDeleteValidationException(ProductImageDeleteRequestDto dto) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(dto, this.getClass().getName());
-        throw new ImageException.ImageDeleteValidationException(ImageErrorCode.IMAGE_DELETE_FAILED, exceptionMetaData);
+    private ImageException.ImageDeleteValidationException createImageDeleteValidationException(Object args,Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ImageErrorCode.IMAGE_DELETE_FAILED)
+                .build();
+        throw new ImageException.ImageDeleteValidationException(exceptionMetaData);
+    }
+    private ImageException.ImageDeleteValidationException createImageDeleteValidationException(Object args) {
+        //
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ImageErrorCode.INVALID_IMAGE_ID)
+                .build();
+        throw new ImageException.ImageDeleteValidationException(exceptionMetaData);
+    }
+    private ImageException.DatabaseErrorException createImageDatabaseErrorException(Object args, Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ImageErrorCode.DATABASE_ERROR)
+                .build();
+        throw new ImageException.DatabaseErrorException(exceptionMetaData);
     }
 
-    private ImageException.DatabaseErrorException createImageDatabaseErrorException(Exception e) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
-        throw new ImageException.DatabaseErrorException(ImageErrorCode.DATABASE_ERROR, exceptionMetaData);
+    private ImageException.InvalidProductImageIdException createInvalidProductImageIdException(Object args, Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ImageErrorCode.INVALID_IMAGE_ID)
+                .build();
+        throw new ImageException.InvalidProductImageIdException(exceptionMetaData);
     }
 
-    private ImageException.InvalidProductImageIdException createInvalidProductImageIdException(Exception e) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
-        throw new ImageException.InvalidProductImageIdException(ImageErrorCode.INVALID_IMAGE_ID, exceptionMetaData);
+    private ImageException.ImageDeleteFailedException createImageDeleteFailedException(Object args, Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ImageErrorCode.IMAGE_DELETE_FAILED).build();
+        throw new ImageException.ImageDeleteFailedException(exceptionMetaData);
     }
 
-    private ImageException.ImageDeleteFailedException createImageDeleteFailedException(Exception e) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
-        throw new ImageException.ImageDeleteFailedException(ImageErrorCode.IMAGE_DELETE_FAILED, exceptionMetaData);
-    }
-
-    private RuntimeException createImageProcessingException(IOException e) {
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData(e.getMessage(), this.getClass().getName());
-        throw new RuntimeException("Error during file processing");
+    private RuntimeException createImageProcessingException(Object args, Exception e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder().args(args).className(className).stackTrace(e).responseApiCode(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3).build();
+        throw new ImageException.NotUploadImageToS3Exception(exceptionMetaData);
     }
 }

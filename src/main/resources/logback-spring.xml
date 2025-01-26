@@ -1,26 +1,29 @@
-<configuration scan="true" scanPeriod="30 seconds">
-  <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
-    <property name="NOT_PROD_LOG_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
-    <property name="PROD_LOG_PATTERN"
-              value="{&quot;metadata&quot;:{ &quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;, &quot;level&quot;:&quot;%-5level&quot;, &quot;class&quot;:&quot;%C&quot;, &quot;method&quot;:&quot;%M&quot;, &quot;line&quot;:&quot;%L&quot;, &quot;message&quot;:&quot;%msg&quot;}%n}"/>
-    <springProfile name="!prod">
-        <include resource="console-appender.xml"/>
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-        </root>
-    </springProfile>
-    <springProfile name="!prod">
-        <include resource="file-info-appender.xml"/>
-        <include resource="file-warn-appender.xml"/>
-        <include resource="file-error-appender.xml"/>
+<configuration scan="true" scanPeriod="5 seconds">
+    <!-- 날짜 변수 정의 -->
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
 
-        <root level="INFO">
-            <appender-ref ref="FILE-INFO"/>
-            <appender-ref ref="FILE-WARN"/>
-            <appender-ref ref="FILE-ERROR"/>
-        </root>
-    </springProfile>
+    <!-- appender 파일들 포함 -->
+<!--    <include resource="console-appender.xml"/>-->
+    <include resource="./appAppender/app-file-error-appender.xml"/>
+    <include resource="./systemAppender/file-info-appender.xml"/>
+    <include resource="./systemAppender/file-warn-appender.xml"/>
+    <include resource="./systemAppender/file-error-appender.xml"/>
+
+    <!-- 패턴 파일 포함 -->
+    <include resource="logback-pattern.xml"/>
+
+    <root level="INFO">
+<!--        <appender-ref ref="CONSOLE"/>-->
+        <appender-ref ref="SYSTEM-INFO"/>
+        <appender-ref ref="SYSTEM-WARN"/>
+        <appender-ref ref="SYSTEM-ERROR"/>
+    </root>
+
+    <logger name="com.gulbi.Backend.global.error" level="WARN" additivity="false">
+        <appender-ref ref="APP-WARN"/>
+    </logger>
+    <logger name="com.gulbi.Backend.global.error" level="ERROR" additivity="false">
+        <appender-ref ref="APP-WARN"/>
+    </logger>
+
 </configuration>
-
-

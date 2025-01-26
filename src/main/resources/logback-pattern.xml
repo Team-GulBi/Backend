@@ -1,0 +1,21 @@
+<configuration>
+
+    <!--    콘솔 로그 패턴-->
+    <property name="NOT_PROD_LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
+
+    <!--    시스템 인포 로그 패턴-->
+    <property name="PROD_SYSTEM_INFO_LOG_PATTERN"
+              value="{&quot;metadata&quot;:{ &quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;, &quot;level&quot;:&quot;%-5level&quot;},&quot;message&quot;:&quot;%msg&quot;}%n"/>
+
+    <property name="PROD_SYSTEM_WARN_LOG_PATTERN"
+              value="{&quot;metadata&quot;:{ &quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;, &quot;level&quot;:&quot;%-5level&quot;,&quot;exceptionClass&quot;:&quot;%X{exceptionClass}&quot;,&quot;exceptionMethod&quot;:&quot;%method&quot;},&quot;message&quot;:&quot;%msg&quot;,&quot;stackTrace&quot;:&quot;%ex{full}&quot;}%n"/>
+
+    <!--    서비스 WARN,ERROR 패턴-->
+    <property name="PROD_APP_WARN_LOG_PATTERN"
+              value="{&quot;metadata&quot;:{ &quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;, &quot;level&quot;:&quot;%-5level&quot;,&quot;exceptionClass&quot;:&quot;%X{exceptionClass}&quot;,&quot;exceptionMethod&quot;:&quot;%method&quot;},&quot;message&quot;:&quot;%msg&quot;,&quot;exceptionCauseArgs&quot;:&quot;%X{exceptionCauseArgs}&quot;,&quot;stackTrace&quot;:&quot;%X{stackTrace}&quot;,&quot;stackTrace2&quot;:&quot;%ex{full}&quot;}%n"/>
+
+    <!--서비스 INFO 패턴-->
+    <property name="PROD_INFO_LOG_PATTERN"
+              value="{&quot;metadata&quot;:{ &quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;, &quot;level&quot;:&quot;%-5level&quot;,&quot;user&quot;:&quot;%X{user}&quot;,&quot;className&quot;:&quot;%C&quot;, &quot;methodName&quot;:&quot;%M&quot;},&quot;message&quot;:&quot;%msg&quot;}%n"/>
+</configuration>

@@ -1,19 +1,19 @@
-<included>
-    <appender name="FILE-WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/warn/warn-${BY_DATE}.log</file>
+<configuration>
+    <appender name="SYSTEM-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./log/system/error/system-error-${BY_DATE}.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
+            <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
         <encoder>
-            <pattern>${PROD_LOG_PATTERN}</pattern>
+            <pattern>${PROD_SYSTEM_WARN_LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>./backup/warn/warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>./backup/error/system-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
     </appender>
-</included>
+</configuration>

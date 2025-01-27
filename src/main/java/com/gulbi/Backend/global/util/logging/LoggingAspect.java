@@ -49,7 +49,7 @@ public class LoggingAspect {
 
         if (authentication != null && authentication.getPrincipal() instanceof User) {
             User user = (User) authentication.getPrincipal();
-            userpk = user.getUsername(); 
+            userpk = user.getUsername();
         }
         return userpk;
     }

@@ -4,26 +4,31 @@
 
     <!-- appender 파일들 포함 -->
 <!--    <include resource="console-appender.xml"/>-->
+
     <include resource="./appAppender/app-file-error-appender.xml"/>
+    <include resource="./appAppender/app-file-warn-appender.xml"/>
+    <include resource="./appAppender/app-file-info-appender.xml"/>
     <include resource="./systemAppender/file-info-appender.xml"/>
     <include resource="./systemAppender/file-warn-appender.xml"/>
     <include resource="./systemAppender/file-error-appender.xml"/>
 
     <!-- 패턴 파일 포함 -->
     <include resource="logback-pattern.xml"/>
+    <!--        <appender-ref ref="CONSOLE"/>-->
 
+    <logger name="com.gulbi.Backend.global.error" level="ERROR" additivity="false">
+        <appender-ref ref="APP-ERROR"/>
+    </logger>
+    <logger name="com.gulbi.Backend.global.error" level="WARN" additivity="false">
+        <appender-ref ref="APP-WARN"/>
+    </logger>
+    <logger name="com.gulbi.Backend.global.util.logging" level="INFO" additivity="false">
+        <appender-ref ref="APP-INFO"/>
+    </logger>
     <root level="INFO">
-<!--        <appender-ref ref="CONSOLE"/>-->
         <appender-ref ref="SYSTEM-INFO"/>
         <appender-ref ref="SYSTEM-WARN"/>
         <appender-ref ref="SYSTEM-ERROR"/>
     </root>
-
-    <logger name="com.gulbi.Backend.global.error" level="WARN" additivity="false">
-        <appender-ref ref="APP-WARN"/>
-    </logger>
-    <logger name="com.gulbi.Backend.global.error" level="ERROR" additivity="false">
-        <appender-ref ref="APP-WARN"/>
-    </logger>
 
 </configuration>

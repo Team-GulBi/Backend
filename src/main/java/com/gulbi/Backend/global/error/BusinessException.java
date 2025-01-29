@@ -5,17 +5,16 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 @Getter
 public class BusinessException extends RuntimeException{
-    private HttpStatus status;
-    private String code;
-    private ResponseApiCode responseApiCode;
+    private ExceptionMetaData metaData;
 
-    public BusinessException(ResponseApiCode errorCode){
-        super(errorCode.getMessage());
-        this.responseApiCode = errorCode;
-        this.status=errorCode.getStatus();
-        this.code=errorCode.getCode();
+    public BusinessException(ExceptionMetaData metaDataDto){
+        super(metaDataDto.getResponseApiCode().getMessage());
+        this.metaData = metaDataDto;
     }
 
+    public ExceptionMetaData getStatus() {
+        return metaData;
+    }
 }
 
 

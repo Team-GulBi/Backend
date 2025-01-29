@@ -4,10 +4,12 @@ import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.global.entity.BaseEntity;
+import com.gulbi.Backend.global.error.ExceptionMetaData;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 @Getter
 @Entity
 @Table(name = "products")
@@ -70,40 +72,35 @@ public class Product extends BaseEntity {
     // 생성자
     @Builder
     private Product(User user, Category bCategory, Category mCategory, Category sCategory, String tag, String title, String name, int views, int price,
-                   String sido, String sigungu, String bname, String description, float rating, String mainImage) {
+                    String sido, String sigungu, String bname, String description, float rating, String mainImage) {
 
+        // 유틸리티 메서드를 사용하여 메타데이터 자동 생성
         if (user == null) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_USER);
+            throwProductException(ProductErrorCode.MISSING_USER, user);
         }
-        if (bCategory == null) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_CATEGORY);
-        }
-        if (mCategory == null) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_CATEGORY);
-        }
-        if (sCategory == null) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_CATEGORY);
+        if (bCategory == null || mCategory == null || sCategory == null) {
+            throwProductException(ProductErrorCode.MISSING_CATEGORY, bCategory);
         }
         if (title == null || title.isEmpty()) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_TITLE);
+            throwProductException(ProductErrorCode.MISSING_TITLE, title);
         }
         if (name == null || name.isEmpty()) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_NAME);
+            throwProductException(ProductErrorCode.MISSING_NAME, name);
         }
         if (views < 0) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.INVALID_VIEWS);
+            throwProductException(ProductErrorCode.INVALID_VIEWS, views);
         }
         if (price < 0) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.INVALID_PRICE);
+            throwProductException(ProductErrorCode.INVALID_PRICE, price);
         }
         if (sido == null || sido.isEmpty()) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_SIDO);
+            throwProductException(ProductErrorCode.MISSING_SIDO, sido);
         }
         if (sigungu == null || sigungu.isEmpty()) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_SIGUNGU);
+            throwProductException(ProductErrorCode.MISSING_SIGUNGU, sigungu);
         }
         if (description == null || description.isEmpty()) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_DESCRIPTION);
+            throwProductException(ProductErrorCode.MISSING_DESCRIPTION, description);
         }
 
         this.user = user;
@@ -121,5 +118,15 @@ public class Product extends BaseEntity {
         this.description = description;
         this.rating = rating;
         this.mainImage = mainImage;
+    }
+
+    private ProductException.MissingProductFieldException throwProductException(ProductErrorCode errorCode, Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(this.getClass().getName())
+                .responseApiCode(errorCode)
+                .build();
+        throw new ProductException.MissingProductFieldException(exceptionMetaData);
     }
 }

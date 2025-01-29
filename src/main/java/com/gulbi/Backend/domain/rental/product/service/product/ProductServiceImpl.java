@@ -13,6 +13,8 @@ import com.gulbi.Backend.domain.rental.product.service.product.register.ProductR
 import com.gulbi.Backend.domain.rental.product.service.product.search.ProductSearchService;
 import com.gulbi.Backend.domain.rental.product.service.product.update.ProductUpdatingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductSearchService productSearchService;
     private final ProductUpdatingService productUpdatingService;
     private final ProductDeleteService productDeleteService;
+    private final Logger LOGER = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     public List<ProductOverViewResponse> searchProductOverview(ProductSearchRequestDto productSearchRequestDto) {

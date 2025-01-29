@@ -24,7 +24,7 @@ public class ReviewController {
             summary = "상품 리뷰 생성"
     )
     public ResponseEntity<RestApiResponse> createReview(@RequestBody @Validated ReviewCreateRequestDto request){
-        reviewService.registerReview(request);
+        reviewService.addReviewToProduct(request);
         RestApiResponse response = new RestApiResponse(ReviewSuccessCode.REVIEW_REGISTER_SUCCESS);
         return ResponseEntity.ok(response);
     }

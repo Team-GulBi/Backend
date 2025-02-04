@@ -9,6 +9,7 @@ import com.gulbi.Backend.domain.user.exception.UserNotFoundException;
 import com.gulbi.Backend.domain.user.repository.ProfileRepository;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import com.gulbi.Backend.global.util.JwtUtil;
+import com.gulbi.Backend.global.util.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,7 +37,8 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
-    public String updateProfile(ProfileRequestDto request, UserDetails userDetails) {
+    public String updateProfile(ProfileRequestDto request) {
+        UserDetails userDetails = SecurityUtil.getAuthenticatedUser();
         User user = getUserByEmail(userDetails.getUsername());
         Profile existingProfile = getProfileByUser(user);
         // 프로필 업데이트
@@ -52,7 +54,7 @@ public class ProfileService {
 
     // 프로필 조회
     public ProfileResponseDto getProfile(Long userId) {
-        UserDetails userDetails = getAuthenticatedUserDetails();
+        UserDetails userDetails = SecurityUtil.getAuthenticatedUser();
         User loggedInUser = getUserByEmail(userDetails.getUsername());
         Long loggedInUserId = loggedInUser.getId();
 

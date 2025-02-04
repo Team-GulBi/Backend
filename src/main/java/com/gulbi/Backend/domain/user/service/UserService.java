@@ -41,17 +41,15 @@ public class UserService {
 
 
     public String login(LoginRequestDto request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword())
-        );
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        authenticateUser(request.getEmail(), request.getPassword());
 
-        Profile profile = profileRepository.findByUser(user).orElse(null);
-        String role = (profile == null || !isProfileComplete(profile)) ? "ROLE_INCOMPLETED_USER" : "ROLE_COMPLETED_USER";
+        User user = findByEmail(request.getEmail());
+        Profile profile = findProfileByUser(user);
+        String role = determineUserRole(profile);
 
         return jwtUtil.generateToken(user.getEmail(), user.getId(), role);
     }
+
     public boolean isProfileComplete(Profile profile) {
         return profile.getImage() != null && profile.getIntro() != null && profile.getPhone() != null &&
                 profile.getSignature() != null && profile.getSido() != null && profile.getSigungu() != null &&
@@ -104,5 +102,18 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         return user.getNickname();
     }
+    //Spring Security 인증 처리
+    private void authenticateUser(String email, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    }
+    //프로필 조회
+    private Profile findProfileByUser(User user) {
+        return profileRepository.findByUser(user).orElse(null);
+    }
+    //jwt role 결정
+    private String determineUserRole(Profile profile) {
+        return (profile == null || !isProfileComplete(profile)) ? "ROLE_INCOMPLETED_USER" : "ROLE_COMPLETED_USER";
+    }
+
 
 }

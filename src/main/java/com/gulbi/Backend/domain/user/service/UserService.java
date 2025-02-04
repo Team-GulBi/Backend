@@ -28,14 +28,17 @@ public class UserService {
     private final ProfileRepository profileRepository;
 
     public void register(RegisterRequestDto request){
+        String encodedPassword = passwordEncoder.encode(request.getPassword()); // 객체 생성 전 인코딩 처리
+
         User user = User.builder()
                 .nickname(request.getNickname())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(encodedPassword) // 인코딩된 비번 넣기
                 .phoneNumber(request.getPhoneNumber())
                 .build();
         userRepository.save(user);
     }
+
 
     public String login(LoginRequestDto request) {
         authenticationManager.authenticate(

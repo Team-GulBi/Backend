@@ -14,7 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -28,27 +29,35 @@ public class UserService {
     private final ProfileRepository profileRepository;
 
     public void register(RegisterRequestDto request){
+        String encodedPassword = passwordEncoder.encode(request.getPassword()); // 객체 생성 전 인코딩 처리
+
         User user = User.builder()
                 .nickname(request.getNickname())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(encodedPassword) // 인코딩된 비번 넣기
                 .phoneNumber(request.getPhoneNumber())
                 .build();
         userRepository.save(user);
     }
 
-    public String login(LoginRequestDto request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword())
-        );
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Profile profile = profileRepository.findByUser(user).orElse(null);
-        String role = (profile == null || !isProfileComplete(profile)) ? "ROLE_INCOMPLETED_USER" : "ROLE_COMPLETED_USER";
+    public Map<String, String> login(LoginRequestDto request) {
+        authenticateUser(request.getEmail(), request.getPassword());
 
-        return jwtUtil.generateToken(user.getEmail(), user.getId(), role);
+        User user = findByEmail(request.getEmail());
+        Profile profile = findProfileByUser(user);
+        String role = determineUserRole(profile);
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getId(), role);
+
+        // ID와 토큰을 함께 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("id", String.valueOf(user.getId()));  // ID를 문자열로 변환하여 저장
+
+        return response;
     }
+
     public boolean isProfileComplete(Profile profile) {
         return profile.getImage() != null && profile.getIntro() != null && profile.getPhone() != null &&
                 profile.getSignature() != null && profile.getSido() != null && profile.getSigungu() != null &&
@@ -60,6 +69,8 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Authenticated User not found"));
     }
+
+
     public User getDummyUser() {
         // 유니크한 email을 생성하기 위해 UUID를 사용
         String uniqueEmail = "user_" + UUID.randomUUID().toString() + "@example.com";
@@ -93,5 +104,24 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
+    // 닉네임 반환 메서드 (ID 기반)
+    public String getNicknameById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        return user.getNickname();
+    }
+    //Spring Security 인증 처리
+    private void authenticateUser(String email, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    }
+    //프로필 조회
+    private Profile findProfileByUser(User user) {
+        return profileRepository.findByUser(user).orElse(null);
+    }
+    //jwt role 결정
+    private String determineUserRole(Profile profile) {
+        return (profile == null || !isProfileComplete(profile)) ? "ROLE_INCOMPLETED_USER" : "ROLE_COMPLETED_USER";
+    }
+
 
 }

@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/profiles")
 public class ProfileController {
 
+    private final ProfileService profileService;
+
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
+    }
+
 
     private final ProfileService profileService;
 
@@ -32,10 +38,12 @@ public class ProfileController {
         return ResponseEntity.ok("Profile created successfully.");
     }
     @PutMapping
-    public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDto request, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String newToken = profileService.updateProfile(request, userDetails);
-        // 응답 헤더에 토큰 추가
+    public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDto request) {
+
+        // ProfileService에서 JWT 토큰을 반환받음
+        String newToken = profileService.updateProfile(request);
+        // 응답 헤더에 토큰 추가 (jwt role 변경으로 유효하지 않은 헤더정보를 최신화해줘야함)
+
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + newToken)
                 .body("Profile updated successfully");

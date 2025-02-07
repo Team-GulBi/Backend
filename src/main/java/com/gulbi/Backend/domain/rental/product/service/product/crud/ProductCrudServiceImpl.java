@@ -3,10 +3,12 @@ package com.gulbi.Backend.domain.rental.product.service.product.crud;
 import com.gulbi.Backend.domain.rental.product.code.ProductErrorCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
-import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductUpdateRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.update.ProductUpdateRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.update.ProductMainImageUpdateDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
+import com.gulbi.Backend.global.error.ExceptionMetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,80 +17,186 @@ import jakarta.persistence.PersistenceException;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class ProductCrudServiceImpl implements ProductCrudService{
+public class ProductCrudServiceImpl implements ProductCrudService {
+    private final String className = this.getClass().getName();
     private final ProductRepository productRepository;
+
     @Override
     public void saveProduct(Product product) {
         try {
             productRepository.save(product);
         } catch (DataIntegrityViolationException e) {
-            throw new ProductException.ProductValidationException(ProductErrorCode.PRODUCT_VALIDATION_FAILED);
+            createProductValidationException(product, e);
         } catch (JpaSystemException | PersistenceException e) {
-            throw new ProductException.DatabaseErrorException(ProductErrorCode.DATABASE_ERROR);
+            createDatabaseErrorException(product, e);
         } catch (IllegalArgumentException e) {
-            throw new ProductException.MissingProductFieldException(ProductErrorCode.MISSING_REQUIRED_FIELD);
+            createMissingProductFieldException(product, e);
         }
     }
 
     @Override
     public ProductDto getProductDtoById(Long productId) {
-        return productRepository.findProductDtoById(productId)
-                .orElseThrow(
-                        () -> new ProductException.ProductNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND));
+        Optional<ProductDto> productDtoOptional = productRepository.findProductDtoById(productId);
+        if (!productDtoOptional.isPresent()) {
+            createProductNotFoundException(productId);  // 예외 던지기
+        }
+        return productDtoOptional.get();  // 값이 있으면 반환
     }
 
     @Override
     public Product getProductById(Long productId) {
-        return productRepository.findProductById(productId)
-                .orElseThrow(
-                     () -> new ProductException.ProductNotFoundException(ProductErrorCode.PRODUCT_NOT_FOUND)
-        );
+        Optional<Product> productOptional = productRepository.findProductById(productId);
+        if (!productOptional.isPresent()) {
+            createProductNotFoundExceptionWithMetaData(productId);  // 예외 던지기
+        }
+        return productOptional.get();  // 값이 있으면 반환
     }
+
 
     @Override
     public List<ProductOverViewResponse> getProductOverViewByTitle(String title) {
         List<ProductOverViewResponse> overViewResponses = productRepository.findProductsByTitle(title);
-        if(overViewResponses.isEmpty()){
-            throw new ProductException.NoProductFoundForTitleException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TITLE);
+        if (overViewResponses.isEmpty()) {
+            createNoProductFoundForTitleException(title);
         }
         return overViewResponses;
-
     }
 
     @Override
     public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3) {
-        List<ProductOverViewResponse> overViewResponses =  productRepository.findProductsByTag(tag,tag2,tag3);
-        if(overViewResponses.isEmpty()){
-            throw new ProductException.NoProductFoundForTagsException(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TAGS);
+        List<ProductOverViewResponse> overViewResponses = productRepository.findProductsByTag(tag, tag2, tag3);
+        if (overViewResponses.isEmpty()) {
+            createNoProductFoundForTagsException(tag, tag2, tag3);
         }
         return overViewResponses;
     }
 
     @Override
-    public void updateProductViews(Long productId){
-        Optional.ofNullable(productRepository.updateProductViews(productId))
-                .filter(updatedRows -> updatedRows > 0)
-                .orElseThrow(
-                        () -> new ProductException.NoUpdateProductException(ProductErrorCode.NO_UPDATED_COLUMNS)
-                );
+    public void updateProductViews(Long productId) {
+        int updatedRows = productRepository.updateProductViews(productId);
+        if (updatedRows <= 0) {
+            createNoUpdateProductException(productId);  // 예외 던지기
+        }
+    }
+
+
+    @Override
+    public void updateProductInfo(ProductUpdateRequestDto dto) {
+        productRepository.updateProductInfo(
+                dto.getProductId(),
+                dto.getTag(),
+                dto.getTitle(),
+                dto.getName(),
+                dto.getPrice(),
+                dto.getSido(),
+                dto.getSigungu(),
+                dto.getBname(),
+                dto.getDescription()
+        );
+
+        if (dto.getCategoryInProduct() != null) {
+            productRepository.updateProductCategories(dto.getProductId(),
+                    dto.getCategoryInProduct().getBCategory(),
+                    dto.getCategoryInProduct().getMCategory(),
+                    dto.getCategoryInProduct().getSCategory());
+        }
     }
 
     @Override
-    public void updateProductInfo(ProductUpdateRequestDto productUpdateRequestDto) {
-            Optional.ofNullable(productUpdateRequestDto.getCategoryInProduct())
-                .ifPresentOrElse(
-                        dto -> productRepository.updateProductInfo(
-                                productUpdateRequestDto,
-                                dto.getBCategory(),
-                                dto.getMCategory(),
-                                dto.getSCategory()
-                        ),
-                        () -> productRepository.updateProductInfo(productUpdateRequestDto)
-                );
+    public void updateProductMainImage(ProductMainImageUpdateDto productMainImageUpdateDto) {
+        productRepository.updateProductMainImage(
+                productMainImageUpdateDto.getMainImageUrl().getImageUrl(),
+                productMainImageUpdateDto.getProductId()
+        );
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        productRepository.deleteAllbyId(productId);
+    }
+
+    private void createProductValidationException(Object args, Throwable e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ProductErrorCode.PRODUCT_VALIDATION_FAILED)
+                .build();
+        throw new ProductException.ProductValidationException(exceptionMetaData);
+    }
+
+    private void createDatabaseErrorException(Object args, Throwable e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ProductErrorCode.DATABASE_ERROR)
+                .build();
+        throw new ProductException.DatabaseErrorException(exceptionMetaData);
+    }
+
+    private void createMissingProductFieldException(Object args, Throwable e) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .stackTrace(e)
+                .responseApiCode(ProductErrorCode.MISSING_REQUIRED_FIELD)
+                .build();
+        throw new ProductException.MissingProductFieldException(exceptionMetaData);
+    }
+
+    private void createProductNotFoundException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND)
+                .build();
+        throw new ProductException.ProductNotFoundException(exceptionMetaData);
+    }
+
+    private void createProductNotFoundExceptionWithMetaData(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND)
+                .build();
+        throw new ProductException.ProductNotFoundException(exceptionMetaData);
+    }
+
+    private void createNoProductFoundForTitleException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TITLE)
+                .build();
+        throw new ProductException.NoProductFoundForTitleException(exceptionMetaData);
+    }
+
+    private void createNoProductFoundForTagsException(String tag, String tag2, String tag3) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(tag + ", " + tag2 + ", " + tag3)
+                .className(className)
+                .responseApiCode(ProductErrorCode.PRODUCT_NOT_FOUND_BY_TAGS)
+                .build();
+        throw new ProductException.NoProductFoundForTagsException(exceptionMetaData);
+    }
+
+    private void createNoUpdateProductException(Object args) {
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData
+                .Builder()
+                .args(args)
+                .className(className)
+                .responseApiCode(ProductErrorCode.NO_UPDATED_COLUMNS)
+                .build();
+        throw new ProductException.NoUpdateProductException(exceptionMetaData);
     }
 }
-
-

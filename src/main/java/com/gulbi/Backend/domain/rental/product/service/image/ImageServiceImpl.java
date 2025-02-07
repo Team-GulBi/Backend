@@ -1,110 +1,83 @@
 package com.gulbi.Backend.domain.rental.product.service.image;
 
-import com.gulbi.Backend.domain.rental.product.code.ImageErrorCode;
-import com.gulbi.Backend.domain.rental.product.dto.ProductImageDto;
-import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductImageDeleteRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.request.update.ProductExistingMainImageUpdateRequestDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.update.ProductImageInfoUpdateDto;
+import com.gulbi.Backend.domain.rental.product.dto.product.update.ProductMainImageUpdateDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
-import com.gulbi.Backend.domain.rental.product.exception.ImageException;
-import com.gulbi.Backend.domain.rental.product.factory.ImageFactory;
-import com.gulbi.Backend.domain.rental.product.repository.ImageRepository;
 import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrlCollection;
-import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
-import com.gulbi.Backend.domain.rental.product.vo.image.ImageCollection;
 import com.gulbi.Backend.domain.rental.product.vo.image.ProductImageCollection;
-import com.gulbi.Backend.global.util.FileSender;
-import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+//fix Todo: 상위 클레스를 호출해서 로직을 처리하니까 ProductResolver는 최상단에만 두고 추후에는 ProductId만 넘겨서 중복되지 않도록 수정.
+//todo: resolveProduct가 여기서도 쓰이는데. ProductId를 crud에 넘기도록해서 그쪽에서 조회하도록 추후 변경 할 것. deleteimage 유효성검사 추가 할 것.
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
-
-    private final ImageRepository imageRepository;
+    private final ImageCrudService imageCrudService;
     private final ProductCrudService productCrudService;
-    private final FileSender fileSender;
 
     @Override
-    public void registerImageWithProduct(ImageUrlCollection imageUrlCollection, Product product) {
-        ImageCollection imageCollection = ImageFactory.createImagesFromUrls(imageUrlCollection, product);
-        saveImages(imageCollection); //이미지 저장과 메인 이미지를 반환하는 두가지 책임..
-    }
+    public void updateProductImages(ProductImageInfoUpdateDto productImageInfoUpdateDto) {
 
-    @Override
-    public ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection) {
-        try{
-            List<ImageUrl> imageUrlList = new ArrayList<>();
-            for (MultipartFile file : productImageCollection.getProductImages()){
-                ImageUrl imageUrl = ImageUrl.of(fileSender.sendFile(file));
-                imageUrlList.add(imageUrl);
-            }
-            return ImageUrlCollection.of(imageUrlList);
-        }catch (ImageException e){ // 추후 센더에 예외 생기면 센더에서 예외 호출 예정
-            throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3);
+        Long productId = productImageInfoUpdateDto.getProductId();
+        Product product = resolveProduct(productId);
+
+        if(productImageInfoUpdateDto.getToBeAddedImages() !=null) {
+            handleAddedImages(productImageInfoUpdateDto, product);
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        if(productImageInfoUpdateDto.getToBeUpdatedMainImageFile() !=null) {
+            imageCrudService.clearMainImageFlags(product);
+            handleUpdatedMainImageFile(productImageInfoUpdateDto, product);
         }
-    }
-
-
-
-    @Override
-    public ProductImageDtoCollection getImageByProductId(Long productId) {
-        resolveProduct(productId);
-        List<ProductImageDto> images = imageRepository.findByImageWithProduct(productId);
-        return ProductImageDtoCollection.of(images);
-
-    }
-
-    @Override
-    public void saveImages(ImageCollection imageCollection){
-        try {
-            imageRepository.saveAll(imageCollection.getImages());
-        } catch (DataIntegrityViolationException | JpaSystemException | PersistenceException |
-                 IllegalArgumentException e) {
-            throw new ImageException.NotUploadImageToS3Exception(ImageErrorCode.CANT_UPLOAD_IMAGE_TO_S3);
+        if(productImageInfoUpdateDto.getToBeUpdatedMainImageWithUrl() !=null) {
+            imageCrudService.clearMainImageFlags(product);
+            ProductMainImageUpdateDto productMainImageUpdateDto = ProductMainImageUpdateDto.of(productId, productImageInfoUpdateDto.getToBeUpdatedMainImageWithUrl().getMainImageUrl());
+            handleUpdatedMainImageWithUrl(productMainImageUpdateDto);
+        }
+        if(productImageInfoUpdateDto.getToBeDeletedImages() !=null){
+            handleDeletedImages(productImageInfoUpdateDto); //지우려는게 메인이미지 일때 예외처리 해주긴해야함.. todo..
         }
     }
 
-    @Override
-    public void deleteImages(ProductImageDeleteRequestDto productImageDeleteRequestDto) {
-        if(productImageDeleteRequestDto.getImagesId()==null){
-            throw new ImageException.NotContainedImageIdException(ImageErrorCode.NOT_CONTAINED_IMAGE_ID);
-        }
-        try{
-            imageRepository.deleteImages(productImageDeleteRequestDto);
-        } catch (DataIntegrityViolationException e) {
-            throw new ImageException.ImageDeleteValidationException(ImageErrorCode.IMAGE_DELETE_FAILED);
-        } catch (JpaSystemException | PersistenceException e) {
-            throw new ImageException.DatabaseErrorException(ImageErrorCode.DATABASE_ERROR);
-        } catch (IllegalArgumentException e) {
-            throw new ImageException.InvalidProductImageIdException(ImageErrorCode.INVALID_IMAGE_ID);
-        } catch (Exception e) {
-            throw new ImageException.ImageDeleteFailedException(ImageErrorCode.IMAGE_DELETE_FAILED);
-        }
+    private void handleAddedImages(ProductImageInfoUpdateDto dto, Product product) {
+            ImageUrlCollection imageUrlCollection = uploadImagesToS3(dto.getToBeAddedImages().getProductImageCollection());
+            updateNewImage(imageUrlCollection, product);
+    }
+
+    private void handleUpdatedMainImageFile(ProductImageInfoUpdateDto dto, Product product) {
+
+            ImageUrlCollection imageUrlCollection = uploadImagesToS3(dto.getToBeUpdatedMainImageFile().getProductImageCollection());
+            imageCrudService.saveMainImage(imageUrlCollection.getMainImageUrl(), product);
+
+            ProductMainImageUpdateDto updateDto = ProductMainImageUpdateDto.of(dto.getProductId(), imageUrlCollection.getMainImageUrl());
+            productCrudService.updateProductMainImage(updateDto);
 
     }
 
-    private void resolveProduct(Long productId){
-        productCrudService.getProductById(productId);
+    private void handleUpdatedMainImageWithUrl(ProductMainImageUpdateDto dto) {
+        imageCrudService.updateMainImageFlags(dto);
+        productCrudService.updateProductMainImage(dto);
     }
 
-    private String temp(){
-        String randomUtl = "https://"+UUID.randomUUID();
-        return randomUtl;
+    private void handleDeletedImages(ProductImageInfoUpdateDto dto) {
+        if (!dto.getToBeDeletedImages().getImagesId().isEmpty()) {
+            imageCrudService.deleteImages(dto.getToBeDeletedImages());
+        }
+    }
+
+    private ImageUrlCollection uploadImagesToS3(ProductImageCollection productImageCollection) {
+        return imageCrudService.uploadImagesToS3(productImageCollection);
+    }
+
+    private Product resolveProduct(Long productId) {
+        return productCrudService.getProductById(productId);
+    }
+
+    private void updateNewImage(ImageUrlCollection imageUrlCollection, Product product) {
+        imageCrudService.registerImagesWithProduct(imageUrlCollection, product);
     }
 
 }
-
-

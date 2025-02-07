@@ -49,6 +49,11 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java:8.0.33'  // 여기서 8.0.33은 예시입니다.
   //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.600'
+
+
+
     implementation "org.apache.tika:tika-core:2.9.1"
     implementation "org.apache.tika:tika-parsers-standard-package:2.9.1"
 

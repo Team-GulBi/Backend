@@ -20,10 +20,14 @@ public class Image extends BaseEntity {
 
     @Column(length = 100000)
     private String url;
-    //데이터 타입이 너무 큰거 같아서 최적화 고려 해야함
+
+    @Column(nullable = false)
+    private Boolean main;
+
     @Builder
-    private Image(Product product, String url) {
+    private Image(Product product, String url, Boolean main) {
         this.product = product;
         this.url = url;
+        this.main = main;
     }
 }

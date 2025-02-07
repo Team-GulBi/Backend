@@ -24,11 +24,13 @@ public class ProfileService {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
+
     public ProfileService(ProfileRepository profileRepository, UserRepository userRepository, JwtUtil jwtUtil,UserService userService) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.userService=userService;
+
     }
     public void createProfile(ProfileRequestDto request, UserDetails userDetails) {
         // 이메일을 통해 User 객체를 찾기

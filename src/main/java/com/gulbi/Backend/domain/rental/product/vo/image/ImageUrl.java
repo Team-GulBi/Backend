@@ -2,12 +2,13 @@ package com.gulbi.Backend.domain.rental.product.vo.image;
 
 import com.gulbi.Backend.domain.rental.product.code.ImageErrorCode;
 import com.gulbi.Backend.domain.rental.product.exception.ImageVoException;
+import com.gulbi.Backend.global.error.ExceptionMetaData;
 import lombok.Getter;
-import org.apache.xmlbeans.impl.regex.Match;
 
 import java.util.regex.Pattern;
 
 public class ImageUrl {
+    private final String className = this.getClass().getName();
     private static final String REGEX = "^https://.*";
     @Getter
     private final String imageUrl;
@@ -23,7 +24,13 @@ public class ImageUrl {
 
     private void ValidateImageUrl(String imageUrl){
         if (!Pattern.matches(REGEX, imageUrl)){
-            throw new ImageVoException.NotValidatedImageUrlException(ImageErrorCode.NOT_VALIDATED_IMAGE_URL);
+            ExceptionMetaData metadata=new ExceptionMetaData
+                    .Builder()
+                    .args(imageUrl)
+                    .className(className)
+                    .responseApiCode(ImageErrorCode.NOT_VALIDATED_IMAGE_URL)
+                    .build();
+            throw new ImageVoException.NotValidatedImageUrlException(metadata);
         }
     }
 

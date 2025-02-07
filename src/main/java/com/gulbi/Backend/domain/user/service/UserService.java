@@ -14,7 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -40,14 +41,21 @@ public class UserService {
     }
 
 
-    public String login(LoginRequestDto request) {
+    public Map<String, String> login(LoginRequestDto request) {
         authenticateUser(request.getEmail(), request.getPassword());
 
         User user = findByEmail(request.getEmail());
         Profile profile = findProfileByUser(user);
         String role = determineUserRole(profile);
 
-        return jwtUtil.generateToken(user.getEmail(), user.getId(), role);
+        String token = jwtUtil.generateToken(user.getEmail(), user.getId(), role);
+
+        // ID와 토큰을 함께 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("id", String.valueOf(user.getId()));  // ID를 문자열로 변환하여 저장
+
+        return response;
     }
 
     public boolean isProfileComplete(Profile profile) {

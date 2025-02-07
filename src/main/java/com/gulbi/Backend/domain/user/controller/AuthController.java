@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto request) {
-        String token = userService.login(request);
-        return ResponseEntity.ok(Collections.singletonMap("token", token));
+        Map<String, String> response = userService.login(request);
+        return ResponseEntity.ok(response);
     }
 }

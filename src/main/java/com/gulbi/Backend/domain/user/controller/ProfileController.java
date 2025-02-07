@@ -19,13 +19,6 @@ public class ProfileController {
     public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
     }
-
-
-    private final ProfileService profileService;
-
-    public ProfileController(ProfileService profileService) {
-        this.profileService = profileService;
-    }
     @PostMapping
     public ResponseEntity<String> createProfile(@RequestBody ProfileRequestDto request) {
         // 현재 인증된 사용자 가져오기

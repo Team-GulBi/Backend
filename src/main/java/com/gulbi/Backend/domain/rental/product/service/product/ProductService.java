@@ -17,4 +17,5 @@ public interface ProductService {
     public ProductDetailResponseDto getProductDetail(Long productId);
     public void updateProductViews(Long productId);
     public void updateProduct(ProductInfoUpdateDto productInfoUpdateDto, ProductImageInfoUpdateDto productImageInfoUpdateDto);
+    public void deleteProduct(Long productId);
 }

@@ -17,6 +17,6 @@ public interface ProductCrudService {
     public void updateProductViews(Long productId);
     public void updateProductInfo(ProductUpdateRequestDto productUpdateRequestDto);
     public void updateProductMainImage(ProductMainImageUpdateDto productMainImageUpdateDto);
-
+    public void deleteProduct(Long productId);
 
 }

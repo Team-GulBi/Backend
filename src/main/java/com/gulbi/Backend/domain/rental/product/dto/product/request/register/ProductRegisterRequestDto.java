@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -68,7 +71,7 @@ public class ProductRegisterRequestDto {
     @Schema(hidden = true)
     private ImageUrl mainImage;
 
-    public ProductRegisterRequestDto(String tag, String title, String productName, Integer price, String sido, String sigungu, String bname, String description, ImageUrl mainImage, Long bcategoryId, Long mcategoryId, Long scategoryId) {
+    public ProductRegisterRequestDto(String tags, String title, String productName, Integer price, String sido, String sigungu, String bname, String description, ImageUrl mainImage, Long bcategoryId, Long mcategoryId, Long scategoryId) {
         System.out.println("RequestPart는 생성자를 이용하지 않습니다!");
         this.tag = tag;
         this.title = title;

@@ -1,16 +1,16 @@
 version: '3.8'
 services:
-  backend:
-    build:
-      context: ./
-    volumes:
-      - .:/app  # 현재 디렉토리를 /app으로 마운트
-    restart: always
-    ports:
-      - "8080:8080"
-    networks:
-      - app-tier
-
+  #  backend:
+  #    image: openjdk:17-jdk
+  #    volumes:
+  #      - .:/app  # 현재 디렉토리를 /app으로 마운트
+  #    working_dir: /app  # 작업 디렉토리 설정
+  #    command: ./gradlew bootJar  # Gradle을 사용하여 JAR 파일 생성
+  #    restart: always
+  #    ports:
+  #      - "8080:8080"
+  #    networks:
+  #      - app-tier
   mysqldb:
     image: mysql:latest
     env_file:
@@ -23,71 +23,17 @@ services:
     networks:
       - app-tier
 
-  # cd 테스트
-  #  phpmyadmin:
-  #    image: phpmyadmin
-  #    restart: always
-  #    ports:
-  #      - 80:80
-  #    environment:
-  #      PMA_ARBITRARY: 1
-  #      PMA_HOST: mysqldb
-  #      PMA_PORT: 3306
-  #    networks:
-  #      - app-tier
-
-  #  elasticsearch:
-  #    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
-  #    container_name: elasticsearch
-  #    environment:
-  #      - discovery.type=single-node
-  #      - xpack.security.enabled=false
-  #    ports:
-  #      - '9200:9200'
-  #      - '9300:9300'
-  #    networks:
-  #      - app-tier
-  #    volumes:
-  #      - elasticsearch-data:/usr/share/elasticsearch/data
-  #
-  #  kibana:
-  #    image: docker.elastic.co/kibana/kibana:8.10.1
-  #    container_name: kibana
-  #    depends_on:
-  #      - elasticsearch
-  #    environment:
-  #      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-  #    ports:
-  #      - '5601:5601'
-  #    networks:
-  #      - app-tier
-  #
-  #  filebeat:
-  #    image: docker.elastic.co/beats/filebeat:8.10.1
-  #    container_name: filebeat
-  #    user: root
-  #    volumes:
-  #      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro  # Filebeat 설정 파일
-  #      - ./logs:/var/log                                     # 로그 파일 경로
-  #    depends_on:
-  #      - elasticsearch
-  #    networks:
-  #      - app-tier
-  #
-  #  logstash:
-  #    image: docker.elastic.co/logstash/logstash:8.10.1
-  #    container_name: logstash
-  #    environment:
-  #      - LS_JAVA_OPTS="-Xmx256m -Xms256m"   # Java 메모리 설정 (필요에 따라 조정)
-  #    ports:
-  #      - '5044:5044'  # Logstash 입력 포트 (필요에 따라 조정)
-  #    volumes:
-  #      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro  # Logstash 설정 파일
-  #      - ./logs:/var/log                                    # 로그 파일 경로
-  #    depends_on:
-  #      - elasticsearch
-  #    networks:
-  #      - app-tier
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysqldb
+      PMA_PORT: 3306
+    networks:
+      - app-tier
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -100,11 +46,76 @@ services:
       - "15672:15672"  # 관리 UI 포트
     restart: always
 
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    expose:
+      - "3100"
+    volumes:
+      - ./lokiconfig.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - app-tier
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3100/metrics"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  promtail:
+    image: grafana/promtail:latest
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./promtail.yml:/etc/promtail/config.yml
+      - ./log/app:/var/log/app
+      - ./log/system:/var/log/system
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - app-tier
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy 
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./dashBoard:/var/lib
+    networks:
+      - app-tier
+
 volumes:
   mysqldb-data:
     driver: local  # 로컬 드라이버 사용
-#  elasticsearch-data:
-#    driver: local  # 로컬 드라이버 사용
+  elasticsearch-data:
+    driver: local  # 로컬 드라이버 사용
 
 networks:
   app-tier:

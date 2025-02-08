@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 public interface ReviewService {
-    public void registerReview(ReviewCreateRequestDto request);
+    public void addReviewToProduct(ReviewCreateRequestDto request);
     public List<ReviewWithAvgProjection> getAllReview(Long productId);
     public void deleteReview(Long reviewId);
     public void updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto);

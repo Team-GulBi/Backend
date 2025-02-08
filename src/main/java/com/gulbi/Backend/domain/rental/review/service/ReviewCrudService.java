@@ -11,4 +11,5 @@ public interface ReviewCrudService{
     public List<ReviewWithAvgProjection> getReviewWithRateAvg(Long productId);
     public void deleteReview(Long reviewId);
     public void updateReview(ReviewUpdateRequestDto reviewUpdateRequestDto);
+    public void removeAllReviewsFromProductId(Long productId);
 }

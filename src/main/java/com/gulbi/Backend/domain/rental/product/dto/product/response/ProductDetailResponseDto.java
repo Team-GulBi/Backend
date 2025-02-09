@@ -3,6 +3,7 @@ package com.gulbi.Backend.domain.rental.product.dto.product.response;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.entity.Category;
 import com.gulbi.Backend.domain.rental.product.dto.ProductImageDtoCollection;
+import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +35,10 @@ public class ProductDetailResponseDto {
 
     private final List<ReviewWithAvgProjection> reviews;
 
-    public static ProductDetailResponseDto of(ProductDto product, ProductImageDtoCollection images, List<ReviewWithAvgProjection> reviews) {
+    private final ImageUrl userPhoto;
+    private final String userNickname;
+
+    public static ProductDetailResponseDto of(ProductDto product, ProductImageDtoCollection images, List<ReviewWithAvgProjection> reviews,ImageUrl userPhoto, String nickName) {
         return ProductDetailResponseDto.builder()
                 .tag(product.getTag())
                 .title(product.getTitle())
@@ -52,6 +56,8 @@ public class ProductDetailResponseDto {
                 .created_at(LocalDateTime.now())
                 .images(images.toUrlList())
                 .reviews(reviews)
+                .userPhoto(userPhoto)
+                .userNickname(nickName)
                 .build();
     }
 }

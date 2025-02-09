@@ -3,7 +3,7 @@
     <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
 
     <!-- appender 파일들 포함 -->
-<!--    <include resource="console-appender.xml"/>-->
+    <include resource="console-appender.xml"/>
 
     <include resource="./appAppender/app-file-error-appender.xml"/>
     <include resource="./appAppender/app-file-warn-appender.xml"/>
@@ -14,7 +14,7 @@
 
     <!-- 패턴 파일 포함 -->
     <include resource="logback-pattern.xml"/>
-    <!--        <appender-ref ref="CONSOLE"/>-->
+
 
     <logger name="com.gulbi.Backend.global.error" level="ERROR" additivity="false">
         <appender-ref ref="APP-ERROR"/>
@@ -26,6 +26,7 @@
         <appender-ref ref="APP-INFO"/>
     </logger>
     <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="SYSTEM-INFO"/>
         <appender-ref ref="SYSTEM-WARN"/>
         <appender-ref ref="SYSTEM-ERROR"/>

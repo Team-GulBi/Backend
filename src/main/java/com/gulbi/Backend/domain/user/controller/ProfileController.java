@@ -3,12 +3,17 @@ package com.gulbi.Backend.domain.user.controller;
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
 import com.gulbi.Backend.domain.user.service.ProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/profiles")
@@ -16,10 +21,10 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-
     public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
     }
+
     @PostMapping
     public ResponseEntity<String> createProfile(@RequestBody ProfileRequestDto request) {
         // 현재 인증된 사용자 가져오기
@@ -31,6 +36,7 @@ public class ProfileController {
         profileService.createProfile(request, userDetails);
         return ResponseEntity.ok("Profile created successfully.");
     }
+
     @PutMapping
     public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDto request) {
 

@@ -6,6 +6,7 @@ import com.gulbi.Backend.domain.rental.product.dto.product.ProductDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearchRequestDto;
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
+import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
@@ -32,16 +33,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     private final ProductCrudService productCrudService;
     private final ImageCrudService imageCrudService;
     private final ReviewService reviewService;
-    private final UserService userService;
     private final ProfileService profileService;
     private final Map<String, ProductSearchStrategy> productSearchStrategies;
 
     @Autowired
-    public ProductSearchServiceImpl(ProductCrudService productCrudService, ImageCrudService imageCrudService, ReviewService reviewService, UserService userService, ProfileService profileService, Map<String, ProductSearchStrategy> productSearchStrategies) {
+    public ProductSearchServiceImpl(ProductCrudService productCrudService, ImageCrudService imageCrudService, ReviewService reviewService, ProfileService profileService, Map<String, ProductSearchStrategy> productSearchStrategies) {
         this.productCrudService = productCrudService;
         this.imageCrudService = imageCrudService;
         this.reviewService = reviewService;
-        this.userService = userService;
         this.profileService = profileService;
         this.productSearchStrategies = productSearchStrategies;
     }
@@ -62,8 +61,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         ProductDto product = getProductById(productId);
         ProductImageDtoCollection imageList = getProductImagesByProductId(productId);
         List<ReviewWithAvgProjection> reviewWithAvg = getProductReviewsByProductId(productId);
-        ImageUrl userPhoto = getImageOfUser();
-        String userNickname = getUserName();
+        ImageUrl userPhoto = getImageOfUser(product);
+        String userNickname = getUserName(product);
         return ProductDetailResponseDto.of(product, imageList, reviewWithAvg,userPhoto,userNickname);
     }
 
@@ -80,22 +79,21 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
 
-    private User getUser(){
-        return userService.getAuthenticatedUser();
-    }
+
 
     private ProfileResponseDto getProfile(Long userId){
         return profileService.getProfile(userId);
     }
 
-    private ImageUrl getImageOfUser(){
-        User user = getUser();
+    private ImageUrl getImageOfUser(ProductDto product){
+        User user = product.getUser();
         ProfileResponseDto profile = getProfile(user.getId());
         return ImageUrl.of(profile.getImage());
     }
 
-    private String getUserName(){
-        return getUser().getNickname();
+    private String getUserName(ProductDto product){
+
+        return product.getUser().getNickname();
     }
 
     // 예외를 처리하는 로직을 private 메서드로 분리

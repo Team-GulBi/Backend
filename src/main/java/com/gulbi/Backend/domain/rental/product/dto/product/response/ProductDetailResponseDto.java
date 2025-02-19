@@ -31,7 +31,7 @@ public class ProductDetailResponseDto {
     private final Category scategory;
 
     private final LocalDateTime created_at;
-    private final List<String> images;
+    private final ProductImageDtoCollection images;
 
     private final List<ReviewWithAvgProjection> reviews;
 
@@ -54,7 +54,7 @@ public class ProductDetailResponseDto {
                 .mcategory(product.getMCategory())
                 .scategory(product.getSCategory())
                 .created_at(LocalDateTime.now())
-                .images(images.toUrlList())
+                .images(images)
                 .reviews(reviews)
                 .userPhoto(userPhoto)
                 .userNickname(nickName)

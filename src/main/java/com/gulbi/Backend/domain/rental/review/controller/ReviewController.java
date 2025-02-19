@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("ap1/v1/review")
+@RequestMapping("api/v1/review")
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;

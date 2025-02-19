@@ -24,9 +24,10 @@ public class ProductCrudServiceImpl implements ProductCrudService {
     private final ProductRepository productRepository;
 
     @Override
-    public void saveProduct(Product product) {
+    public Long saveProduct(Product product) {
+        Long savedProductId = null;
         try {
-            productRepository.save(product);
+            savedProductId = productRepository.save(product).getId();
         } catch (DataIntegrityViolationException e) {
             createProductValidationException(product, e);
         } catch (JpaSystemException | PersistenceException e) {
@@ -34,6 +35,7 @@ public class ProductCrudServiceImpl implements ProductCrudService {
         } catch (IllegalArgumentException e) {
             createMissingProductFieldException(product, e);
         }
+        return savedProductId;
     }
 
     @Override

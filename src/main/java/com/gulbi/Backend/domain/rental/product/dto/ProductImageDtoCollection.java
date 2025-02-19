@@ -1,8 +1,10 @@
 package com.gulbi.Backend.domain.rental.product.dto;
 
+import lombok.Getter;
+
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Getter
 public class ProductImageDtoCollection {
     private final List<ProductImageDto> productImages;
 

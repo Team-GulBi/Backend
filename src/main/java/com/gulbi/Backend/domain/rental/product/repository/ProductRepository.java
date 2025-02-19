@@ -31,7 +31,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     public List<ProductOverViewResponse> findProductsByTag(@Param("query1") String tagQuery1, @Param("query2") String tagQuery2, @Param("query3") String tagQuery3);
 
 
-    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.bCategory, p.mCategory, p.sCategory, p.createdAt) " +
+    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.bCategory, p.mCategory, p.sCategory,p.user, p.createdAt) " +
             "FROM Product p WHERE p.id = :id")
     public Optional<ProductDto> findProductDtoById(@Param("id") Long id);
 

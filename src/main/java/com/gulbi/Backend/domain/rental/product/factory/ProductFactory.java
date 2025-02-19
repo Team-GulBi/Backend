@@ -15,7 +15,7 @@ public class ProductFactory{
     private final UserService userService;
     private final CategoryBusinessService categoryBusinessService;
     public Product createWithRegisterRequestDto(ProductRegisterRequestDto productRegisterRequestDto) {
-        User user = userService.getDummyUser();
+        User user = userService.getAuthenticatedUser();
         CategoryInProductDto categoryInProductDto = categoryBusinessService.resolveCategories(
                 productRegisterRequestDto.getBcategoryId(),
                 productRegisterRequestDto.getMcategoryId(),

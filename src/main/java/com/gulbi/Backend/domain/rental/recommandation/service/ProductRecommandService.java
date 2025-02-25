@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ProductRecommandService {
     List<ProductOverViewResponse> getRealTimePopularProducts();
+    List<ProductOverViewResponse> getRecentRegistrationProducts();
 }

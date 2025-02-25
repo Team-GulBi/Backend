@@ -34,4 +34,9 @@ public class ProductRecommandServiceImpl implements ProductRecommandService {
     public List<ProductOverViewResponse> getRecentRegistrationProducts() {
         return productCrudService.getProductOverViewByCreatedAtDesc();
     }
+
+    @Override
+    public List<ProductOverViewResponse> getRecentProductByCategory(Long bCategoryId, Long mCategoryId, Long sCategoryId) {
+        return productCrudService.getProductOverViewByCategories(bCategoryId, mCategoryId, sCategoryId);
+    }
 }

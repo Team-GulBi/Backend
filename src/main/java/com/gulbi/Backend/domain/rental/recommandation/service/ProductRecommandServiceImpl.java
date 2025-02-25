@@ -32,6 +32,6 @@ public class ProductRecommandServiceImpl implements ProductRecommandService {
 
     @Override
     public List<ProductOverViewResponse> getRecentRegistrationProducts() {
-        return List.of();
+        return productCrudService.getProductOverViewByCreatedAtDesc();
     }
 }

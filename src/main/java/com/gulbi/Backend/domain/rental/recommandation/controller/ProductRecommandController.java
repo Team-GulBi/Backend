@@ -28,4 +28,12 @@ public class ProductRecommandController {
         RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
-}
+
+    @GetMapping("/recent")
+    public ResponseEntity<RestApiResponse> showRecentRegistratedProducts(){
+        List<ProductOverViewResponse> products = productRecommandService.getRecentRegistrationProducts();
+        RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
+        return ResponseEntity.ok(response);
+    }
+    }
+

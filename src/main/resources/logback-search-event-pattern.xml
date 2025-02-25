@@ -1,10 +1,10 @@
 <configuration>
 
         <property name="SEARCHED_PRODUCT_ID_LOG_PATTERN"
-                  value="{&quot;metadata&quot;:{&quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;}, &quot;productId&quot;:&quot;%X{productId}&quot;}%n" />
+                  value="{&quot;metadata&quot;:{&quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH:mm:ss}&quot;},&quot;productId&quot;:&quot;%X{productId}&quot;,&quot;message&quot;:&quot;%msg&quot;}%n" />
 
         <property name="SEARCHED_QUERY_LOG_PATTERN"
-                  value="{&quot;metadata&quot;:{&quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH}&quot;}, &quot;query&quot;:&quot;%X{query}&quot;,&quot;detail&quot;:&quot;%X{detail}&quot;,&quot;location&quot;:&quot;%X{location}&quot;}%n"
+                  value="{&quot;metadata&quot;:{&quot;timestamp&quot;:&quot;%d{yyyy-MM-dd HH:mm:ss}}&quot;},&quot;query&quot;:&quot;%X{query}&quot;,&quot;detail&quot;:&quot;%X{detail}&quot;,&quot;location&quot;:&quot;%X{location}&quot;,&quot;message&quot;:&quot;%msg&quot;}%n"
         />
 
 </configuration>

@@ -35,12 +35,18 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     " WHERE p.id IN :productIds")
     public List<ProductOverViewResponse> findProductsByIds(@Param("productIds") List<Long> productIds);
 
+    @Query(value = "SELECT p.id AS id, p.mainImage AS mainImage, p.title AS title, p.price AS price "+
+                    "FROM Product p ORDER BY p.createdAt DESC")
+    public List<ProductOverViewResponse> findAllProductOverviewsByCreatedAtDesc();
+
+
     @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.bCategory, p.mCategory, p.sCategory,p.user, p.createdAt) " +
             "FROM Product p WHERE p.id = :id")
     public Optional<ProductDto> findProductDtoById(@Param("id") Long id);
 
     @Query("SELECT p FROM Product p WHERE p.id = :id")
     public Optional<Product> findProductById(@Param("id") Long id);
+
     @Transactional
     @Modifying
     @Query("UPDATE Product p SET p.views = p.views + 1 WHERE p.id = :id ")

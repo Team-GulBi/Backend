@@ -16,6 +16,7 @@ public interface ProductCrudService {
     public List<ProductOverViewResponse> getProductOverViewByTitle(String title);
     public List<ProductOverViewResponse> getProductOverViewByproductIds(List<Long> productIds);
     public List<ProductOverViewResponse> getProductOverViewByCreatedAtDesc();
+    public List<ProductOverViewResponse> getProductOverViewByCategories(Long bCategoryId, Long mCategoryId, Long sCategoryId);
     public void updateProductViews(Long productId);
     public void updateProductInfo(ProductUpdateRequestDto productUpdateRequestDto);
     public void updateProductMainImage(ProductMainImageUpdateDto productMainImageUpdateDto);

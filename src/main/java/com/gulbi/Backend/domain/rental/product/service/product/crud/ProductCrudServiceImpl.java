@@ -76,6 +76,15 @@ public class ProductCrudServiceImpl implements ProductCrudService {
     }
 
     @Override
+    public List<ProductOverViewResponse> getProductOverViewByCreatedAtDesc() {
+        List<ProductOverViewResponse> overViewResponses =productRepository.findAllProductOverviewsByCreatedAtDesc();
+        if (overViewResponses.isEmpty()) {
+            createNoProductFoundForTitleException(null);
+        }
+        return overViewResponses;
+    }
+
+    @Override
     public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3) {
         List<ProductOverViewResponse> overViewResponses = productRepository.findProductsByTag(tag, tag2, tag3);
         if (overViewResponses.isEmpty()) {

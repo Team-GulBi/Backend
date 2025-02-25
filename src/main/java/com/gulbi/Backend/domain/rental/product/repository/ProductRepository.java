@@ -39,6 +39,16 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "FROM Product p ORDER BY p.createdAt DESC")
     public List<ProductOverViewResponse> findAllProductOverviewsByCreatedAtDesc();
 
+    @Query(value = "SELECT p.id AS id, p.mainImage AS mainImage, p.title AS title, p.price AS price " +
+            "FROM Product p WHERE " +
+            "(:bCategoryId =0 OR p.bCategory.id = :bCategoryId) AND " +
+            "(:mCategoryId =0 OR p.mCategory.id = :mCategoryId) AND " +
+            "(:sCategoryId =0 OR p.sCategory.id = :sCategoryId)")
+    public List<ProductOverViewResponse> findAllProductByCategoryIds(@Param("bCategoryId") Long bCategoryId,
+                                                                     @Param("mCategoryId") Long mCategoryId,
+                                                                     @Param("sCategoryId") Long sCategoryId);
+
+
 
     @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.bCategory, p.mCategory, p.sCategory,p.user, p.createdAt) " +
             "FROM Product p WHERE p.id = :id")

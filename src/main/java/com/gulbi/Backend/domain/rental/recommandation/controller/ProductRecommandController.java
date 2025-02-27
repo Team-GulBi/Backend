@@ -47,5 +47,12 @@ public class ProductRecommandController {
         RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("personality")
+    public ResponseEntity<RestApiResponse> showPersonalRecommandationProducts(){
+        List<ProductOverViewResponse> products = productRecommandService.getPersonalizedRecommendationProducts();
+        RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
+        return ResponseEntity.ok(response);
+    }
     }
 

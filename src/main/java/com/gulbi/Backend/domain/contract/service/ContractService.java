@@ -206,6 +206,21 @@ public class ContractService {
         dto.setLenderApproval(contract.getLenderApproval());
         dto.setBorrowerApproval(contract.getBorrowerApproval());
         dto.setUrl(contract.getUrl());
+
+        // 대여인이 승인했으면 서명을 추가
+        if (contract.getLenderApproval()) {
+            dto.setLenderSignature(
+                    contract.getLender().getProfile() != null ? contract.getLender().getProfile().getSignature() : null
+            );
+        }
+
+        // 차용인이 승인했으면 서명을 추가
+        if (contract.getBorrowerApproval()) {
+            dto.setBorrowerSignature(
+                    contract.getBorrower().getProfile() != null ? contract.getBorrower().getProfile().getSignature()
+                            : null
+            );
+        }
         return dto;
     }
 

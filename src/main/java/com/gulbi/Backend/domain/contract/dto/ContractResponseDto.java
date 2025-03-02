@@ -28,4 +28,6 @@ public class ContractResponseDto {
     private Boolean lenderApproval;
     private Boolean borrowerApproval;
     private String url;
+    private String lenderSignature;
+    private String borrowerSignature;
 }

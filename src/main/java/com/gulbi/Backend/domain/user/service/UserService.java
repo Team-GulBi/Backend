@@ -38,6 +38,11 @@ public class UserService {
                 .phoneNumber(request.getPhoneNumber())
                 .build();
         userRepository.save(user);
+
+        Profile profile = Profile.builder()
+                .user(user)
+                .build();
+        profileRepository.save(profile);
     }
 
 

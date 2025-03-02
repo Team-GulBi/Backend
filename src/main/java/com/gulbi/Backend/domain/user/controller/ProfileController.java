@@ -3,17 +3,17 @@ package com.gulbi.Backend.domain.user.controller;
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
 import com.gulbi.Backend.domain.user.service.ProfileService;
+import com.gulbi.Backend.domain.user.service.UserService;
+import com.gulbi.Backend.global.util.S3Uploader;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/profiles")
@@ -21,23 +21,24 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
+
     public ProfileController(ProfileService profileService) {
         this.profileService = profileService;
     }
 
-    @PostMapping
-    public ResponseEntity<String> createProfile(@RequestBody ProfileRequestDto request) {
-        // 현재 인증된 사용자 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // 인증된 사용자 정보 출력
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//    @PostMapping  삭제할거임
+//    public ResponseEntity<String> createProfile(@RequestBody ProfileRequestDto request) {
+//        // 현재 인증된 사용자 가져오기
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        // 인증된 사용자 정보 출력
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//
+//        // 로그인한 사용자 정보를 바탕으로 프로필 생성 로직 호출
+//        profileService.createProfile(request, userDetails);
+//        return ResponseEntity.ok("Profile created successfully.");
+//    }
 
-        // 로그인한 사용자 정보를 바탕으로 프로필 생성 로직 호출
-        profileService.createProfile(request, userDetails);
-        return ResponseEntity.ok("Profile created successfully.");
-    }
-
-    @PutMapping
+    @PatchMapping
     public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDto request) {
 
         // ProfileService에서 JWT 토큰을 반환받음
@@ -47,6 +48,23 @@ public class ProfileController {
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + newToken)
                 .body("Profile updated successfully");
+    }
+
+    @PatchMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateProfileImage(@RequestParam("image") MultipartFile file) throws IOException {
+        String newToken = profileService.updateProfileImage(file);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + newToken)
+                .body("Profile image updated successfully.");
+    }
+
+    @PatchMapping(value = "/signature", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateProfileSignature(@RequestParam("file") MultipartFile file) throws IOException {
+        String newToken = profileService.updateProfileSignature(file);
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + newToken)
+                .body("Signature updated successfully.");
     }
 
 

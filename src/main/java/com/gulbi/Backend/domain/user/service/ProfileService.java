@@ -9,12 +9,16 @@ import com.gulbi.Backend.domain.user.exception.UserNotFoundException;
 import com.gulbi.Backend.domain.user.repository.ProfileRepository;
 import com.gulbi.Backend.domain.user.repository.UserRepository;
 import com.gulbi.Backend.global.util.JwtUtil;
+import com.gulbi.Backend.global.util.S3Uploader;
 import com.gulbi.Backend.global.util.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 public class ProfileService {
@@ -23,21 +27,22 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final S3Uploader s3Uploader;
 
 
-    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository, JwtUtil jwtUtil,UserService userService) {
+    public ProfileService(ProfileRepository profileRepository, UserRepository userRepository, JwtUtil jwtUtil,UserService userService, S3Uploader s3Uploader) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.userService=userService;
-
+        this.s3Uploader=s3Uploader;
     }
-    public void createProfile(ProfileRequestDto request, UserDetails userDetails) {
-        // 이메일을 통해 User 객체를 찾기
-        User user = getUserByEmail(userDetails.getUsername());
-        Profile profile = Profile.fromDto(request, user);
-        profileRepository.save(profile);
-    }
+//    public void createProfile(ProfileRequestDto request, UserDetails userDetails) {
+//        // 이메일을 통해 User 객체를 찾기
+//        User user = getUserByEmail(userDetails.getUsername());
+//        Profile profile = Profile.fromDto(request, user);
+//        profileRepository.save(profile);
+//    }
 
     public String updateProfile(ProfileRequestDto request) {
         UserDetails userDetails = SecurityUtil.getAuthenticatedUser();
@@ -50,6 +55,52 @@ public class ProfileService {
         String role = determineUserRole(existingProfile);
         String token = generateUserToken(user, role);
         return token;
+    }
+
+    public String updateProfileImage(MultipartFile file) throws IOException {
+        UserDetails userDetails = SecurityUtil.getAuthenticatedUser();
+        User user = getUserByEmail(userDetails.getUsername());
+        Profile existingProfile = getProfileByUser(user);
+
+        // S3에 파일 업로드 후 URL 반환
+        String imageUrl = s3Uploader.uploadFile(file, "profile-images");
+
+        // 기존 프로필 정보를 유지하면서 image 필드만 업데이트
+        ProfileRequestDto request = ProfileRequestDto.builder()
+                .image(imageUrl)
+                .intro(existingProfile.getIntro())
+                .phone(existingProfile.getPhone())
+                .signature(existingProfile.getSignature())
+                .sido(existingProfile.getSido())
+                .sigungu(existingProfile.getSigungu())
+                .bname(existingProfile.getBname())
+                .build();
+
+        // 기존 updateProfile 메서드 활용 (JWT Role 업데이트 포함)
+        return updateProfile(request);
+    }
+
+    public String updateProfileSignature(MultipartFile file) throws IOException {
+        UserDetails userDetails = SecurityUtil.getAuthenticatedUser();
+        User user = getUserByEmail(userDetails.getUsername());
+        Profile existingProfile = getProfileByUser(user);
+
+        // S3에 파일 업로드 후 URL 반환
+        String signatureUrl = s3Uploader.uploadFile(file, "signatures");
+
+        // 기존 프로필 정보를 유지하면서 signature 필드만 업데이트
+        ProfileRequestDto request = ProfileRequestDto.builder()
+                .image(existingProfile.getImage())
+                .intro(existingProfile.getIntro())
+                .phone(existingProfile.getPhone())
+                .signature(signatureUrl)
+                .sido(existingProfile.getSido())
+                .sigungu(existingProfile.getSigungu())
+                .bname(existingProfile.getBname())
+                .build();
+
+        // 기존 updateProfile 메서드 활용 (JWT Role 업데이트 포함)
+        return updateProfile(request);
     }
 
 

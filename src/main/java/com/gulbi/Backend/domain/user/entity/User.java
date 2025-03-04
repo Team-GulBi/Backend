@@ -1,9 +1,13 @@
 package com.gulbi.Backend.domain.user.entity;
 
+import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.user.dto.RegisterRequestDto;
 import com.gulbi.Backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -31,6 +35,17 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Profile profile;
+
+    // 내가 만든 채팅방 (user1 역할)
+    @OneToMany(mappedBy = "user1", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ChatRoom> createdChatRooms = new ArrayList<>();
+
+    // 내가 참여한 채팅방 (user2 역할)
+    @OneToMany(mappedBy = "user2", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ChatRoom> joinedChatRooms = new ArrayList<>();
 
     // 빌더 패턴을 사용해 DTO 기반 객체 생성
     @Builder

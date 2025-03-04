@@ -7,6 +7,8 @@ import com.gulbi.Backend.domain.chat.websocket.WebSocketEventHandler;
 import com.gulbi.Backend.domain.chat.websocket.UserConnectedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.event.EventListener;
@@ -27,47 +29,11 @@ public class MessageListener {
     private final RabbitTemplate rabbitTemplate;
     private final WebSocketEventHandler webSocketEventHandler;
     private final ChatRoomService chatRoomService;
+    private final RabbitMQConfig rabbitMQConfig;
 
     // 중복 메시지 방지를 위한 처리 상태 추적
     private final Set<Long> processedMessages = new HashSet<>();
 
-//    // 메시지 수신 및 처리
-//    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
-//    public void receiveMessage(ChatMessageDto chatMessageDto) {
-//        if (chatMessageDto == null) {
-//            log.error("Received null ChatMessageDto");
-//            return;
-//        }
-//
-//        Long senderId = chatMessageDto.getSenderId();
-//        Long chatRoomId = chatMessageDto.getChatRoomId();
-//        Long receiverId = findReceiverIdFromChatRoom(chatRoomId, senderId);
-//
-//        chatMessageDto.setReceiverId(receiverId);
-//
-//        // 이미 처리된 메시지인지 확인 (중복 방지)
-//        if (processedMessages.contains(chatMessageDto.getId())) {
-//            log.info("Message {} already processed, skipping.", chatMessageDto.getId());
-//            return;
-//        }
-//
-//        // 수신자가 온라인 상태인지 확인
-//        boolean isReceiverOnline = webSocketEventHandler.isUserOnline(receiverId);
-//        log.info("Receiver {} isOnline: {}", receiverId, isReceiverOnline);
-//
-//        if (isReceiverOnline) {
-//            // Receiver가 온라인 상태일 때 WebSocket으로 메시지 전송
-//            log.info("Receiver {} is online. Sending message: {}", receiverId, chatMessageDto);
-//            sendToWebSocket(chatMessageDto);
-//        } else {
-//            // Receiver가 오프라인 상태일 때 메시지를 큐에 저장
-//            log.info("Receiver {} is offline. Storing message for later: {}", receiverId, chatMessageDto);
-//            storeMessageForLater(chatMessageDto);
-//        }
-//
-//        // 큐에서 메시지를 처리한 후에 processedMessages에 추가
-//        processedMessages.add(chatMessageDto.getId());
-//    }
 
     // 구독 이벤트 처리
     @EventListener
@@ -81,11 +47,25 @@ public class MessageListener {
             return;
         }
 
-        log.info("User {} subscribed to a channel. Processing queued messages.", userId);
+        // 구독한 destination이 채팅방과 관련된 것인지 확인
+        String destination = headerAccessor.getDestination();
+        if (destination == null || !destination.startsWith("/sub/chat/room/")) {
+            return;
+        }
 
+        // chatRoomId 추출
+        Long chatRoomId = Long.valueOf(destination.replace("/sub/chat/room/", ""));
+        log.info("User {} subscribed to chat room: {}", userId, chatRoomId);
+
+        // 🔹 채팅방별로 동적 큐 생성 & 바인딩
+        String queueName = "chat.queue." + chatRoomId;
+        Queue queue = rabbitMQConfig.createQueue(chatRoomId.toString());
+        Binding binding = rabbitMQConfig.bindQueueToExchange(queue);
+
+        // 큐에서 메시지 가져오기 (큐가 비어있을 때까지)
         ChatMessageDto chatMessageDto;
-        while ((chatMessageDto = (ChatMessageDto) rabbitTemplate.receiveAndConvert(RabbitMQConfig.QUEUE_NAME)) != null) {
-            log.debug("Dequeued message: {}", chatMessageDto);
+        while ((chatMessageDto = (ChatMessageDto) rabbitTemplate.receiveAndConvert(queueName)) != null) {
+            log.debug("Dequeued message for chat room {}: {}", chatRoomId, chatMessageDto);
 
             // 채팅방에서 상대방 ID 가져오기
             Long receiverId = findReceiverIdFromChatRoom(chatMessageDto.getChatRoomId(), chatMessageDto.getSenderId());
@@ -102,8 +82,9 @@ public class MessageListener {
                 storeMessageForLater(chatMessageDto);
             }
         }
-        log.info("Finished processing queued messages for user {}.", userId);
+        log.info("Finished processing queued messages for user {} in chat room {}.", userId, chatRoomId);
     }
+
 
     // WebSocket으로 메시지 전송
     private void sendToWebSocket(ChatMessageDto chatMessageDto) {

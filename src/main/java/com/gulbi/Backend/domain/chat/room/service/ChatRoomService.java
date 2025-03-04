@@ -5,6 +5,7 @@ import com.gulbi.Backend.domain.chat.room.repository.ChatRoomRepository;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
+    private final RabbitTemplate rabbitTemplate;
+
 
     public List<ChatRoom> findChatRoomsByUserId(Long userId) {
         return chatRoomRepository.findByUser1IdOrUser2Id(userId, userId);
@@ -48,8 +51,24 @@ public class ChatRoomService {
 
         // 채팅방이 없으면 새로 생성
         ChatRoom newRoom = new ChatRoom(user1, user2);
-        return chatRoomRepository.save(newRoom);
+        ChatRoom savedRoom = chatRoomRepository.save(newRoom);
+
+        // 큐 및 Exchange 설정
+        createQueueAndBind(String.valueOf(savedRoom.getId()));
+        return savedRoom;
     }
 
+    // 큐 및 Exchange 생성 메서드
+    private void createQueueAndBind(String chatRoomId) {
+        String queueName = "chat.queue." + chatRoomId;
+        String routingKey = "chat.room." + chatRoomId;
 
+        // 큐와 Exchange를 선언하고 바인딩
+        rabbitTemplate.execute(channel -> {
+            channel.queueDeclare(queueName, true, false, false, null);  // 큐 생성
+            channel.exchangeDeclare("chat.exchange", "topic", true);  // Exchange 생성
+            channel.queueBind(queueName, "chat.exchange", routingKey);  // 큐와 Exchange 바인딩
+            return null;
+        });
+    }
 }

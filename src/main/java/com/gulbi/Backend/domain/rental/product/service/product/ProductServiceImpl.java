@@ -34,8 +34,8 @@ public class ProductServiceImpl implements ProductService {
         return productSearchService.searchProductByQuery(productSearchRequestDto);
     }
     @Override
-    public void registrationProduct(ProductRegisterRequestDto productRegisterRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto, ProductMainImageCreateRequestDto productMainImageCreateRequestDto){
-        productRegistrationService.registerProduct(productRegisterRequestDto,productImageCreateRequestDto,productMainImageCreateRequestDto);
+    public Long registrationProduct(ProductRegisterRequestDto productRegisterRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto, ProductMainImageCreateRequestDto productMainImageCreateRequestDto){
+        return productRegistrationService.registerProduct(productRegisterRequestDto,productImageCreateRequestDto,productMainImageCreateRequestDto);
     }
     @Override
     public ProductDetailResponseDto getProductDetail(Long productId){

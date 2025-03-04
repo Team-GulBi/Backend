@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image,Long > {
-    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.ProductImageDto(i.id, i.product.id, i.url) " +
+    @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.ProductImageDto(i.id, i.product.id, i.url,i.main) " +
             "FROM Image i WHERE i.product.id = :productId")
     public List<ProductImageDto> findByImageWithProduct(@Param("productId") Long productId);
     @Transactional

@@ -45,8 +45,8 @@ public class ProductController {
             @RequestPart("images") List<MultipartFile> productImages,
             @RequestPart("mainImage") List<MultipartFile> productMainImage)
     {
-            productService.registrationProduct(productInfo, ProductImageCreateRequestDto.of(productImages), ProductMainImageCreateRequestDto.of(productMainImage));
-            RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS);
+            Long savedProductId=productService.registrationProduct(productInfo, ProductImageCreateRequestDto.of(productImages), ProductMainImageCreateRequestDto.of(productMainImage));
+            RestApiResponse response = new RestApiResponse(ProductSuccessCode.PRODUCT_REGISTER_SUCCESS,savedProductId);
         return ResponseEntity.ok(response);
     }
 

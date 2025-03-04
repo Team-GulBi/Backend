@@ -5,5 +5,5 @@ import com.gulbi.Backend.domain.rental.product.dto.product.request.register.Prod
 import com.gulbi.Backend.domain.rental.product.dto.product.request.register.ProductRegisterRequestDto;
 
 public interface ProductRegistrationService {
-    public void registerProduct(ProductRegisterRequestDto productRegisterRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto, ProductMainImageCreateRequestDto productMainImageCreateRequestDto);
+    public Long registerProduct(ProductRegisterRequestDto productRegisterRequestDto, ProductImageCreateRequestDto productImageCreateRequestDto, ProductMainImageCreateRequestDto productMainImageCreateRequestDto);
 }

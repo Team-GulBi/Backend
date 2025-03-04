@@ -47,3 +47,9 @@ scrape_configs:
         labels:
           job: appWarn
           __path__: /var/log/app/warn/*.log
+      - targets:
+          - localhost
+        labels:
+          job: product
+          __path__: /var/log/app/service/product/*.log
+          

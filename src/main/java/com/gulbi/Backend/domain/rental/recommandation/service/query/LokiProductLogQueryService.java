@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.recommandation.service;
+package com.gulbi.Backend.domain.rental.recommandation.service.query;
 
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.UserService;
@@ -17,7 +17,7 @@ public class LokiProductLogQueryService implements ProductLogQueryService {
 
     @Override
     public String getQueryOfPopularProductIds() {
-        String query = "topk(3, sum(count_over_time({job=\"popularProduct\"} | json | line_format \"{{.productId}}\" [600m])) by (productId))";
+        String query = "topk(20, sum(count_over_time({job=\"popularProduct\"} | json | line_format \"{{.productId}}\" [600m])) by (productId))";
         String rawLokiQuery = String.format(query);
         String response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/loki/api/v1/query")
@@ -42,8 +42,8 @@ public class LokiProductLogQueryService implements ProductLogQueryService {
         String query =
                 "topk(3, sum(count_over_time({job=\"personalRecommandationProduct\"} \n" +
                         "    | json \n" +
-                        "    | metadata_userId == 51\n" +
-                        "    | line_format \"{{.bCategoryId}},{{.mCategoryId}}\" [1000m])) \n" +
+                        "    | metadata_userId == 1\n" +
+                        "    | line_format \"{{.bCategoryId}},{{.mCategoryId}}\" [5m])) \n" +
                         "    by (bCategoryId, mCategoryId))";
         String response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/loki/api/v1/query")

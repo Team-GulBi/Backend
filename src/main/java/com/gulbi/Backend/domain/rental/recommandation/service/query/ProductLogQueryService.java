@@ -1,6 +1,4 @@
-package com.gulbi.Backend.domain.rental.recommandation.service;
-
-import com.gulbi.Backend.domain.user.entity.User;
+package com.gulbi.Backend.domain.rental.recommandation.service.query;
 
 public interface ProductLogQueryService {
 

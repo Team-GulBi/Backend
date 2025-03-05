@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.recommandation.service;
+package com.gulbi.Backend.domain.rental.recommandation.service.query;
 
 import com.gulbi.Backend.domain.rental.recommandation.vo.ExtractedProductIds;
 import com.gulbi.Backend.domain.rental.recommandation.vo.ExtractedRecommendation;

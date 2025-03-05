@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.recommandation.service;
+package com.gulbi.Backend.domain.rental.recommandation.service.query;
 
 import com.gulbi.Backend.domain.rental.recommandation.vo.ExtractedProductIds;
 import com.gulbi.Backend.domain.rental.recommandation.vo.ExtractedRecommendation;
@@ -20,10 +20,10 @@ public class LokiQueryHandler implements QueryHandler{
         // 실패작들
         //        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].value[*].values")));
         //        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].metric[*].bCategoryId")));
-//        System.out.println(queryResult);
-//        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].metric.bCategoryId")));
-//        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].metric.mCategoryId")));
-//        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].value[1]")));
+        System.out.println(queryResult);
+        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].metric.bCategoryId")));
+        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].metric.mCategoryId")));
+        System.out.println(Optional.ofNullable(JsonPath.read(queryResult, "$.data.result[*].value[1]")));
         List<String> bCategoryList = JsonPath.read(queryResult, "$.data.result[*].metric.bCategoryId");
         List<String> mCategoryList =JsonPath.read(queryResult, "$.data.result[*].metric.mCategoryId");
         List<String> priorityList =JsonPath.read(queryResult, "$.data.result[*].value[1]");

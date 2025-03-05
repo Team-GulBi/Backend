@@ -1,14 +1,12 @@
 package com.gulbi.Backend.domain.rental.recommandation.controller;
 
-import com.gulbi.Backend.domain.rental.product.code.ProductSuccessCode;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.recommandation.code.RecommandationSuccessCode;
-import com.gulbi.Backend.domain.rental.recommandation.service.ProductRecommandService;
+import com.gulbi.Backend.domain.rental.recommandation.service.ProductRecommendFacade;
 import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationRequestDto;
-import com.gulbi.Backend.global.response.ResponseApiCode;
+import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationResponseDto;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,15 +19,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/recommand")
 public class ProductRecommandController {
-    private final ProductRecommandService productRecommandService;
+    private final ProductRecommendFacade productRecommendFacade;
 
-    public ProductRecommandController(ProductRecommandService productRecommandService) {
-        this.productRecommandService = productRecommandService;
+    public ProductRecommandController(ProductRecommendFacade productRecommendFacade) {
+        this.productRecommendFacade = productRecommendFacade;
     }
 
     @GetMapping
     public ResponseEntity<RestApiResponse> showRealTimePopularProduct(){
-        List<ProductOverViewResponse> products = productRecommandService.getRealTimePopularProducts();
+        List<ProductOverViewResponse> products = productRecommendFacade.getRealTimePopularProducts();
         RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
@@ -38,7 +36,7 @@ public class ProductRecommandController {
     public ResponseEntity<RestApiResponse> showRecentRegistratedProducts(@Parameter(description = "lastCreatedAt",required = false)@RequestParam(value = "lastCreatedAt", required = false) LocalDateTime lastCreatedAt,
                                                                          @Parameter(description = "size", required = true) @RequestParam("size") int size){
         Pageable pageable = PageRequest.of(0, size);
-        List<ProductOverViewResponse> products = productRecommandService.getRecentRegistrationProducts(pageable,lastCreatedAt);
+        List<ProductOverViewResponse> products = productRecommendFacade.getRecentRegistrationProducts(pageable,lastCreatedAt);
         RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
@@ -52,16 +50,25 @@ public class ProductRecommandController {
             @Parameter(description = "size", required = true) @RequestParam("size") int size
     ) {
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        List<ProductOverViewResponse> products = productRecommandService.getRecentProductByCategory(bCategoryId, mCategoryId,sCategoryId,lastCreatedAt,pageable);
+        List<ProductOverViewResponse> products = productRecommendFacade.getRecentProductByCategory(bCategoryId, mCategoryId,sCategoryId,lastCreatedAt,pageable);
         RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("personality")
-    public ResponseEntity<RestApiResponse> showPersonalRecommendationProducts(){
-        List<ProductOverViewResponse> products = productRecommandService.getPersonalizedRecommendationProducts();
-        RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
+    @GetMapping("/personality")
+    public ResponseEntity<RestApiResponse> getPersonalRecommendation(@ModelAttribute PersonalRecommendationRequestDto request) {
+        return buildResponse(request);
+    }
+
+    @PostMapping("/personality")
+    public ResponseEntity<RestApiResponse> postPersonalRecommendation(@RequestBody PersonalRecommendationRequestDto request) {
+        return buildResponse(request);
+    }
+
+    private ResponseEntity<RestApiResponse> buildResponse(PersonalRecommendationRequestDto request) {
+        PersonalRecommendationResponseDto products = productRecommendFacade.getPersonalizedRecommendationProducts(request);
+        RestApiResponse response = new RestApiResponse(RecommandationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS, products);
         return ResponseEntity.ok(response);
     }
-    }
+}
 

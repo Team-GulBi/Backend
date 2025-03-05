@@ -58,16 +58,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
 
 
-    @Query("SELECT p.id AS id, p.mainImage AS mainImage, p.title AS title, p.price AS price " +
-            "FROM Product p WHERE p.createdAt BETWEEN :oneMonthAgo AND :now " +
-            "AND p.bCategory.id = :bCategoryId AND p.mCategory.id = :mCategoryId ORDER BY RANDOM()")
-    List<ProductOverViewResponse> findProductsByCreatedAtBetweenAndCategories(
-            @Param("now") LocalDateTime now,
-            @Param("oneMonthAgo") LocalDateTime oneMonthAgo,
-            @Param("bCategoryId") Long bCategoryId,
-            @Param("mCategoryId") Long mCategoryId);
-
-
     @Query("SELECT new com.gulbi.Backend.domain.rental.product.dto.product.ProductDto(p.id, p.tag, p.title, p.name, p.views, p.price, p.sido, p.sigungu, p.bname, p.description, p.rating, p.bCategory, p.mCategory, p.sCategory,p.user, p.createdAt) " +
             "FROM Product p WHERE p.id = :id")
     Optional<ProductDto> findProductDtoById(@Param("id") Long id);

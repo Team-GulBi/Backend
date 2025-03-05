@@ -53,7 +53,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         String detail = productSearchRequestDto.getDetail().trim();
         String query = productSearchRequestDto.getQuery();
         loggingQuery(query,detail);
-        System.out.println("tltltltltltltlltlt-----sd-s-d-ds-d-sd-ds-");
         ProductSearchStrategy productSearchStrategy = getProductSearchStrategy(detail, productSearchRequestDto);
         return productSearchStrategy.search(query);
     }

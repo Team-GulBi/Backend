@@ -36,9 +36,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private Profile profile;
-
     // 내가 만든 채팅방 (user1 역할)
     @OneToMany(mappedBy = "user1", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ChatRoom> createdChatRooms = new ArrayList<>();

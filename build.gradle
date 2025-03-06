@@ -44,6 +44,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.jayway.jsonpath:json-path:2.9.0'
 
 	// MySQL JDBC 드라이버의 버전을 명시합니다.
 	runtimeOnly 'mysql:mysql-connector-java:8.0.33'  // 여기서 8.0.33은 예시입니다.
@@ -56,8 +58,6 @@ dependencies {
 
     implementation "org.apache.tika:tika-core:2.9.1"
     implementation "org.apache.tika:tika-parsers-standard-package:2.9.1"
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'com.jayway.jsonpath:json-path:2.9.0'
 
 }
 

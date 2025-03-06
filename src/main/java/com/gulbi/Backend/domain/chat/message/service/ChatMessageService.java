@@ -10,9 +10,10 @@ import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.global.config.RabbitMQConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-
+import org.springframework.amqp.core.Queue;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ChatMessageService {
     private final ChatRoomService chatRoomService;
     private final WebSocketEventHandler webSocketEventHandler;
     private final RabbitTemplate rabbitTemplate;
+
 
     // 메시지 저장 및 오프라인 사용자 처리
     public ChatMessage sendMessage(Long chatRoomId, String content, User sender) {
@@ -69,10 +71,11 @@ public class ChatMessageService {
         chatMessageRepository.save(message);
     }
 
-    // RabbitMQ 큐에 메시지 전송
-    private void sendMessageToQueue(ChatMessageDto chatMessageDto) {
-        rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, chatMessageDto);
-        log.info("Sent Message to Queue: {}", chatMessageDto);
+    // 메시지를 RabbitMQ로 전송
+    public void sendMessageToQueue(ChatMessageDto chatMessageDto) {
+        String routingKey = "chat.room." + chatMessageDto.getChatRoomId();
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, chatMessageDto);
+        log.info("Sent Message to Exchange: {}, RoutingKey: {}", RabbitMQConfig.EXCHANGE_NAME, routingKey);
     }
 
     // 상대방이 온라인인지 확인 (sender와 반대되는 사용자의 상태 확인)

@@ -10,11 +10,14 @@ import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
 import com.gulbi.Backend.global.error.ExceptionMetaData;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.jpa.JpaSystemException;
 import jakarta.persistence.PersistenceException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -74,6 +77,21 @@ public class ProductCrudServiceImpl implements ProductCrudService {
         }
         return overViewResponses;
     }
+
+    @Override
+    public List<ProductOverViewResponse> getProductOverViewByCreatedAtDesc(Pageable pageable, LocalDateTime lastCreatedAt) {
+        List<ProductOverViewResponse> overViewResponses =productRepository.findAllProductOverviewsByCreatedAtDesc(lastCreatedAt,pageable);
+        if (overViewResponses.isEmpty()) {
+            createNoProductFoundForTitleException(null);
+        }
+        return overViewResponses;
+    }
+
+    @Override
+    public List<ProductOverViewResponse> getProductOverViewByCategories(Long bCategoryId, Long mCategoryId, Long sCategoryId, LocalDateTime lastCreatedAt, Pageable pageable) {
+        return productRepository.findAllProductByCategoryIds(bCategoryId, mCategoryId, sCategoryId,lastCreatedAt,pageable);
+    }
+
 
     @Override
     public List<ProductOverViewResponse> getProductOverViewByTag(String tag, String tag2, String tag3) {

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = @Index(name="idx_created_at",columnList = "created_at DESC"))
 @NoArgsConstructor
 public class Product extends BaseEntity {
 

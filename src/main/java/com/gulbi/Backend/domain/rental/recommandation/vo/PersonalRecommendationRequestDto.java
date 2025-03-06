@@ -1,9 +1,12 @@
 package com.gulbi.Backend.domain.rental.recommandation.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gulbi.Backend.domain.rental.recommandation.code.QueryFilter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -11,10 +14,32 @@ import java.util.Map;
 
 @Getter
 public class PersonalRecommendationRequestDto {
+        @NotNull
+        @Schema(description = "페이지 네이션 사이즈", example = "10")
         private int size;
+        @NotNull
+        @Schema(description = "GET 요청시 false, POST요청시 true", example = "false")
         private boolean pagination;
+        @NotNull
+        @Schema(description = "추천 전략을 위한 필드", example = "RECENT")
         private QueryFilter filter;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY,
+                description = "페이지 네이션",
+                example = "{\n" +
+                        "  \"1\": {\n" +
+                        "    \"bCategoryId\": { \"intValue\": 1 },\n" +
+                        "    \"mCategoryId\": { \"intValue\": 2 },\n" +
+                        "    \"lastCreatedAt\": { \"dateTimeValue\": \"2025-01-05T23:52:36.861726\" },\n" +
+                        "    \"당부말씀\": { \"dateTimeValue\": \"GET,POST같은DTO를쓰기에,GET요청은categories를지우고쓰세요\" }\n" +
+                        "  }\n" +
+                        "}"
+        )
         private Map<Integer, Map<String, Value>> categories;
+
+
+
 
         public PersonalRecommendationRequestDto() {
             this.size = 0;

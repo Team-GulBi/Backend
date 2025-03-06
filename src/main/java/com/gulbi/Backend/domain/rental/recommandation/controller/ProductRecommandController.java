@@ -25,7 +25,7 @@ public class ProductRecommandController {
         this.productRecommendFacade = productRecommendFacade;
     }
 
-    @GetMapping
+    @GetMapping("/realtime")
     public ResponseEntity<RestApiResponse> showRealTimePopularProduct(){
         List<ProductOverViewResponse> products = productRecommendFacade.getRealTimePopularProducts();
         RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);

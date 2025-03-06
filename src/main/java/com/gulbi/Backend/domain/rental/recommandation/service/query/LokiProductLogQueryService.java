@@ -1,7 +1,11 @@
 package com.gulbi.Backend.domain.rental.recommandation.service.query;
 
+import com.gulbi.Backend.domain.rental.recommandation.code.WebClientErrorCode;
+import com.gulbi.Backend.domain.rental.recommendation.exception.LokiException;
 import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.UserService;
+import com.gulbi.Backend.global.error.ExceptionMetaData;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -35,8 +39,23 @@ public class LokiProductLogQueryService implements ProductLogQueryService {
                         .queryParam("query", "{query}")
                         .build(query))
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError,response->{
+                    ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder()
+                            .stackTrace(new Throwable())
+                            .className(this.getClass().getName())
+                            .responseApiCode(WebClientErrorCode.WEB_CLIENT_BAD_REQUEST)
+                            .build();
+                    throw new LokiException.ResponseException(exceptionMetaData);
+                })
+                .onStatus(HttpStatusCode::is5xxServerError,response->{
+                    ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder()
+                            .stackTrace(new Throwable())
+                            .className(this.getClass().getName())
+                            .responseApiCode(WebClientErrorCode.INTERNAL_SERVER_ERROR)
+                            .build();
+                    throw new LokiException.ResponseException(exceptionMetaData);
+                })
                 .bodyToMono(String.class)
-                .doOnTerminate(() -> System.out.println("Query execution finished"))
                 .block();
     }
 

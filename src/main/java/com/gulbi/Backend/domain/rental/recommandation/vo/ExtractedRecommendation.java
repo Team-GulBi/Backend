@@ -3,13 +3,13 @@ package com.gulbi.Backend.domain.rental.recommandation.vo;
 import java.util.*;
 
 public class ExtractedRecommendation {
-    private final Map<Integer, Map<String,Integer>> recommandationIndices;
+    private final Map<Integer, Map<String,Integer>> recommendationIndices;
 
     private ExtractedRecommendation(List<String> bCategoryList, List<String> mCategoryList, List<String> priorityList) {
         List<Integer> bCategories = convertStringListToIntegerList(bCategoryList);
         List<Integer> mCategories = convertStringListToIntegerList(mCategoryList);
         List<Integer> priority = dupulicatedListSolution(convertStringListToIntegerList(priorityList));
-        this.recommandationIndices = createRecommandationMap(bCategories, mCategories, priority);
+        this.recommendationIndices = createRecommandationMap(bCategories, mCategories, priority);
     }
 
     public static ExtractedRecommendation of(List<String> bCategoryList, List<String> mCategoryList, List<String> priorityList) {
@@ -23,7 +23,6 @@ public class ExtractedRecommendation {
         }
         return integerList;
     }
-
 
     private Map<Integer, Map<String, Integer>> createRecommandationMap(List<Integer> bCategoryList, List<Integer> mCategoryList, List<Integer> priorityList) {
         Map<Integer, Map<String,Integer>> recommandationMap = new HashMap<>();
@@ -55,26 +54,25 @@ public class ExtractedRecommendation {
     }
 
     public List<Integer> getSortedKey() {
-        List<Integer> sortedKeys = new ArrayList<>(this.recommandationIndices.keySet());
+        List<Integer> sortedKeys = new ArrayList<>(this.recommendationIndices.keySet());
         sortedKeys.sort(Comparator.reverseOrder());
         return sortedKeys;
     }
 
     public Integer getBCategory(int priority){
-        return this.recommandationIndices.get(priority).get("bCategories");
+        return this.recommendationIndices.get(priority).get("bCategories");
     }
 
     public Integer getMCategory(int priority){
-        return this.recommandationIndices.get(priority).get("mCategories");
+        return this.recommendationIndices.get(priority).get("mCategories");
     }
 
     public void printRecommendationIndices() {
-        this.recommandationIndices.forEach((priority, categoryMap) -> {
+        this.recommendationIndices.forEach((priority, categoryMap) -> {
             System.out.println("Priority: " + priority);
             categoryMap.forEach((categoryType, value) -> {
                 System.out.println("  " + categoryType + ": " + value);
             });
         });
     }
-
 }

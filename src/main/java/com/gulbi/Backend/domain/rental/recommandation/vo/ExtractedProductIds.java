@@ -1,5 +1,5 @@
 package com.gulbi.Backend.domain.rental.recommandation.vo;
-import com.gulbi.Backend.domain.rental.recommandation.code.RecommandationErrorCode;
+import com.gulbi.Backend.domain.rental.recommandation.code.RecommendationErrorCode;
 import com.gulbi.Backend.global.error.BusinessException;
 import com.gulbi.Backend.global.error.ExceptionMetaData;
 
@@ -45,7 +45,7 @@ public class ExtractedProductIds {
     }
 
     private void listIsNullException(){
-        ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder().responseApiCode(RecommandationErrorCode.REALTIME_POPULAR_PRODUCT_DOES_NOT_EXIST).build();
+        ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder().responseApiCode(RecommendationErrorCode.REALTIME_POPULAR_PRODUCT_DOES_NOT_EXIST).build();
         throw new BusinessException(exceptionMetaData);
     }
 

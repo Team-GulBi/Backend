@@ -5,8 +5,8 @@ import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudS
 import com.gulbi.Backend.domain.rental.recommandation.service.personal.strategy.CategoryBasedRecommendStrategy;
 import com.gulbi.Backend.domain.rental.recommandation.vo.ExtractedRecommendation;
 import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalCategoryPagination;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationRequestDto;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationResponseDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationRequestDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationResponseDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service("latestProductQueryStrategy")
 //전략에 대한 정보만 유치 필요한 상품의 비율은 서비스 호출로 충족.

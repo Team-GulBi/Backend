@@ -1,10 +1,9 @@
 package com.gulbi.Backend.domain.rental.recommandation.service.personal.strategy;
 
-import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.search.strategy.search.ProductSearchStrategy;
 import com.gulbi.Backend.domain.rental.recommandation.vo.ExtractedRecommendation;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationRequestDto;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationResponseDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationRequestDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

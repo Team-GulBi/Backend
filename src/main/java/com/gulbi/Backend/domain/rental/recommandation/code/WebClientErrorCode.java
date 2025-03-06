@@ -3,31 +3,32 @@ package com.gulbi.Backend.domain.rental.recommandation.code;
 import com.gulbi.Backend.global.response.ResponseApiCode;
 import org.springframework.http.HttpStatus;
 
-public enum RecommandationErrorCode implements ResponseApiCode {
-    REALTIME_POPULAR_PRODUCT_DOES_NOT_EXIST(HttpStatus.OK,"E001","실시간 인기상품이 존재하지 않습니다.(최근에 검색 된 기록이 없습니다.)");
+public enum WebClientErrorCode implements ResponseApiCode {
+    WEB_CLIENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "WEB001", "잘못된 엔드포인트 혹은 쿼리입니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "WEB002", "서버 내부 오류가 발생했습니다.");
 
     private final HttpStatus status;
     private final String code;
     private final String message;
 
-    RecommandationErrorCode(HttpStatus status, String code, String message) {
+    WebClientErrorCode(HttpStatus status, String code, String message) {
         this.status = status;
         this.code = code;
         this.message = message;
     }
 
     @Override
-    public org.springframework.http.HttpStatus getStatus() {
-        return this.status;
+    public HttpStatus getStatus() {
+        return status;
     }
 
     @Override
     public String getCode() {
-        return this.code;
+        return code;
     }
 
     @Override
     public String getMessage() {
-        return this.message;
+        return message;
     }
 }

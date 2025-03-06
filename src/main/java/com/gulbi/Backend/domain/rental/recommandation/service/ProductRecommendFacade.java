@@ -1,8 +1,8 @@
 package com.gulbi.Backend.domain.rental.recommandation.service;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationRequestDto;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationResponseDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationRequestDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationResponseDto;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;

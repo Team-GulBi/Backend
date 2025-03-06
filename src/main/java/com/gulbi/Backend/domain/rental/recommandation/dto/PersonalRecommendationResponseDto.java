@@ -1,4 +1,4 @@
-package com.gulbi.Backend.domain.rental.recommandation.vo;
+package com.gulbi.Backend.domain.rental.recommandation.dto;
 
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import lombok.Getter;

@@ -3,8 +3,8 @@ package com.gulbi.Backend.domain.rental.recommandation.controller;
 import com.gulbi.Backend.domain.rental.product.dto.product.ProductOverViewResponse;
 import com.gulbi.Backend.domain.rental.recommandation.code.RecommendationSuccessCode;
 import com.gulbi.Backend.domain.rental.recommandation.service.ProductRecommendFacade;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationRequestDto;
-import com.gulbi.Backend.domain.rental.recommandation.vo.PersonalRecommendationResponseDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationRequestDto;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationResponseDto;
 import com.gulbi.Backend.global.response.RestApiResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +37,7 @@ public class ProductRecommandController {
                                                                          @Parameter(description = "size", required = true) @RequestParam("size") int size){
         Pageable pageable = PageRequest.of(0, size);
         List<ProductOverViewResponse> products = productRecommendFacade.getRecentRegistrationProducts(pageable,lastCreatedAt);
-        RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
+        RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.LATEST_REGISTRATION_PRODUCTS_FOUND_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
 
@@ -51,7 +51,7 @@ public class ProductRecommandController {
     ) {
         Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         List<ProductOverViewResponse> products = productRecommendFacade.getRecentProductByCategory(bCategoryId, mCategoryId,sCategoryId,lastCreatedAt,pageable);
-        RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS,products);
+        RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.PRODUCTS_FOUND_BY_CATEGORIES_SUCCESS,products);
         return ResponseEntity.ok(response);
     }
 
@@ -67,7 +67,7 @@ public class ProductRecommandController {
 
     private ResponseEntity<RestApiResponse> buildResponse(PersonalRecommendationRequestDto request) {
         PersonalRecommendationResponseDto products = productRecommendFacade.getPersonalizedRecommendationProducts(request);
-        RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.REALTIME_POPULAR_PRODUCTS_FOUND_SUCCESS, products);
+        RestApiResponse response = new RestApiResponse(RecommendationSuccessCode.PERSONAL_RECOMMENDATION_PRODUCTS_FOUND_SUCCESS, products);
         return ResponseEntity.ok(response);
     }
 }

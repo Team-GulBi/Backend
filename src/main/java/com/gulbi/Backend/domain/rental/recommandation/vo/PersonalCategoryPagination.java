@@ -1,6 +1,6 @@
 package com.gulbi.Backend.domain.rental.recommandation.vo;
 
-import lombok.Getter;
+import com.gulbi.Backend.domain.rental.recommandation.dto.PersonalRecommendationRequestDto;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;

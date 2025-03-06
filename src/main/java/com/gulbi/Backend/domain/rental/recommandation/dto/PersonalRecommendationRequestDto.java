@@ -1,10 +1,9 @@
-package com.gulbi.Backend.domain.rental.recommandation.vo;
+package com.gulbi.Backend.domain.rental.recommandation.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gulbi.Backend.domain.rental.recommandation.code.QueryFilter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

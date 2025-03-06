@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class LokiProductLogQueryService implements ProductLogQueryService {
-
+    private static final String LOKI_GET_REQUEST_ENDPOINT = "/loki/api/v1/query";
     private final WebClient webClient = WebClient.create("http://localhost:3100");
     private final UserService userService;
 
@@ -17,43 +17,27 @@ public class LokiProductLogQueryService implements ProductLogQueryService {
 
     @Override
     public String getQueryOfPopularProductIds() {
-        String query = "topk(20, sum(count_over_time({job=\"popularProduct\"} | json | line_format \"{{.productId}}\" [600m])) by (productId))";
-        String rawLokiQuery = String.format(query);
-        String response = webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/loki/api/v1/query")
-                        .queryParam("query", "{query}")
-                        .build(query))
-                .retrieve()
-                .bodyToMono(String.class)
-                .doOnTerminate(() -> System.out.println("Query execution finished"))
-                .block();
-        return response;
+        String query = LokiQuery.REALTIME_POPULAR_PRODUCT_IDS.getQuery();
+        return requestQueryToLoki(query);
     }
 
 
     @Override
     public String getQueryOfMostViewedCategoriesByUser() {
-//        String query = String.format(
-//                "topk(3, sum(count_over_time({job=\"personalRecommandationProduct\"} \n" +
-//                        "    | json \n" +
-//                        "    | metadata_userId == %d\n" +
-//                        "    | line_format \"{{.bCategoryId}},{{.mCategoryId}}\" [1000m])) \n" +
-//                        "    by (bCategoryId, mCategoryId))", getAuthenticationUser().getId());
-        String query =
-                "topk(3, sum(count_over_time({job=\"personalRecommandationProduct\"} \n" +
-                        "    | json \n" +
-                        "    | metadata_userId == 1\n" +
-                        "    | line_format \"{{.bCategoryId}},{{.mCategoryId}}\" [5m])) \n" +
-                        "    by (bCategoryId, mCategoryId))";
-        String response = webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/loki/api/v1/query")
+        String query = LokiQuery.MOST_VIEWED_THIRD_CATEGORIES_BY_USER.getQuery(getAuthenticationUser().getId());
+        return requestQueryToLoki(query);
+    }
+
+
+    private String requestQueryToLoki(String query){
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(LOKI_GET_REQUEST_ENDPOINT)
                         .queryParam("query", "{query}")
                         .build(query))
                 .retrieve()
                 .bodyToMono(String.class)
                 .doOnTerminate(() -> System.out.println("Query execution finished"))
                 .block();
-        return response;
     }
 
     private User getAuthenticationUser(){

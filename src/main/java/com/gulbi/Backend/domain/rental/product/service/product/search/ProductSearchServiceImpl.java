@@ -10,6 +10,7 @@ import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
+import com.gulbi.Backend.domain.rental.product.service.product.logging.ProductLogHandler;
 import com.gulbi.Backend.domain.rental.product.service.product.search.strategy.search.ProductSearchStrategy;
 import com.gulbi.Backend.domain.rental.product.vo.image.ImageUrl;
 import com.gulbi.Backend.domain.rental.review.dto.ReviewWithAvgProjection;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @Service
 public class ProductSearchServiceImpl implements ProductSearchService {
     private final String className = this.getClass().getName();
+    private final ProductLogHandler productLogHandler;
     private final ProductCrudService productCrudService;
     private final ImageCrudService imageCrudService;
     private final ReviewService reviewService;
@@ -37,7 +39,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     private final Map<String, ProductSearchStrategy> productSearchStrategies;
 
     @Autowired
-    public ProductSearchServiceImpl(ProductCrudService productCrudService, ImageCrudService imageCrudService, ReviewService reviewService, ProfileService profileService, Map<String, ProductSearchStrategy> productSearchStrategies) {
+    public ProductSearchServiceImpl(ProductLogHandler productLogHandler, ProductCrudService productCrudService, ImageCrudService imageCrudService, ReviewService reviewService, ProfileService profileService, Map<String, ProductSearchStrategy> productSearchStrategies) {
+        this.productLogHandler = productLogHandler;
         this.productCrudService = productCrudService;
         this.imageCrudService = imageCrudService;
         this.reviewService = reviewService;
@@ -49,16 +52,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     public List<ProductOverViewResponse> searchProductByQuery(ProductSearchRequestDto productSearchRequestDto) {
         String detail = productSearchRequestDto.getDetail().trim();
         String query = productSearchRequestDto.getQuery();
-
-        // 예외를 처리하는 부분을 private 메서드로 분리
+        loggingQuery(query,detail);
         ProductSearchStrategy productSearchStrategy = getProductSearchStrategy(detail, productSearchRequestDto);
-
         return productSearchStrategy.search(query);
     }
 
     @Override
     public ProductDetailResponseDto getProductDetail(Long productId) {
+        loggingProductId(productId);
         ProductDto product = getProductById(productId);
+        loggingReturnedProduct(product);
         ProductImageDtoCollection imageList = getProductImagesByProductId(productId);
         List<ReviewWithAvgProjection> reviewWithAvg = getProductReviewsByProductId(productId);
         ImageUrl userPhoto = getImageOfUser(product);
@@ -78,9 +81,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return reviewService.getAllReview(productId);
     }
 
-
-
-
     private ProfileResponseDto getProfile(Long userId){
         return profileService.getProfile(userId);
     }
@@ -96,15 +96,27 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return product.getUser().getNickname();
     }
 
-    // 예외를 처리하는 로직을 private 메서드로 분리
+    // 로깅 서비스 호출 메서드 부분(시작)
+    private void loggingProductId(Long productId){
+        productLogHandler.loggingProductIdData(productId);
+    }
+    private void loggingQuery(String query, String detail){
+        productLogHandler.loggingQueryData(query,detail);
+    }
+    private void loggingReturnedProduct(ProductDto productDto){
+        productLogHandler.loggingReturnedProductData(productDto);
+    }
+    // 로깅 서비스 호출 메서드 부분(끝)
+
+    // 예외 호출 (시작)
     private ProductSearchStrategy getProductSearchStrategy(String detail, ProductSearchRequestDto productSearchRequestDto) {
         return Optional.ofNullable(productSearchStrategies.get(detail))
                 .orElseThrow(() -> createInvalidProductSearchDetailException(productSearchRequestDto));
     }
 
-    // 예외를 생성하는 메서드
     private ProductException.InvalidProductSearchDetailException createInvalidProductSearchDetailException(Object args) {
         ExceptionMetaData exceptionMetaData = new ExceptionMetaData.Builder().args(args).className(className).responseApiCode(ProductErrorCode.UNSUPPORTED_SEARCH_CONDITION).build();
         return new ProductException.InvalidProductSearchDetailException(exceptionMetaData);
     }
+    // 예외 호출 (종료)
 }

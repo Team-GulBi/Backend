@@ -5,5 +5,8 @@ public interface ReviewWithAvgProjection {
     Long getId();
     Integer getRating();
     String getContent();
-    Double getAverageRating();
+    Float getAverageRating();
+    String getNickName();
+    String getProfileImage();
+
 }

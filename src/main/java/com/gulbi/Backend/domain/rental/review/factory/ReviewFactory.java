@@ -22,13 +22,16 @@ public class ReviewFactory {
     }
 
     public Review createWithRegisterRequest(ReviewCreateRequestDto reviewCreateRequestDto) {
-        User user = userService.getDummyUser();
         Product product = productCrudService.getProductById(reviewCreateRequestDto.getProductId());
         return Review.builder()
                 .content(reviewCreateRequestDto.getContent())
                 .rating(reviewCreateRequestDto.getRating())
-                .user(user)
+                .user(getAuthenticatedUser())
                 .product(product)
                 .build();
+    }
+
+    private User getAuthenticatedUser(){
+        return userService.getAuthenticatedUser();
     }
 }

@@ -17,8 +17,18 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("SELECT r FROM Review r WHERE r.product.id = :productId")
     public List<Review> findAllReviewByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT r.id AS id, r.content AS content, r.rating AS rating, (SELECT AVG(r2.rating) FROM Review r2 WHERE r2.product.id=:productId) AS averageRating FROM Review r WHERE r.product.id = :productId")
-    public List<ReviewWithAvgProjection> findAllReviewAndAvgByProductId(@Param("productId") Long productId);
+    @Query("SELECT " +
+            "r.id AS id, " +
+            "r.content AS content, " +
+            "r.rating AS rating, " +
+            "u.nickname AS nickName, " +
+            "p.image AS profileImage, " +
+            "(SELECT AVG(r.rating) FROM Review r WHERE r.product.id =:productId) AS averageRating " +
+            "FROM Review r " +
+            "JOIN User u ON u.id = r.user.id " +
+            "JOIN Profile p ON u.id = p.user.id WHERE r.product.id =:productId")
+    public List<ReviewWithAvgProjection> findAllReviewWithRelationsByProductId(@Param("productId") Long productId);
+
 
     @Transactional
     @Modifying

@@ -1,5 +1,6 @@
 package com.gulbi.Backend.domain.chat.room.controller;
 
+import com.gulbi.Backend.domain.chat.room.dto.ChatRoomDto;
 import com.gulbi.Backend.domain.chat.room.entity.ChatRoom;
 import com.gulbi.Backend.domain.chat.room.service.ChatRoomService;
 import com.gulbi.Backend.domain.user.entity.User;
@@ -20,16 +21,21 @@ public class ChatRoomController {
     private final UserService userService;
     // 채팅방 생성 또는 반환
     @PostMapping("/chatrooms")
-    public ResponseEntity<ChatRoom> findOrCreateChatRoom(@RequestParam String user1Email, @RequestParam String user2Email) {
+    public ResponseEntity<ChatRoomDto> findOrCreateChatRoom(@RequestParam String user1Email, @RequestParam String user2Email) {
         ChatRoom chatRoom = chatRoomService.findOrCreateChatRoom(user1Email, user2Email);
-        return ResponseEntity.ok(chatRoom);
+        return ResponseEntity.ok(ChatRoomDto.fromEntity(chatRoom));
     }
 
     @GetMapping("/chatrooms")
-    public ResponseEntity<List<ChatRoom>> getMyChatRooms() {
+    public ResponseEntity<List<ChatRoomDto>> getMyChatRooms() {
         User currentUser = userService.getAuthenticatedUser(); // 인증된 사용자 가져오기
         List<ChatRoom> chatRooms = chatRoomService.findChatRoomsByUserId(currentUser.getId());
-        return ResponseEntity.ok(chatRooms);
+
+        List<ChatRoomDto> chatRoomDtos = chatRooms.stream()
+                .map(ChatRoomDto::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(chatRoomDtos);
     }
 
 }

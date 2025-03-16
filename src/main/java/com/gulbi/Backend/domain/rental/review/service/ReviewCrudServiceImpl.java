@@ -37,7 +37,7 @@ public class ReviewCrudServiceImpl implements ReviewCrudService {
 
     @Override
     public List<ReviewWithAvgProjection> getReviewWithRateAvg(Long productId) {
-        return reviewRepository.findAllReviewAndAvgByProductId(productId);
+        return reviewRepository.findAllReviewWithRelationsByProductId(productId);
     }
 
     @Override

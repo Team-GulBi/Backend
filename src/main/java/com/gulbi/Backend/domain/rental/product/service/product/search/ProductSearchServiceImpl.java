@@ -8,6 +8,7 @@ import com.gulbi.Backend.domain.rental.product.dto.product.request.ProductSearch
 import com.gulbi.Backend.domain.rental.product.dto.product.response.ProductDetailResponseDto;
 import com.gulbi.Backend.domain.rental.product.entity.Product;
 import com.gulbi.Backend.domain.rental.product.exception.ProductException;
+import com.gulbi.Backend.domain.rental.product.repository.ProductRepository;
 import com.gulbi.Backend.domain.rental.product.service.image.ImageCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.crud.ProductCrudService;
 import com.gulbi.Backend.domain.rental.product.service.product.logging.ProductLogHandler;
@@ -30,13 +31,17 @@ import java.util.Optional;
 
 @Service
 public class ProductSearchServiceImpl implements ProductSearchService {
-    private final String className = this.getClass().getName();
-    private final ProductLogHandler productLogHandler;
+
+
     private final ProductCrudService productCrudService;
     private final ImageCrudService imageCrudService;
     private final ReviewService reviewService;
     private final ProfileService profileService;
+
     private final Map<String, ProductSearchStrategy> productSearchStrategies;
+
+    private final String className = this.getClass().getName();
+    private final ProductLogHandler productLogHandler;
 
     @Autowired
     public ProductSearchServiceImpl(ProductLogHandler productLogHandler, ProductCrudService productCrudService, ImageCrudService imageCrudService, ReviewService reviewService, ProfileService profileService, Map<String, ProductSearchStrategy> productSearchStrategies) {

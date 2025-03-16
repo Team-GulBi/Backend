@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("SELECT r FROM Review r WHERE r.product.id = :productId")
-    public List<Review> findAllReviewByProductId(@Param("productId") Long productId);
+    List<Review> findAllReviewByProductId(@Param("productId") Long productId);
 
     @Query("SELECT " +
             "r.id AS id, " +
@@ -27,22 +27,22 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
             "FROM Review r " +
             "JOIN User u ON u.id = r.user.id " +
             "JOIN Profile p ON u.id = p.user.id WHERE r.product.id =:productId")
-    public List<ReviewWithAvgProjection> findAllReviewWithRelationsByProductId(@Param("productId") Long productId);
+    List<ReviewWithAvgProjection> findAllReviewWithRelationsByProductId(@Param("productId") Long productId);
 
 
     @Transactional
     @Modifying
     @Query("DELETE FROM Review r WHERE r.id = :reviewId")
-    public void deleteReviewByReviewId(@Param("reviewId") Long reviewId);
+    void deleteReviewByReviewId(@Param("reviewId") Long reviewId);
 
     @Transactional
     @Modifying
     @Query("UPDATE Review r SET r.rating = :rating, r.content = :content WHERE r.id = :reviewId")
-    public void updateReviewInfo(@Param("rating") Integer rating, @Param("content")String content, @Param("reviewId") Long reviewId);
+    void updateReviewInfo(@Param("rating") Integer rating, @Param("content")String content, @Param("reviewId") Long reviewId);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM Review r WHERE r.product = :product")
-    public void deleteAllReviewsByProduct(@Param("product")Product product);
+    void deleteAllReviewsByProduct(@Param("product")Product product);
 
 }

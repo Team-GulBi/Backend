@@ -17,8 +17,6 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewCrudService reviewCrudService;
     private final ReviewFactory reviewFactory;
-    private final UserService userService;
-    private final ProductCrudService productCrudService;
 
     @Override
     public void addReviewToProduct(ReviewCreateRequestDto review) {

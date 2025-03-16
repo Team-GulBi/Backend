@@ -59,7 +59,6 @@ public class ProductDataInitService {
                         .mainImage("https://test.com")
                         .price(price)
                         .views(0)
-                        .rating(0)
                         .build();
 
                 products.add(product);

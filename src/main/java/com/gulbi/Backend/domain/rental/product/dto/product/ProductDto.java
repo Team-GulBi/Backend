@@ -19,14 +19,13 @@ public class ProductDto {
     private final String sigungu;
     private final String bname;
     private final String description;
-    private final float rating;
     private final Category bCategory;
     private final Category mCategory;
     private final Category sCategory;
     private final User user;
     private final LocalDateTime created_at;
 
-    public ProductDto(Long id, String tag, String title, String name, int views, int price, String sido, String sigungu, String bname, String description, float rating, Category bCategory, Category mCategory, Category sCategory, User user, LocalDateTime createdAt) {
+    public ProductDto(Long id, String tag, String title, String name, int views, int price, String sido, String sigungu, String bname, String description, Category bCategory, Category mCategory, Category sCategory, User user, LocalDateTime createdAt) {
         this.id = id;
         this.tag = tag;
         this.title = title;
@@ -37,7 +36,6 @@ public class ProductDto {
         this.sigungu = sigungu;
         this.bname = bname;
         this.description = description;
-        this.rating = rating;
         this.bCategory = bCategory;
         this.mCategory = mCategory;
         this.sCategory = sCategory;

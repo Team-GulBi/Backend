@@ -20,7 +20,6 @@ public class ProductDetailResponseDto {
     private final String price;
     private final String view;
 
-    private final String rating;
     private final String sido;
     private final String sigungu;
     private final String bname;
@@ -45,7 +44,6 @@ public class ProductDetailResponseDto {
                 .productName(product.getName())
                 .price(String.valueOf(product.getPrice()))
                 .view(String.valueOf(product.getViews()))
-                .rating(String.valueOf(product.getRating()))
                 .sido(product.getSido())
                 .sigungu(product.getSigungu())
                 .bname(product.getBname())

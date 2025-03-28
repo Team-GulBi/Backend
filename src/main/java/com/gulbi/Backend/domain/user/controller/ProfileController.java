@@ -2,9 +2,11 @@ package com.gulbi.Backend.domain.user.controller;
 
 import com.gulbi.Backend.domain.user.dto.ProfileRequestDto;
 import com.gulbi.Backend.domain.user.dto.ProfileResponseDto;
+import com.gulbi.Backend.domain.user.entity.User;
 import com.gulbi.Backend.domain.user.service.ProfileService;
 import com.gulbi.Backend.domain.user.service.UserService;
 import com.gulbi.Backend.global.util.S3Uploader;
+import com.gulbi.Backend.global.util.SecurityUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -74,4 +76,18 @@ public class ProfileController {
         ProfileResponseDto profileResponseDto = profileService.getProfile(userId);
         return ResponseEntity.ok(profileResponseDto);
     }
+
+    @GetMapping("/mine")
+    public ResponseEntity<ProfileResponseDto> getMyProfile() {
+        // 현재 로그인된 사용자 정보 가져오기
+        UserDetails userDetails = SecurityUtil.getAuthenticatedUser();
+        User loggedInUser = profileService.getUserByEmail(userDetails.getUsername());
+
+        // 본인 프로필 조회
+        ProfileResponseDto profileResponseDto = profileService.getProfile(loggedInUser.getId());
+
+        return ResponseEntity.ok(profileResponseDto);
+    }
+
+
 }

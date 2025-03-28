@@ -131,7 +131,7 @@ public class ProfileService {
         return profile.getImage();
     }
 
-    private User getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
